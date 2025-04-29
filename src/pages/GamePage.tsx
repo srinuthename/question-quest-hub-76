@@ -8,7 +8,7 @@ import LeaderboardPanel from "@/components/LeaderboardPanel";
 import GameInfoHeader from "@/components/GameInfoHeader";
 import { Trophy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
-import Card from "@/components/ui/card";
+import { Card } from "@/components/ui/card";
 
 // Mock socket.io client
 let mockSocketEvents = {} as any;
