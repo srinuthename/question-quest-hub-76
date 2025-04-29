@@ -16,19 +16,19 @@ const GameInfoHeader = ({
 }: GameInfoHeaderProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="p-4 flex items-center justify-center">
+      <Card className="p-4 flex items-center justify-center bg-gradient-to-r from-green-600/20 to-purple-600/20">
         <h2 className="text-xl font-semibold">
           Question {questionIndex} of {totalQuestions}
         </h2>
       </Card>
       
-      <Card className="p-4">
+      <Card className="p-4 bg-gradient-to-r from-purple-600/20 to-green-600/20">
         <div className="timer">
           <div 
             className="timer-ring" 
             style={{ "--progress": timerProgress } as any} 
           />
-          <span>{timeLeft}s</span>
+          <span className="relative z-10">{timeLeft}s</span>
         </div>
       </Card>
     </div>

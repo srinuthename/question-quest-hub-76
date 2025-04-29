@@ -254,14 +254,14 @@ const GamePage = () => {
         {gameState === 'waiting' ? (
           <div className="max-w-xl mx-auto mt-20">
             <div className="text-center space-y-8">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent">
+              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 via-purple-500 to-green-500 bg-clip-text text-transparent">
                 {quizGame.gameTitle}
               </h1>
               <p className="text-xl">Number of Questions: {totalQuestions}</p>
               <Button
                 size="lg" 
                 onClick={startGame}
-                className="text-xl px-8 py-6 bg-gradient-to-r from-blue-600 to-purple-600 hover:from-blue-700 hover:to-purple-700"
+                className="text-xl px-8 py-6 bg-gradient-to-r from-green-500 to-purple-600 hover:from-green-600 hover:to-purple-700 shadow-lg hover:shadow-green-500/25 transition-all duration-300"
               >
                 Start Game
                 <Trophy className="ml-2 h-5 w-5" />
