@@ -4,11 +4,11 @@
 
 @layer base {
   :root {
-    --background: 240 10% 3.9%;
+    --background: 240 10% 10%;
     --foreground: 0 0% 98%;
-    --card: 240 10% 3.9%;
+    --card: 240 10% 10%;
     --card-foreground: 0 0% 98%;
-    --popover: 240 10% 3.9%;
+    --popover: 240 10% 10%;
     --popover-foreground: 0 0% 98%;
     --primary: 142 76% 50%;     /* Bright green */
     --primary-foreground: 0 0% 98%;
@@ -44,10 +44,10 @@
 
 @layer components {
   .quiz-container {
-    background-color: hsl(240, 10%, 3.9%);
+    background-color: hsl(260, 15%, 20%);
     background-image: 
-      radial-gradient(circle at 25% 35%, hsla(282, 90%, 60%, 0.25) 0%, transparent 50%),
-      radial-gradient(circle at 75% 65%, hsla(142, 76%, 50%, 0.2) 0%, transparent 50%);
+      radial-gradient(circle at 25% 35%, hsla(282, 90%, 60%, 0.3) 0%, transparent 50%),
+      radial-gradient(circle at 75% 65%, hsla(142, 76%, 50%, 0.25) 0%, transparent 50%);
   }
   
   .choice-btn {
