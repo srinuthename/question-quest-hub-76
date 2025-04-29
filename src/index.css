@@ -62,12 +62,12 @@
   }
   
   .choice-btn.correct {
-    @apply bg-correct text-correct-foreground border-correct;
+    @apply bg-green-500 text-white border-green-600;
     animation: pulse-success 2s infinite;
   }
   
   .choice-btn.incorrect {
-    @apply bg-destructive text-destructive-foreground border-destructive;
+    @apply bg-red-500 text-white border-red-600;
   }
   
   /* Animations */
