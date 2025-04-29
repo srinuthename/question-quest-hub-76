@@ -1,11 +1,96 @@
-// Update this page (the content is just a fallback if you fail to update the page)
+
+import { useEffect, useState } from "react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { useToast } from "@/components/ui/use-toast";
+import { useNavigate } from "react-router-dom";
+import { ArrowRight } from "lucide-react";
+
+// Define the game type
+interface QuizGame {
+  _id: string;
+  gameTitle: string;
+  questions: any[];
+}
 
 const Index = () => {
+  const [quizGames, setQuizGames] = useState<QuizGame[]>([]);
+  const [loading, setLoading] = useState(true);
+  const { toast } = useToast();
+  const navigate = useNavigate();
+  
+  useEffect(() => {
+    // In a real app, you'd fetch games from your API here
+    // For our demo, we'll create mock data
+    const mockGames = [
+      {
+        _id: "game1",
+        gameTitle: "General Knowledge Quiz",
+        questions: Array(10).fill({}),
+      },
+      {
+        _id: "game2",
+        gameTitle: "Science Fiction Trivia",
+        questions: Array(15).fill({}),
+      },
+      {
+        _id: "game3",
+        gameTitle: "History Champions",
+        questions: Array(12).fill({}),
+      }
+    ];
+    
+    setQuizGames(mockGames);
+    setLoading(false);
+  }, []);
+  
+  const handleSelectGame = (gameId: string) => {
+    navigate(`/game/${gameId}`);
+    toast({
+      title: "Game selected!",
+      description: "Loading quiz game...",
+    });
+  };
+  
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="animate-pulse text-2xl font-bold">Loading Games...</div>
+      </div>
+    );
+  }
+  
   return (
-    <div className="min-h-screen flex items-center justify-center bg-gray-100">
-      <div className="text-center">
-        <h1 className="text-4xl font-bold mb-4">Welcome to Your Blank App</h1>
-        <p className="text-xl text-gray-600">Start building your amazing project here!</p>
+    <div className="container mx-auto py-8 px-4">
+      <div className="max-w-4xl mx-auto">
+        <Card>
+          <CardHeader className="text-center">
+            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent">
+              Question Quest Hub
+            </CardTitle>
+          </CardHeader>
+          <CardContent>
+            <h2 className="text-2xl font-semibold mb-6 text-center">Select a Quiz Game</h2>
+            <div className="grid gap-4">
+              {quizGames.map((game) => (
+                <Button
+                  key={game._id}
+                  variant="outline"
+                  className="flex justify-between items-center h-16 text-left px-6"
+                  onClick={() => handleSelectGame(game._id)}
+                >
+                  <div>
+                    <span className="text-lg font-medium">{game.gameTitle}</span>
+                    <p className="text-sm text-muted-foreground">
+                      {game.questions.length} Questions
+                    </p>
+                  </div>
+                  <ArrowRight className="h-5 w-5" />
+                </Button>
+              ))}
+            </div>
+          </CardContent>
+        </Card>
       </div>
     </div>
   );
