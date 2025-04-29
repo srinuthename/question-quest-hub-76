@@ -61,11 +61,11 @@ const Index = () => {
   }
   
   return (
-    <div className="container mx-auto py-8 px-4">
+    <div className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-br from-purple-50 to-green-50">
       <div className="max-w-4xl mx-auto">
-        <Card>
+        <Card className="bg-white shadow-md">
           <CardHeader className="text-center">
-            <CardTitle className="text-4xl font-bold bg-gradient-to-r from-blue-500 via-purple-500 to-orange-500 bg-clip-text text-transparent">
+            <CardTitle className="text-4xl font-bold">
               Question Quest Hub
             </CardTitle>
           </CardHeader>
@@ -76,7 +76,7 @@ const Index = () => {
                 <Button
                   key={game._id}
                   variant="outline"
-                  className="flex justify-between items-center h-16 text-left px-6"
+                  className="flex justify-between items-center h-16 text-left px-6 bg-gradient-to-r from-white to-purple-50 hover:from-green-50 hover:to-purple-100 transition-all duration-300"
                   onClick={() => handleSelectGame(game._id)}
                 >
                   <div>

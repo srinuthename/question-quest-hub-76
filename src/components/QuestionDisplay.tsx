@@ -16,7 +16,7 @@ interface QuestionDisplayProps {
 const QuestionDisplay = ({ question, correctIndex, gameState }: QuestionDisplayProps) => {
   if (!question) {
     return (
-      <Card className="h-full flex items-center justify-center bg-gradient-to-br from-purple-600/10 to-green-600/10">
+      <Card className="h-full flex items-center justify-center bg-gradient-to-br from-purple-200/50 to-green-200/50 shadow-md">
         <CardContent className="text-center py-20">
           <p className="text-2xl font-semibold text-muted-foreground">
             Waiting for the next question...
@@ -27,9 +27,9 @@ const QuestionDisplay = ({ question, correctIndex, gameState }: QuestionDisplayP
   }
 
   return (
-    <Card className="bg-gradient-to-br from-purple-600/10 to-green-600/10 border-purple-500/30">
+    <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md">
       <CardHeader>
-        <CardTitle className="text-2xl font-bold bg-gradient-to-r from-green-400 to-purple-500 bg-clip-text text-transparent">
+        <CardTitle className="text-2xl font-bold">
           {question.questionText}
         </CardTitle>
       </CardHeader>
@@ -46,7 +46,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState }: QuestionDisplayP
             } ${gameState === 'question' ? 'cursor-pointer' : ''}`}
           >
             <div className="flex items-center">
-              <span className="text-2xl font-bold mr-2 bg-gradient-to-r from-purple-400 to-green-400 bg-clip-text text-transparent">
+              <span className="text-2xl font-bold mr-2">
                 {String.fromCharCode(65 + choice.choiceIndex)}
               </span>
               <span className="text-lg">{choice.choiceText}</span>

@@ -8,6 +8,7 @@ import LeaderboardPanel from "@/components/LeaderboardPanel";
 import GameInfoHeader from "@/components/GameInfoHeader";
 import { Trophy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
+import Card from "@/components/ui/card";
 
 // Mock socket.io client
 let mockSocketEvents = {} as any;
@@ -253,18 +254,20 @@ const GamePage = () => {
         {gameState === 'waiting' ? (
           <div className="max-w-xl mx-auto mt-20">
             <div className="text-center space-y-8">
-              <h1 className="text-4xl font-bold bg-gradient-to-r from-green-400 via-purple-500 to-green-500 bg-clip-text text-transparent">
-                {quizGame.gameTitle}
-              </h1>
-              <p className="text-xl">Number of Questions: {totalQuestions}</p>
-              <Button
-                size="lg" 
-                onClick={startGame}
-                className="text-xl px-8 py-6 bg-gradient-to-r from-green-500 to-purple-600 hover:from-green-600 hover:to-purple-700 shadow-lg hover:shadow-green-500/25 transition-all duration-300"
-              >
-                Start Game
-                <Trophy className="ml-2 h-5 w-5" />
-              </Button>
+              <Card className="bg-gradient-to-r from-green-50 to-purple-50 p-8 shadow-lg">
+                <h1 className="text-4xl font-bold">
+                  {quizGame.gameTitle}
+                </h1>
+                <p className="text-xl mt-4">Number of Questions: {totalQuestions}</p>
+                <Button
+                  size="lg" 
+                  onClick={startGame}
+                  className="text-xl px-8 py-6 mt-6 bg-gradient-to-r from-green-400 to-purple-500 hover:from-green-500 hover:to-purple-600 shadow-lg hover:shadow-green-500/25 transition-all duration-300"
+                >
+                  Start Game
+                  <Trophy className="ml-2 h-5 w-5" />
+                </Button>
+              </Card>
             </div>
           </div>
         ) : (

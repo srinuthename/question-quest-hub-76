@@ -16,13 +16,13 @@ const GameInfoHeader = ({
 }: GameInfoHeaderProps) => {
   return (
     <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-      <Card className="p-4 flex items-center justify-center bg-gradient-to-r from-green-600/20 to-purple-600/20">
+      <Card className="p-4 flex items-center justify-center bg-gradient-to-r from-green-100 to-purple-100 shadow-sm">
         <h2 className="text-xl font-semibold">
           Question {questionIndex} of {totalQuestions}
         </h2>
       </Card>
       
-      <Card className="p-4 bg-gradient-to-r from-purple-600/20 to-green-600/20">
+      <Card className="p-4 bg-gradient-to-r from-purple-100 to-green-100 shadow-sm">
         <div className="timer">
           <div 
             className="timer-ring" 

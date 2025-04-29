@@ -11,7 +11,7 @@ interface AnswersPanelProps {
 
 const AnswersPanel = ({ answers }: AnswersPanelProps) => {
   return (
-    <Card className="h-full overflow-hidden flex flex-col">
+    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold">Live Answers</CardTitle>
       </CardHeader>
@@ -22,7 +22,7 @@ const AnswersPanel = ({ answers }: AnswersPanelProps) => {
           </div>
         ) : (
           answers.map((answer, index) => (
-            <div key={index} className="answer-card" style={{ animationDelay: `${index * 0.1}s` }}>
+            <div key={index} className="answer-card bg-white/80" style={{ animationDelay: `${index * 0.1}s` }}>
               <div className="avatar-sm">
                 <img 
                   src={answer.ytProfilePicUrl} 

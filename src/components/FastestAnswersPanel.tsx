@@ -12,7 +12,7 @@ interface FastestAnswersPanelProps {
 
 const FastestAnswersPanel = ({ fastestAnswers }: FastestAnswersPanelProps) => {
   return (
-    <Card className="h-full overflow-hidden flex flex-col">
+    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-semibold">Fastest Correct Answers</CardTitle>
         <CardDescription>The quickest players who got it right!</CardDescription>
@@ -26,7 +26,7 @@ const FastestAnswersPanel = ({ fastestAnswers }: FastestAnswersPanelProps) => {
           fastestAnswers.map((answer, index) => (
             <div 
               key={index} 
-              className="answer-card bg-gradient-to-r from-green-500/20 to-green-400/10" 
+              className="answer-card bg-gradient-to-r from-green-100/70 to-green-50/70" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <div className="avatar-sm">
