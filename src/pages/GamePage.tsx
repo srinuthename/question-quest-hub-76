@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -9,126 +10,8 @@ import GameInfoHeader from "@/components/GameInfoHeader";
 import { Trophy } from "lucide-react";
 import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
-
-// Mock socket.io client
-let mockSocketEvents = {} as any;
-const mockSocket = {
-  on: (event: string, callback: Function) => {
-    mockSocketEvents[event] = callback;
-  },
-  emit: (event: string, data: any) => {
-    console.log("Socket emit:", event, data);
-    
-    // Simulate backend responses
-    setTimeout(() => {
-      if (event === 'startGame') {
-        mockSocketEvents['newQuestion']({
-          questionText: "What is the capital of France?",
-          choices: [
-            { choiceIndex: 0, choiceText: "London" },
-            { choiceIndex: 1, choiceText: "Paris" },
-            { choiceIndex: 2, choiceText: "Berlin" },
-            { choiceIndex: 3, choiceText: "Madrid" }
-          ]
-        });
-        
-        // Simulate answers coming in
-        simulateAnswers();
-      }
-    }, 1000);
-  }
-};
-
-// Simulate answers coming in
-function simulateAnswers() {
-  const profilePics = [
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=Felix",
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=Bella",
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=Charlie",
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=Luna",
-    "https://api.dicebear.com/7.x/avataaars/svg?seed=Oliver"
-  ];
-  
-  const userNames = ["Player123", "QuizMaster", "BrainiacGamer", "TriviaKing", "QuizWhiz"];
-  
-  let answerCount = 0;
-  const answerInterval = setInterval(() => {
-    if (answerCount < 10) {
-      const answers = [];
-      const randomCount = Math.floor(Math.random() * 3) + 1;
-      
-      for (let i = 0; i < randomCount; i++) {
-        const randomIndex = Math.floor(Math.random() * 5);
-        answers.push({
-          ytProfilePicUrl: profilePics[randomIndex],
-          userName: userNames[randomIndex],
-          responseTime: Math.floor(Math.random() * 5000) + 1000
-        });
-      }
-      
-      mockSocketEvents['newAnswers'](answers);
-      answerCount++;
-    } else {
-      clearInterval(answerInterval);
-      
-      // Reveal correct answer
-      setTimeout(() => {
-        mockSocketEvents['revealAnswer']({
-          correctChoiceIndex: 1, // Paris
-          questionIndex: 0
-        });
-        
-        // Show fastest answers
-        setTimeout(() => {
-          mockSocketEvents['fastestCorrectAnswers']([
-            {
-              ytProfilePicUrl: profilePics[0],
-              userName: userNames[0],
-              responseTime: 1200
-            },
-            {
-              ytProfilePicUrl: profilePics[2],
-              userName: userNames[2],
-              responseTime: 1800
-            },
-            {
-              ytProfilePicUrl: profilePics[4],
-              userName: userNames[4],
-              responseTime: 2300
-            }
-          ]);
-          
-          // Show leaderboard
-          setTimeout(() => {
-            const scores = {};
-            for (let i = 0; i < 5; i++) {
-              scores[userNames[i]] = Math.floor(Math.random() * 5000) + 1000;
-            }
-            mockSocketEvents['leaderboard'](Object.entries(scores));
-            
-            // Continue to next question or end game
-            setTimeout(() => {
-              if (Math.random() > 0.5) {
-                mockSocketEvents['newQuestion']({
-                  questionText: "Which planet is known as the Red Planet?",
-                  choices: [
-                    { choiceIndex: 0, choiceText: "Venus" },
-                    { choiceIndex: 1, choiceText: "Earth" },
-                    { choiceIndex: 2, choiceText: "Mars" },
-                    { choiceIndex: 3, choiceText: "Jupiter" }
-                  ]
-                });
-                simulateAnswers();
-              } else {
-                mockSocketEvents['gameEnded']();
-              }
-            }, 5000);
-          }, 5000);
-        }, 2000);
-      }, 5000);
-    }
-  }, 1000);
-}
+import { getSocket } from "@/services/socketService";
+import { Socket } from "socket.io-client";
 
 // Game state type
 type GameState = 'waiting' | 'question' | 'reveal' | 'fastest' | 'leaderboard' | 'ended';
@@ -144,9 +27,9 @@ const GamePage = () => {
   const [correctIndex, setCorrectIndex] = useState<number | null>(null);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
-  const [timeLeft, setTimeLeft] = useState<number>(120);
+  const [timeLeft, setTimeLeft] = useState<number>(20);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
-  const socket = useRef(mockSocket);
+  const socketRef = useRef<Socket | null>(null);
   const { toast } = useToast();
   
   useEffect(() => {
@@ -160,8 +43,12 @@ const GamePage = () => {
     setQuizGame(mockGame);
     setTotalQuestions(mockGame.questions.length);
     
-    // Set up socket events
-    socket.current.on('newQuestion', (question: any) => {
+    // Initialize socket connection
+    socketRef.current = getSocket();
+    
+    // Set up socket event listeners
+    socketRef.current.on('newQuestion', (question: any) => {
+      console.log('Received new question:', question);
       setCurrentQuestion(question);
       setAnswers([]);
       setFastestAnswers([]);
@@ -176,11 +63,17 @@ const GamePage = () => {
       });
     });
     
-    socket.current.on('newAnswers', (newAnswers: any[]) => {
-      setAnswers(prev => [...prev, ...newAnswers]);
+    socketRef.current.on('newAnswers', (newAnswers: any[]) => {
+      console.log('Received new answers:', newAnswers);
+      setAnswers(prev => [...prev, ...newAnswers.map(answer => ({
+        ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
+        userName: answer.ytName || answer.ytChannelId,
+        responseTime: answer.responseTime
+      }))]);
     });
     
-    socket.current.on('revealAnswer', (data: any) => {
+    socketRef.current.on('revealAnswer', (data: any) => {
+      console.log('Received correct answer:', data);
       setCorrectIndex(data.correctChoiceIndex);
       setGameState('reveal');
       
@@ -189,17 +82,24 @@ const GamePage = () => {
       }
     });
     
-    socket.current.on('fastestCorrectAnswers', (answers: any[]) => {
-      setFastestAnswers(answers);
+    socketRef.current.on('fastestCorrectAnswers', (answers: any[]) => {
+      console.log('Received fastest answers:', answers);
+      setFastestAnswers(answers.map(answer => ({
+        ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
+        userName: answer.ytName || answer.ytChannelId,
+        responseTime: answer.responseTime
+      })));
       setGameState('fastest');
     });
     
-    socket.current.on('leaderboard', (scores: [string, number][]) => {
+    socketRef.current.on('leaderboard', (scores: [string, number][]) => {
+      console.log('Received leaderboard:', scores);
       setLeaderboard(scores);
       setGameState('leaderboard');
     });
     
-    socket.current.on('gameEnded', () => {
+    socketRef.current.on('gameEnded', () => {
+      console.log('Game ended');
       setGameState('ended');
       
       toast({
@@ -212,15 +112,28 @@ const GamePage = () => {
       if (timerRef.current) {
         clearInterval(timerRef.current);
       }
+      
+      // Remove all socket event listeners
+      if (socketRef.current) {
+        socketRef.current.off('newQuestion');
+        socketRef.current.off('newAnswers');
+        socketRef.current.off('revealAnswer');
+        socketRef.current.off('fastestCorrectAnswers');
+        socketRef.current.off('leaderboard');
+        socketRef.current.off('gameEnded');
+      }
     };
   }, [id]);
   
   const startGame = () => {
-    socket.current.emit('startGame', { gameId: id });
+    if (socketRef.current && id) {
+      console.log('Emitting startGame event with gameId:', id);
+      socketRef.current.emit('startGame', { gameId: id });
+    }
   };
   
   const startTimer = () => {
-    setTimeLeft(120);
+    setTimeLeft(20);
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -238,7 +151,7 @@ const GamePage = () => {
   };
   
   // Calculate timer progress
-  const timerProgress = `${(timeLeft / 120) * 100}%`;
+  const timerProgress = `${(timeLeft / 20) * 100}%`;
   
   if (!quizGame) {
     return (
