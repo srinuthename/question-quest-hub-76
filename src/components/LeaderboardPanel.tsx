@@ -1,5 +1,6 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface LeaderboardPanelProps {
   leaderboard: [string, number][];
@@ -7,11 +8,17 @@ interface LeaderboardPanelProps {
 }
 
 const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => {
+  const isMobile = useIsMobile();
+  
   // Get top 3 players for the podium
   const topThree = leaderboard.slice(0, 3);
   
   // Get the rest of the players
   const otherPlayers = leaderboard.slice(3);
+  
+  // Split other players into two columns for desktop view
+  const leftColumnPlayers = otherPlayers.slice(0, Math.ceil(otherPlayers.length / 2));
+  const rightColumnPlayers = otherPlayers.slice(Math.ceil(otherPlayers.length / 2));
   
   return (
     <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
@@ -53,26 +60,76 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
               </div>
             )}
             
-            {/* Other players */}
-            <div className="space-y-1">
-              {otherPlayers.map(([name, score], index) => (
-                <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                  <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
-                      <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                        alt={`Player ${name}`}
-                        className="w-full h-full object-cover"
-                      />
+            {/* Other players - Desktop gets 2 column layout */}
+            <div className={`${!isMobile ? "grid grid-cols-2 gap-2" : "space-y-1"}`}>
+              {isMobile ? (
+                // Mobile view - single column
+                otherPlayers.map(([name, score], index) => (
+                  <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div className="flex items-center">
+                      <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                        <img
+                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                          alt={`Player ${name}`}
+                          className="w-full h-full object-cover"
+                        />
+                      </div>
+                      <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                        <span className="text-xs font-medium">{index + 4}</span>
+                      </div>
+                      <span className="font-medium">{name}</span>
                     </div>
-                    <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
-                      <span className="text-xs font-medium">{index + 4}</span>
-                    </div>
-                    <span className="font-medium">{name}</span>
+                    <span className="font-bold">{score}</span>
                   </div>
-                  <span className="font-bold">{score}</span>
-                </div>
-              ))}
+                ))
+              ) : (
+                // Desktop view - two columns
+                <>
+                  {/* Left column */}
+                  <div className="space-y-1">
+                    {leftColumnPlayers.map(([name, score], index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                        <div className="flex items-center">
+                          <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                            <img
+                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                              alt={`Player ${name}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                            <span className="text-xs font-medium">{index + 4}</span>
+                          </div>
+                          <span className="font-medium">{name}</span>
+                        </div>
+                        <span className="font-bold">{score}</span>
+                      </div>
+                    ))}
+                  </div>
+                  
+                  {/* Right column */}
+                  <div className="space-y-1">
+                    {rightColumnPlayers.map(([name, score], index) => (
+                      <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                        <div className="flex items-center">
+                          <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                            <img
+                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                              alt={`Player ${name}`}
+                              className="w-full h-full object-cover"
+                            />
+                          </div>
+                          <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                            <span className="text-xs font-medium">{index + leftColumnPlayers.length + 4}</span>
+                          </div>
+                          <span className="font-medium">{name}</span>
+                        </div>
+                        <span className="font-bold">{score}</span>
+                      </div>
+                    ))}
+                  </div>
+                </>
+              )}
             </div>
           </>
         )}

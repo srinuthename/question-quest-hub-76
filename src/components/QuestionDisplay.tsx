@@ -40,7 +40,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible }: Questio
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">
-        <ScrollingText text="Type the option in answers to participate" />
+        <ScrollingText text="Answer with A, B, C or D in chat to play!" />
         
         <div className="pt-1 space-y-2">
           {question.choices.map((choice) => (

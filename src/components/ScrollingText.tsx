@@ -12,18 +12,6 @@ const ScrollingText = ({ text, className }: ScrollingTextProps) => {
   const [isAnimating, setIsAnimating] = useState(false);
   
   useEffect(() => {
-    if (!containerRef.current) return;
-    
-    const container = containerRef.current;
-    const contentWidth = container.scrollWidth;
-    const viewportWidth = container.offsetWidth;
-    
-    // Only apply marquee animation if content is wider than the container
-    if (contentWidth > viewportWidth) {
-      container.className = cn(container.className, "animate-marquee");
-    }
-    
-    // Add pulse animation effect
     const pulseInterval = setInterval(() => {
       setIsAnimating(prev => !prev);
     }, 3000);
@@ -36,13 +24,11 @@ const ScrollingText = ({ text, className }: ScrollingTextProps) => {
       <div 
         ref={containerRef}
         className={cn(
-          "whitespace-nowrap inline-block transition-transform duration-700",
-          isAnimating ? "scale-[1.02]" : "scale-100",
+          "whitespace-nowrap inline-block transition-all duration-700",
+          isAnimating ? "scale-[1.02] text-primary" : "scale-100",
           className
         )}
       >
-        {text}
-        <span className="px-4">•</span>
         {text}
       </div>
     </div>
