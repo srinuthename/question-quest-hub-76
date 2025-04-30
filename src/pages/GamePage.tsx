@@ -8,7 +8,6 @@ import FastestAnswersPanel from "@/components/FastestAnswersPanel";
 import LeaderboardPanel from "@/components/LeaderboardPanel";
 import GameInfoHeader from "@/components/GameInfoHeader";
 import { Trophy } from "lucide-react";
-import { useToast } from "@/components/ui/use-toast";
 import { Card } from "@/components/ui/card";
 import { getSocket } from "@/services/socketService";
 import { Socket } from "socket.io-client";
@@ -30,7 +29,9 @@ const GamePage = () => {
   const [timeLeft, setTimeLeft] = useState<number>(20);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const socketRef = useRef<Socket | null>(null);
-  const { toast } = useToast();
+  
+  // Flag to determine if question card should be visible
+  const isQuestionVisible = gameState !== 'leaderboard' && gameState !== 'ended';
   
   useEffect(() => {
     // Mock fetching game data
@@ -50,17 +51,12 @@ const GamePage = () => {
     socketRef.current.on('newQuestion', (question: any) => {
       console.log('Received new question:', question);
       setCurrentQuestion(question);
-      setAnswers([]);
+      setAnswers([]);  // Clear previous answers
       setFastestAnswers([]);
       setCorrectIndex(null);
       setQuestionIndex(prev => prev + 1);
       setGameState('question');
-      startTimer();
-      
-      toast({
-        title: `Question ${questionIndex + 1}`,
-        description: "New question loaded!",
-      });
+      resetTimer(20);  // Reset timer for new question
     });
     
     socketRef.current.on('newAnswers', (newAnswers: any[]) => {
@@ -76,6 +72,7 @@ const GamePage = () => {
       console.log('Received correct answer:', data);
       setCorrectIndex(data.correctChoiceIndex);
       setGameState('reveal');
+      resetTimer(10);  // Reset timer for answer reveal phase
       
       if (timerRef.current) {
         clearInterval(timerRef.current);
@@ -96,16 +93,12 @@ const GamePage = () => {
       console.log('Received leaderboard:', scores);
       setLeaderboard(scores);
       setGameState('leaderboard');
+      resetTimer(10);  // Reset timer for leaderboard phase
     });
     
     socketRef.current.on('gameEnded', () => {
       console.log('Game ended');
       setGameState('ended');
-      
-      toast({
-        title: "Game Over!",
-        description: "Thank you for playing!",
-      });
     });
     
     return () => {
@@ -132,8 +125,8 @@ const GamePage = () => {
     }
   };
   
-  const startTimer = () => {
-    setTimeLeft(20);
+  const resetTimer = (seconds: number) => {
+    setTimeLeft(seconds);
     
     if (timerRef.current) {
       clearInterval(timerRef.current);
@@ -155,74 +148,74 @@ const GamePage = () => {
   
   if (!quizGame) {
     return (
-      <div className="min-h-screen flex items-center justify-center quiz-container">
-        <div className="animate-pulse text-2xl font-bold">Loading Game...</div>
+      <div className="flex items-center justify-center p-4">
+        <div className="animate-pulse text-2xl font-bold text-white">Loading Game...</div>
       </div>
     );
   }
   
   return (
-    <div className="min-h-screen quiz-container">
-      <div className="container mx-auto py-6 px-4">
-        {gameState === 'waiting' ? (
-          <div className="max-w-xl mx-auto mt-20">
-            <div className="text-center space-y-8">
-              <Card className="bg-gradient-to-r from-green-50 to-purple-50 p-8 shadow-lg">
-                <h1 className="text-4xl font-bold">
-                  {quizGame.gameTitle}
-                </h1>
-                <p className="text-xl mt-4">Number of Questions: {totalQuestions}</p>
-                <Button
-                  size="lg" 
-                  onClick={startGame}
-                  className="text-xl px-8 py-6 mt-6 bg-gradient-to-r from-green-400 to-purple-500 hover:from-green-500 hover:to-purple-600 shadow-lg hover:shadow-green-500/25 transition-all duration-300"
-                >
-                  Start Game
-                  <Trophy className="ml-2 h-5 w-5" />
-                </Button>
-              </Card>
+    <div className="container mx-auto py-3 px-3">
+      {gameState === 'waiting' ? (
+        <div className="max-w-xl mx-auto mt-16">
+          <div className="text-center space-y-6">
+            <Card className="bg-gradient-to-r from-green-50 to-purple-50 p-6 shadow-lg">
+              <h1 className="text-3xl font-bold">
+                {quizGame.gameTitle}
+              </h1>
+              <p className="text-xl mt-3">Number of Questions: {totalQuestions}</p>
+              <Button
+                size="lg" 
+                onClick={startGame}
+                className="text-xl px-6 py-5 mt-5 bg-gradient-to-r from-green-400 to-purple-500 hover:from-green-500 hover:to-purple-600 shadow-lg hover:shadow-green-500/25 transition-all duration-300"
+              >
+                Start Game
+                <Trophy className="ml-2 h-5 w-5" />
+              </Button>
+            </Card>
+          </div>
+        </div>
+      ) : (
+        <>
+          <GameInfoHeader
+            questionIndex={questionIndex}
+            totalQuestions={totalQuestions}
+            timeLeft={timeLeft}
+            timerProgress={timerProgress}
+            gameState={gameState}
+          />
+          
+          <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mt-3">
+            {/* Question section - 7 columns on desktop */}
+            <div className="md:col-span-7">
+              <QuestionDisplay 
+                question={currentQuestion} 
+                correctIndex={correctIndex}
+                gameState={gameState}
+                visible={isQuestionVisible}
+              />
+            </div>
+            
+            {/* Right panel - 5 columns on desktop */}
+            <div className="md:col-span-5">
+              {gameState === 'question' && (
+                <AnswersPanel answers={answers} />
+              )}
+              
+              {(gameState === 'reveal' || gameState === 'fastest') && (
+                <FastestAnswersPanel fastestAnswers={fastestAnswers} />
+              )}
+              
+              {(gameState === 'leaderboard' || gameState === 'ended') && (
+                <LeaderboardPanel 
+                  leaderboard={leaderboard}
+                  gameEnded={gameState === 'ended'}
+                />
+              )}
             </div>
           </div>
-        ) : (
-          <>
-            <GameInfoHeader
-              questionIndex={questionIndex}
-              totalQuestions={totalQuestions}
-              timeLeft={timeLeft}
-              timerProgress={timerProgress}
-            />
-            
-            <div className="grid grid-cols-1 md:grid-cols-12 gap-4 mt-6">
-              {/* Question section - 7 columns on desktop */}
-              <div className="md:col-span-7">
-                <QuestionDisplay 
-                  question={currentQuestion} 
-                  correctIndex={correctIndex}
-                  gameState={gameState}
-                />
-              </div>
-              
-              {/* Right panel - 5 columns on desktop */}
-              <div className="md:col-span-5">
-                {gameState === 'question' && (
-                  <AnswersPanel answers={answers} />
-                )}
-                
-                {(gameState === 'reveal' || gameState === 'fastest') && (
-                  <FastestAnswersPanel fastestAnswers={fastestAnswers} />
-                )}
-                
-                {(gameState === 'leaderboard' || gameState === 'ended') && (
-                  <LeaderboardPanel 
-                    leaderboard={leaderboard}
-                    gameEnded={gameState === 'ended'}
-                  />
-                )}
-              </div>
-            </div>
-          </>
-        )}
-      </div>
+        </>
+      )}
     </div>
   );
 };

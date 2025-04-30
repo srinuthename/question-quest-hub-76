@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -48,7 +49,7 @@
   }
   
   .choice-btn {
-    @apply relative overflow-hidden rounded-lg border-2 border-muted text-left p-4 transition-all duration-300;
+    @apply relative overflow-hidden rounded-lg border-2 border-muted text-left p-3 transition-all duration-300;
   }
   
   .choice-btn:hover {
@@ -89,12 +90,21 @@
     100% { box-shadow: 0 0 0 0 hsla(282, 90%, 60%, 0); }
   }
   
+  @keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+  }
+  
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
   }
   
   .animate-fade-slide-in {
     animation: fade-slide-in 0.5s ease-out forwards;
+  }
+  
+  .animate-marquee {
+    animation: marquee 15s linear infinite;
   }
   
   /* Timer animation */
@@ -117,7 +127,7 @@
   
   /* Podium for leaderboard */
   .podium {
-    @apply relative flex items-end justify-center h-[200px] mb-8 gap-1;
+    @apply relative flex items-end justify-center h-[160px] gap-1;
   }
   
   .podium-place {
@@ -161,7 +171,7 @@
   }
   
   .podium-avatar {
-    @apply rounded-full bg-muted w-12 h-12 -mt-16 border-4 border-background overflow-hidden flex items-center justify-center;
+    @apply rounded-full bg-muted w-10 h-10 -mt-14 border-4 border-background overflow-hidden flex items-center justify-center;
   }
   
   .podium-name {
@@ -174,7 +184,7 @@
   
   /* Answer cards */
   .answer-card {
-    @apply flex items-center gap-3 p-3 rounded-lg bg-muted mb-2 animate-fade-slide-in opacity-0;
+    @apply flex items-center gap-2 p-2 rounded-lg bg-muted mb-1 animate-fade-slide-in opacity-0;
     animation-fill-mode: forwards;
   }
   
@@ -185,7 +195,7 @@
   .answer-card:nth-child(5) { animation-delay: 0.4s; }
   
   .avatar-sm {
-    @apply w-10 h-10 rounded-full overflow-hidden flex items-center justify-center bg-background;
+    @apply w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-background;
   }
   
   /* Question transitions */

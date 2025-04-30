@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 
@@ -16,7 +15,7 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
   
   return (
     <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-1">
         <div className="flex items-center">
           <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
           <CardTitle className="text-xl font-semibold">
@@ -27,22 +26,24 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
           <CardDescription>Congratulations to all our players!</CardDescription>
         )}
       </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto">
+      <CardContent className="flex-grow overflow-y-auto pt-1">
         {leaderboard.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-4 text-muted-foreground">
             No scores yet...
           </div>
         ) : (
           <>
             {/* Top 3 Podium */}
             {topThree.length > 0 && (
-              <div className="podium mb-6">
+              <div className="podium mb-4">
                 {topThree.map(([name, score], index) => (
                   <div key={index} className="podium-place">
                     <div className="podium-avatar">
-                      <span className="text-xs font-bold">
-                        {index + 1}
-                      </span>
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                        alt={`Player ${name}`}
+                        className="w-full h-full object-cover"
+                      />
                     </div>
                     <div className="podium-stand" />
                     <div className="podium-name">{name}</div>
@@ -53,11 +54,18 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
             )}
             
             {/* Other players */}
-            <div className="space-y-2">
+            <div className="space-y-1">
               {otherPlayers.map(([name, score], index) => (
-                <div key={index} className="flex items-center justify-between p-3 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                   <div className="flex items-center">
-                    <div className="w-6 h-6 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-3">
+                    <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                      <img
+                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                        alt={`Player ${name}`}
+                        className="w-full h-full object-cover"
+                      />
+                    </div>
+                    <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
                       <span className="text-xs font-medium">{index + 4}</span>
                     </div>
                     <span className="font-medium">{name}</span>

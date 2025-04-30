@@ -1,5 +1,6 @@
 
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { useEffect, useRef } from "react";
 
 interface AnswersPanelProps {
   answers: {
@@ -10,14 +11,24 @@ interface AnswersPanelProps {
 }
 
 const AnswersPanel = ({ answers }: AnswersPanelProps) => {
+  const prevAnswersCountRef = useRef(0);
+  
+  useEffect(() => {
+    // This will track if the answers array was reset (new question)
+    if (answers.length < prevAnswersCountRef.current) {
+      console.log("Answers were reset for new question");
+    }
+    prevAnswersCountRef.current = answers.length;
+  }, [answers]);
+  
   return (
     <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-1">
         <CardTitle className="text-xl font-semibold">Live Answers</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto space-y-2">
+      <CardContent className="flex-grow overflow-y-auto space-y-1 pt-1">
         {answers.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-4 text-muted-foreground">
             Waiting for answers...
           </div>
         ) : (

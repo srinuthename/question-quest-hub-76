@@ -2,7 +2,6 @@
 import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
 import { ArrowRight, Calendar, HelpCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -24,7 +23,6 @@ const Index = () => {
   const [quizGames, setQuizGames] = useState<QuizGame[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const { toast } = useToast();
   const navigate = useNavigate();
   
   useEffect(() => {
@@ -77,25 +75,21 @@ const Index = () => {
   
   const handleSelectGame = (gameId: string) => {
     navigate(`/game/${gameId}`);
-    toast({
-      title: "Game selected!",
-      description: "Loading quiz game...",
-    });
   };
   
   if (loading) {
     return (
-      <div className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-br from-purple-50 to-green-50">
+      <div className="container mx-auto py-4 px-3">
         <div className="max-w-4xl mx-auto">
           <Card className="bg-white shadow-md">
-            <CardHeader className="text-center">
-              <CardTitle className="text-4xl font-bold">
+            <CardHeader className="text-center pb-2">
+              <CardTitle className="text-3xl font-bold">
                 Question Quest Hub
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <h2 className="text-2xl font-semibold mb-6 text-center">Loading Quiz Games...</h2>
-              <div className="grid gap-4">
+              <h2 className="text-2xl font-semibold mb-4 text-center">Loading Quiz Games...</h2>
+              <div className="grid gap-3">
                 {[1, 2, 3].map((index) => (
                   <div key={index} className="h-16 rounded-md p-4 flex justify-between items-center">
                     <div className="space-y-2 w-full">
@@ -114,38 +108,38 @@ const Index = () => {
   }
   
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen quiz-container">
+    <div className="container mx-auto py-4 px-3">
       <div className="max-w-4xl mx-auto">
         <Card className="bg-white/90 shadow-md backdrop-blur-sm">
-          <CardHeader className="text-center">
-            <CardTitle className="text-4xl font-bold">
+          <CardHeader className="text-center pb-3">
+            <CardTitle className="text-3xl font-bold">
               Question Quest Hub
             </CardTitle>
           </CardHeader>
           <CardContent>
             {error && (
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 rounded">
                 <p className="text-yellow-800">{error}</p>
               </div>
             )}
             
-            <h2 className="text-2xl font-semibold mb-6 text-center">Available Quiz Games</h2>
-            <div className="grid gap-4">
+            <h2 className="text-2xl font-semibold mb-4 text-center">Available Quiz Games</h2>
+            <div className="grid gap-2">
               {quizGames.map((game) => (
                 <Button
                   key={game._id}
                   variant="outline"
-                  className="flex justify-between items-center h-auto min-h-16 text-left px-6 py-3 bg-gradient-to-r from-white to-purple-50 hover:from-green-50 hover:to-purple-100 transition-all duration-300"
+                  className="flex justify-between items-center h-auto min-h-14 text-left px-4 py-2 bg-gradient-to-r from-white to-purple-50 hover:from-green-50 hover:to-purple-100 transition-all duration-300"
                   onClick={() => handleSelectGame(game._id)}
                 >
                   <div className="flex flex-col">
-                    <span className="text-lg font-medium">{game.gameTitle}</span>
+                    <span className="text-base font-medium">{game.gameTitle}</span>
                     <div className="flex flex-wrap gap-2 mt-1">
-                      <p className="text-sm text-muted-foreground flex items-center">
+                      <p className="text-xs text-muted-foreground flex items-center">
                         <HelpCircle className="h-3 w-3 mr-1" />
                         {game.questions.length} Questions
                       </p>
-                      <p className="text-sm text-muted-foreground flex items-center">
+                      <p className="text-xs text-muted-foreground flex items-center">
                         <Calendar className="h-3 w-3 mr-1" />
                         {format(new Date(game.createdAt), 'MMM d, yyyy')}
                       </p>
