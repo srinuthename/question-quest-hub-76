@@ -1,4 +1,3 @@
-
 import { Card } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Hourglass } from "lucide-react";
