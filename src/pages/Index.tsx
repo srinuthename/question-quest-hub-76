@@ -129,7 +129,7 @@ const Index = () => {
                 <Button
                   key={game._id}
                   variant="outline"
-                  className="flex justify-between items-center h-auto min-h-14 text-left px-4 py-2 bg-gradient-to-r from-white to-purple-50 hover:from-green-50 hover:to-purple-100 transition-all duration-300"
+                  className="flex justify-between items-center h-auto min-h-14 text-left px-4 py-2 bg-gradient-to-r from-white to-blue-50 hover:from-green-400 hover:to-blue-400 transition-all duration-100"
                   onClick={() => handleSelectGame(game._id)}
                 >
                   <div className="flex flex-col">
