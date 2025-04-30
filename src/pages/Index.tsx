@@ -4,44 +4,75 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/components/ui/use-toast";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight } from "lucide-react";
+import { ArrowRight, Calendar, HelpCircle } from "lucide-react";
+import { Skeleton } from "@/components/ui/skeleton";
+import { format } from "date-fns";
 
-// Define the game type
+// Define the quiz game interface based on the provided schema
 interface QuizGame {
   _id: string;
   gameTitle: string;
   questions: any[];
+  createdAt: string;
+  quizTopicsList?: string[];
+  quizLanguage?: string;
+  youtubeChannel?: string;
+  gameMode?: 'automatic' | 'manual';
 }
 
 const Index = () => {
   const [quizGames, setQuizGames] = useState<QuizGame[]>([]);
   const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
   const { toast } = useToast();
   const navigate = useNavigate();
   
   useEffect(() => {
-    // In a real app, you'd fetch games from your API here
-    // For our demo, we'll create mock data
-    const mockGames = [
-      {
-        _id: "game1",
-        gameTitle: "General Knowledge Quiz",
-        questions: Array(10).fill({}),
-      },
-      {
-        _id: "game2",
-        gameTitle: "Science Fiction Trivia",
-        questions: Array(15).fill({}),
-      },
-      {
-        _id: "game3",
-        gameTitle: "History Champions",
-        questions: Array(12).fill({}),
+    const fetchQuizGames = async () => {
+      try {
+        setLoading(true);
+        // Use environment variable for API URL if available, fallback to localhost
+        const apiUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
+        const response = await fetch(`${apiUrl}/api/quizgames`);
+        
+        if (!response.ok) {
+          throw new Error(`API responded with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        setQuizGames(data);
+        console.log("Fetched quiz games:", data);
+      } catch (err) {
+        console.error("Error fetching quiz games:", err);
+        setError("Failed to load quiz games. Using mock data instead.");
+        
+        // Fallback to mock data if fetch fails
+        setQuizGames([
+          {
+            _id: "game1",
+            gameTitle: "General Knowledge Quiz",
+            questions: Array(10).fill({}),
+            createdAt: new Date().toISOString(),
+          },
+          {
+            _id: "game2",
+            gameTitle: "Science Fiction Trivia",
+            questions: Array(15).fill({}),
+            createdAt: new Date().toISOString(),
+          },
+          {
+            _id: "game3",
+            gameTitle: "History Champions",
+            questions: Array(12).fill({}),
+            createdAt: new Date().toISOString(),
+          }
+        ]);
+      } finally {
+        setLoading(false);
       }
-    ];
+    };
     
-    setQuizGames(mockGames);
-    setLoading(false);
+    fetchQuizGames();
   }, []);
   
   const handleSelectGame = (gameId: string) => {
@@ -54,36 +85,71 @@ const Index = () => {
   
   if (loading) {
     return (
-      <div className="min-h-screen flex items-center justify-center">
-        <div className="animate-pulse text-2xl font-bold">Loading Games...</div>
+      <div className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-br from-purple-50 to-green-50">
+        <div className="max-w-4xl mx-auto">
+          <Card className="bg-white shadow-md">
+            <CardHeader className="text-center">
+              <CardTitle className="text-4xl font-bold">
+                Question Quest Hub
+              </CardTitle>
+            </CardHeader>
+            <CardContent>
+              <h2 className="text-2xl font-semibold mb-6 text-center">Loading Quiz Games...</h2>
+              <div className="grid gap-4">
+                {[1, 2, 3].map((index) => (
+                  <div key={index} className="h-16 rounded-md p-4 flex justify-between items-center">
+                    <div className="space-y-2 w-full">
+                      <Skeleton className="h-5 w-3/4" />
+                      <Skeleton className="h-4 w-1/3" />
+                    </div>
+                    <Skeleton className="h-8 w-8 rounded-full" />
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
+        </div>
       </div>
     );
   }
   
   return (
-    <div className="container mx-auto py-8 px-4 min-h-screen bg-gradient-to-br from-purple-50 to-green-50">
+    <div className="container mx-auto py-8 px-4 min-h-screen quiz-container">
       <div className="max-w-4xl mx-auto">
-        <Card className="bg-white shadow-md">
+        <Card className="bg-white/90 shadow-md backdrop-blur-sm">
           <CardHeader className="text-center">
             <CardTitle className="text-4xl font-bold">
               Question Quest Hub
             </CardTitle>
           </CardHeader>
           <CardContent>
-            <h2 className="text-2xl font-semibold mb-6 text-center">Select a Quiz Game</h2>
+            {error && (
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-4 mb-6 rounded">
+                <p className="text-yellow-800">{error}</p>
+              </div>
+            )}
+            
+            <h2 className="text-2xl font-semibold mb-6 text-center">Available Quiz Games</h2>
             <div className="grid gap-4">
               {quizGames.map((game) => (
                 <Button
                   key={game._id}
                   variant="outline"
-                  className="flex justify-between items-center h-16 text-left px-6 bg-gradient-to-r from-white to-purple-50 hover:from-green-50 hover:to-purple-100 transition-all duration-300"
+                  className="flex justify-between items-center h-auto min-h-16 text-left px-6 py-3 bg-gradient-to-r from-white to-purple-50 hover:from-green-50 hover:to-purple-100 transition-all duration-300"
                   onClick={() => handleSelectGame(game._id)}
                 >
-                  <div>
+                  <div className="flex flex-col">
                     <span className="text-lg font-medium">{game.gameTitle}</span>
-                    <p className="text-sm text-muted-foreground">
-                      {game.questions.length} Questions
-                    </p>
+                    <div className="flex flex-wrap gap-2 mt-1">
+                      <p className="text-sm text-muted-foreground flex items-center">
+                        <HelpCircle className="h-3 w-3 mr-1" />
+                        {game.questions.length} Questions
+                      </p>
+                      <p className="text-sm text-muted-foreground flex items-center">
+                        <Calendar className="h-3 w-3 mr-1" />
+                        {format(new Date(game.createdAt), 'MMM d, yyyy')}
+                      </p>
+                    </div>
                   </div>
                   <ArrowRight className="h-5 w-5" />
                 </Button>
