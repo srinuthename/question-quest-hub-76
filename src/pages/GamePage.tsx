@@ -34,15 +34,36 @@ const GamePage = () => {
   const isQuestionVisible = gameState !== 'leaderboard' && gameState !== 'ended';
   
   useEffect(() => {
-    // Mock fetching game data
-    const mockGame = {
-      _id: id,
-      gameTitle: "Interactive Quiz Challenge",
-      questions: Array(10).fill({}),
+    // Fetch the actual game data
+    const fetchGameData = async () => {
+      try {
+        const apiUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
+        const response = await fetch(`${apiUrl}/api/quizgames/${id}`);
+        
+        if (!response.ok) {
+          throw new Error(`API responded with status: ${response.status}`);
+        }
+        
+        const data = await response.json();
+        console.log('Fetched game data:', data);
+        setQuizGame(data);
+        setTotalQuestions(data.questions.length);
+      } catch (err) {
+        console.error('Error fetching game data:', err);
+        
+        // Fallback to mock data
+        const mockGame = {
+          _id: id,
+          gameTitle: "Interactive Quiz Challenge",
+          questions: Array(10).fill({}),
+        };
+        
+        setQuizGame(mockGame);
+        setTotalQuestions(mockGame.questions.length);
+      }
     };
     
-    setQuizGame(mockGame);
-    setTotalQuestions(mockGame.questions.length);
+    fetchGameData();
     
     // Initialize socket connection
     socketRef.current = getSocket();
@@ -61,11 +82,12 @@ const GamePage = () => {
     
     socketRef.current.on('newAnswers', (newAnswers: any[]) => {
       console.log('Received new answers:', newAnswers);
-      setAnswers(prev => [...prev, ...newAnswers.map(answer => ({
+      // Replace answers instead of appending
+      setAnswers(newAnswers.map(answer => ({
         ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
         userName: answer.ytName || answer.ytChannelId,
         responseTime: answer.responseTime
-      }))]);
+      })));
     });
     
     socketRef.current.on('revealAnswer', (data: any) => {
@@ -73,10 +95,6 @@ const GamePage = () => {
       setCorrectIndex(data.correctChoiceIndex);
       setGameState('reveal');
       resetTimer(10);  // Reset timer for answer reveal phase
-      
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
     });
     
     socketRef.current.on('fastestCorrectAnswers', (answers: any[]) => {
@@ -144,7 +162,7 @@ const GamePage = () => {
   };
   
   // Calculate timer progress
-  const timerProgress = `${(timeLeft / 20) * 100}%`;
+  const timerProgress = `${Math.max(0, (timeLeft / (gameState === 'question' ? 20 : 10)) * 100)}%`;
   
   if (!quizGame) {
     return (
