@@ -55,8 +55,7 @@ const GameInfoHeader = ({
             </div>
             <Progress 
               value={progressValue} 
-              className="h-2 bg-gray-200"
-              indicatorClassName={getTimerColor()}
+              className={`h-2 bg-gray-200 ${getTimerColor()}`}
             />
           </div>
         </div>
