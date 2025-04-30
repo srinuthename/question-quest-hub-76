@@ -20,6 +20,10 @@ const ScrollingText = ({ text, className }: ScrollingTextProps) => {
   }, [text]);
   
   return (
+    <>
+   <div>
+    
+   </div>
     <div className="overflow-hidden relative w-full bg-black/10 py-1.5 px-2 rounded">
       <div 
         ref={containerRef}
@@ -31,7 +35,7 @@ const ScrollingText = ({ text, className }: ScrollingTextProps) => {
       >
         {text}
       </div>
-    </div>
+    </div> </>
   );
 };
 
