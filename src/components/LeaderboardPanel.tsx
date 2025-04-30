@@ -9,132 +9,134 @@ interface LeaderboardPanelProps {
 
 const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => {
   const isMobile = useIsMobile();
-  
+
   // Get top 3 players for the podium
   const topThree = leaderboard.slice(0, 3);
-  
+
   // Get the rest of the players
   const otherPlayers = leaderboard.slice(3);
-  
+
   // Split other players into two columns for desktop view
   const leftColumnPlayers = otherPlayers.slice(0, Math.ceil(otherPlayers.length / 2));
   const rightColumnPlayers = otherPlayers.slice(Math.ceil(otherPlayers.length / 2));
-  
+
   return (
-    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
-      <CardHeader className="pb-1">
-        <div className="flex items-center">
-          <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
-          <CardTitle className="text-xl font-semibold">
-            {gameEnded ? "Final Leaderboard" : "Current Standings"}
-          </CardTitle>
-        </div>
-        {gameEnded && (
-          <CardDescription>Congratulations to all our players!</CardDescription>
-        )}
-      </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto pt-1">
-        {leaderboard.length === 0 ? (
-          <div className="text-center py-4 text-muted-foreground">
-            No scores yet...
+    <div className="flex justify-center w-full"> {/* Container to center the card */}
+      <Card className="w-full max-w-4xl h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
+        <CardHeader className="pb-1">
+          <div className="flex items-center">
+            <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
+            <CardTitle className="text-xl font-semibold">
+              {gameEnded ? "Final Leaderboard" : "Current Standings"}
+            </CardTitle>
           </div>
-        ) : (
-          <>
-            {/* Top 3 Podium */}
-            {topThree.length > 0 && (
-              <div className="podium mb-4">
-                {topThree.map(([name, score], index) => (
-                  <div key={index} className="podium-place">
-                    <div className="podium-avatar">
-                      <img
-                        src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                        alt={`Player ${name}`}
-                        className="w-full h-full object-cover"
-                      />
-                    </div>
-                    <div className="podium-stand" />
-                    <div className="podium-name">{name}</div>
-                    <div className="podium-score">{score}</div>
-                  </div>
-                ))}
-              </div>
-            )}
-            
-            {/* Other players - Desktop gets 2 column layout */}
-            <div className={`${!isMobile ? "grid grid-cols-2 gap-2" : "space-y-1"}`}>
-              {isMobile ? (
-                // Mobile view - single column
-                otherPlayers.map(([name, score], index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                    <div className="flex items-center">
-                      <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+          {gameEnded && (
+            <CardDescription>Congratulations to all our players!</CardDescription>
+          )}
+        </CardHeader>
+        <CardContent className="flex-grow overflow-y-auto pt-1">
+          {leaderboard.length === 0 ? (
+            <div className="text-center py-4 text-muted-foreground">
+              No scores yet...
+            </div>
+          ) : (
+            <>
+              {/* Top 3 Podium */}
+              {topThree.length > 0 && (
+                <div className="podium mb-4">
+                  {topThree.map(([name, score], index) => (
+                    <div key={index} className="podium-place">
+                      <div className="podium-avatar">
                         <img
                           src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
                           alt={`Player ${name}`}
                           className="w-full h-full object-cover"
                         />
                       </div>
-                      <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
-                        <span className="text-xs font-medium">{index + 4}</span>
-                      </div>
-                      <span className="font-medium">{name}</span>
+                      <div className="podium-stand" />
+                      <div className="podium-name">{name}</div>
+                      <div className="podium-score">{score}</div>
                     </div>
-                    <span className="font-bold">{score}</span>
-                  </div>
-                ))
-              ) : (
-                // Desktop view - two columns
-                <>
-                  {/* Left column */}
-                  <div className="space-y-1">
-                    {leftColumnPlayers.map(([name, score], index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                        <div className="flex items-center">
-                          <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
-                            <img
-                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                              alt={`Player ${name}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
-                            <span className="text-xs font-medium">{index + 4}</span>
-                          </div>
-                          <span className="font-medium">{name}</span>
-                        </div>
-                        <span className="font-bold">{score}</span>
-                      </div>
-                    ))}
-                  </div>
-                  
-                  {/* Right column */}
-                  <div className="space-y-1">
-                    {rightColumnPlayers.map(([name, score], index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
-                        <div className="flex items-center">
-                          <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
-                            <img
-                              src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                              alt={`Player ${name}`}
-                              className="w-full h-full object-cover"
-                            />
-                          </div>
-                          <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
-                            <span className="text-xs font-medium">{index + leftColumnPlayers.length + 4}</span>
-                          </div>
-                          <span className="font-medium">{name}</span>
-                        </div>
-                        <span className="font-bold">{score}</span>
-                      </div>
-                    ))}
-                  </div>
-                </>
+                  ))}
+                </div>
               )}
-            </div>
-          </>
-        )}
-      </CardContent>
-    </Card>
+
+              {/* Other players - Desktop gets 2 column layout */}
+              <div className={`${!isMobile ? "grid grid-cols-2 gap-2" : "space-y-1"}`}>
+                {isMobile ? (
+                  // Mobile view - single column
+                  otherPlayers.map(([name, score], index) => (
+                    <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <div className="flex items-center">
+                        <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                          <img
+                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                            alt={`Player ${name}`}
+                            className="w-full h-full object-cover"
+                          />
+                        </div>
+                        <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                          <span className="text-xs font-medium">{index + 4}</span>
+                        </div>
+                        <span className="font-medium">{name}</span>
+                      </div>
+                      <span className="font-bold">{score}</span>
+                    </div>
+                  ))
+                ) : (
+                  // Desktop view - two columns
+                  <>
+                    {/* Left column */}
+                    <div className="space-y-1">
+                      {leftColumnPlayers.map(([name, score], index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                          <div className="flex items-center">
+                            <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                              <img
+                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                                alt={`Player ${name}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                              <span className="text-xs font-medium">{index + 4}</span>
+                            </div>
+                            <span className="font-medium">{name}</span>
+                          </div>
+                          <span className="font-bold">{score}</span>
+                        </div>
+                      ))}
+                    </div>
+
+                    {/* Right column */}
+                    <div className="space-y-1">
+                      {rightColumnPlayers.map(([name, score], index) => (
+                        <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                          <div className="flex items-center">
+                            <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
+                              <img
+                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
+                                alt={`Player ${name}`}
+                                className="w-full h-full object-cover"
+                              />
+                            </div>
+                            <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                              <span className="text-xs font-medium">{index + leftColumnPlayers.length + 4}</span>
+                            </div>
+                            <span className="font-medium">{name}</span>
+                          </div>
+                          <span className="font-bold">{score}</span>
+                        </div>
+                      ))}
+                    </div>
+                  </>
+                )}
+              </div>
+            </>
+          )}
+        </CardContent>
+      </Card>
+    </div>
   );
 };
 
