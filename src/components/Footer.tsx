@@ -1,4 +1,3 @@
-
 import { cn } from "@/lib/utils";
 
 interface FooterProps {
@@ -7,9 +6,9 @@ interface FooterProps {
 
 const Footer = ({ className }: FooterProps) => {
   const currentYear = new Date().getFullYear();
-  
+
   return (
-    <footer className={cn("bg-gray-800 text-white py-2 px-4 text-center text-sm", className)}>
+    <footer className={cn("bg-gradient-to-r from-green-600 to-blue-700 text-white py-3 px-4 flex items-center justify-center shadow-md", className)}>
       <p>&copy; {currentYear} QuizCube. All rights reserved.</p>
     </footer>
   );
