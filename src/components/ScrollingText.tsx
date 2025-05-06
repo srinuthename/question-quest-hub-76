@@ -1,41 +1,44 @@
 
-import { useEffect, useRef, useState } from "react";
-import { cn } from "@/lib/utils";
+import { useEffect, useState } from 'react';
 
 interface ScrollingTextProps {
-  text: string;
+  text?: string;
   className?: string;
 }
 
-const ScrollingText = ({ text, className }: ScrollingTextProps) => {
-  const containerRef = useRef<HTMLDivElement>(null);
-  const [isAnimating, setIsAnimating] = useState(false);
+const ScrollingText = ({ text = "Join the quiz by typing your answer!", className }: ScrollingTextProps) => {
+  const messages = [
+    "Type an option letter to play!",
+    "A, B, C, or D to answer",
+    "Be quick to top the leaderboard!",
+    "Answer fast for bonus points!"
+  ];
   
+  const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
+  const [isVisible, setIsVisible] = useState(true);
+
   useEffect(() => {
-    const pulseInterval = setInterval(() => {
-      setIsAnimating(prev => !prev);
-    }, 3000);
-    
-    return () => clearInterval(pulseInterval);
-  }, [text]);
-  
+    const interval = setInterval(() => {
+      setIsVisible(false);
+      setTimeout(() => {
+        setCurrentMessageIndex((prev) => (prev + 1) % messages.length);
+        setIsVisible(true);
+      }, 500); // Wait for fade out before changing message
+    }, 4000); // Change message every 4 seconds
+
+    return () => clearInterval(interval);
+  }, [messages.length]);
+
   return (
-    <>
-   <div>
-    
-   </div>
-    <div className="overflow-hidden relative w-full bg-black/10 py-1.5 px-2 rounded">
-      <div 
-        ref={containerRef}
-        className={cn(
-          "whitespace-nowrap inline-block transition-all duration-700",
-          isAnimating ? "scale-[1.02] text-primary" : "scale-100",
-          className
-        )}
+    <div className="overflow-hidden relative py-1 bg-black/10 rounded-md">
+      <div
+        className={`text-center text-sm font-medium transition-all duration-500 ${
+          isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
+        } ${className}`}
       >
-        {text}
+        {messages[currentMessageIndex]}
       </div>
-    </div> </>
+    </div>
   );
 };
 

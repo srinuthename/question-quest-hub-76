@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 
 interface QuestionDisplayProps {
@@ -12,9 +13,11 @@ interface QuestionDisplayProps {
   correctIndex: number | null;
   gameState: string;
   visible: boolean;
+  questionIndex?: number;
+  totalQuestions?: number;
 }
 
-const QuestionDisplay = ({ question, correctIndex, gameState, visible }: QuestionDisplayProps) => {
+const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionIndex, totalQuestions }: QuestionDisplayProps) => {
   if (!visible) {
     return null;
   }
@@ -31,11 +34,15 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible }: Questio
     );
   }
 
+  const questionWithNumber = questionIndex && totalQuestions 
+    ? `${questionIndex}/${totalQuestions} ${question.questionText}`
+    : question.questionText;
+
   return (
     <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md">
       <CardHeader className="pb-2">
         <CardTitle className="text-xl font-bold">
-          {question.questionText}
+          {questionWithNumber}
         </CardTitle>
       </CardHeader>
       <CardContent className="space-y-2">

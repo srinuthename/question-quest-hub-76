@@ -1,4 +1,6 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Check } from "lucide-react";
 
 interface FastestAnswersPanelProps {
@@ -6,6 +8,7 @@ interface FastestAnswersPanelProps {
     ytProfilePicUrl: string;
     userName: string;
     responseTime: number;
+    answerIndex?: number;
   }[];
 }
 
@@ -28,20 +31,24 @@ const FastestAnswersPanel = ({ fastestAnswers }: FastestAnswersPanelProps) => {
               className="answer-card bg-gradient-to-r from-green-100/70 to-green-50/70" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <div className="avatar-sm">
-                <img 
+              <Avatar className="w-8 h-8">
+                <AvatarImage 
                   src={answer.ytProfilePicUrl} 
                   alt={answer.userName}
-                  className="w-full h-full object-cover"
-                  onError={(e) => {
-                    (e.target as HTMLImageElement).src = 'https://api.dicebear.com/7.x/avataaars/svg?seed=default';
-                  }}
                 />
-              </div>
+                <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
+              </Avatar>
               <div className="flex-grow">
                 <div className="font-medium">{answer.userName}</div>
-                <div className="text-xs text-muted-foreground">
-                  Response time: {answer.responseTime}ms
+                <div className="flex gap-2 items-center">
+                  {answer.answerIndex !== undefined && (
+                    <span className="text-xs font-medium bg-green-100 px-1.5 py-0.5 rounded-full">
+                      {String.fromCharCode(65 + answer.answerIndex)}
+                    </span>
+                  )}
+                  <span className="text-xs text-muted-foreground">
+                    {answer.responseTime}ms
+                  </span>
                 </div>
               </div>
               <Check className="h-5 w-5 text-green-500" />

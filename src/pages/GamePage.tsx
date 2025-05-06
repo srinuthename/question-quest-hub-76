@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -14,6 +15,11 @@ import { Socket } from "socket.io-client";
 // Game state type
 type GameState = 'waiting' | 'question' | 'reveal' | 'fastest' | 'leaderboard' | 'ended';
 
+// Get timer values from environment variables
+const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || "20");
+const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || "10");
+const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || "10");
+
 const GamePage = () => {
   const { id } = useParams<{ id: string }>();
   const [gameState, setGameState] = useState<GameState>('waiting');
@@ -25,7 +31,7 @@ const GamePage = () => {
   const [correctIndex, setCorrectIndex] = useState<number | null>(null);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
-  const [timeLeft, setTimeLeft] = useState<number>(20);
+  const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIMER);
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const socketRef = useRef<Socket | null>(null);
 
@@ -76,7 +82,7 @@ const GamePage = () => {
       setCorrectIndex(null);
       setQuestionIndex(prev => prev + 1);
       setGameState('question');
-      resetTimer(20);  // Reset timer for new question
+      resetTimer(QUESTION_TIMER);  // Reset timer for new question
     });
 
     socketRef.current.on('newAnswers', (newAnswers: any[]) => {
@@ -85,7 +91,8 @@ const GamePage = () => {
       setAnswers(newAnswers.map(answer => ({
         ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
         userName: answer.ytName || answer.ytChannelId,
-        responseTime: answer.responseTime
+        responseTime: answer.responseTime,
+        answerIndex: answer.answerIndex
       })));
     });
 
@@ -93,7 +100,7 @@ const GamePage = () => {
       console.log('Received correct answer:', data);
       setCorrectIndex(data.correctChoiceIndex);
       setGameState('reveal');
-      resetTimer(10);  // Reset timer for answer reveal phase
+      resetTimer(REVEAL_ANSWER_TIMER);  // Reset timer for answer reveal phase
     });
 
     socketRef.current.on('fastestCorrectAnswers', (answers: any[]) => {
@@ -101,7 +108,8 @@ const GamePage = () => {
       setFastestAnswers(answers.map(answer => ({
         ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
         userName: answer.ytName || answer.ytChannelId,
-        responseTime: answer.responseTime
+        responseTime: answer.responseTime,
+        answerIndex: answer.answerIndex
       })));
       setGameState('fastest');
     });
@@ -110,7 +118,7 @@ const GamePage = () => {
       console.log('Received leaderboard:', scores);
       setLeaderboard(scores);
       setGameState('leaderboard');
-      resetTimer(10);  // Reset timer for leaderboard phase
+      resetTimer(LEADERBOARD_TIMER);  // Reset timer for leaderboard phase
     });
 
     socketRef.current.on('gameEnded', () => {
@@ -161,7 +169,9 @@ const GamePage = () => {
   };
 
   // Calculate timer progress
-  const timerProgress = `${Math.max(0, (timeLeft / (gameState === 'question' ? 20 : 10)) * 100)}%`;
+  const timerProgress = `${Math.max(0, (timeLeft / 
+    (gameState === 'question' ? QUESTION_TIMER : 
+     gameState === 'leaderboard' ? LEADERBOARD_TIMER : REVEAL_ANSWER_TIMER)) * 100)}%`;
 
   if (!quizGame) {
     return (
@@ -195,7 +205,7 @@ const GamePage = () => {
       ) : (
         <>
           {(gameState === 'leaderboard' || gameState === 'ended') ? (
-            <div className="flex justify-center w-full mt-4"> {/* Added mt-4 for top margin */}
+            <div className="flex justify-center w-full mt-4">
               <LeaderboardPanel
                 leaderboard={leaderboard}
                 gameEnded={gameState === 'ended'}
@@ -203,26 +213,31 @@ const GamePage = () => {
             </div>
           ) : (
             <>
-              <GameInfoHeader
-                questionIndex={questionIndex}
-                totalQuestions={totalQuestions}
-                timeLeft={timeLeft}
-                timerProgress={timerProgress}
-                gameState={gameState}
-              />
               <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mt-3">
-                {/* Question section - 7 columns on desktop */}
-                <div className="md:col-span-9">
+                {/* Question section - 8 columns on desktop */}
+                <div className="md:col-span-8">
+                  {/* Timer bar */}
+                  <div className="mb-2">
+                    <GameInfoHeader
+                      timeLeft={timeLeft}
+                      timerProgress={timerProgress}
+                      gameState={gameState}
+                    />
+                  </div>
+                  
+                  {/* Question display */}
                   <QuestionDisplay
                     question={currentQuestion}
                     correctIndex={correctIndex}
                     gameState={gameState}
                     visible={isQuestionVisible}
+                    questionIndex={questionIndex}
+                    totalQuestions={totalQuestions}
                   />
                 </div>
 
-                {/* Right panel - 5 columns on desktop */}
-                <div className="md:col-span-3">
+                {/* Right panel - 4 columns on desktop */}
+                <div className="md:col-span-4">
                   {gameState === 'question' && (
                     <AnswersPanel answers={answers} />
                   )}
