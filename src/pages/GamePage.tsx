@@ -1,3 +1,4 @@
+
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -199,7 +200,7 @@ const GamePage = () => {
               <Button
                 size="lg"
                 onClick={startGame}
-                className="text-xl px-6 py-5 mt-5 bg-gradient-to-r from-green-400 to-blue-500 hover:from-green-500 hover:to-blue-600 shadow-lg hover:shadow-green-500/25 transition-all duration-300"
+                className="text-xl px-6 py-5 mt-5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
               >
                 Start Game
                 <Trophy className="ml-2 h-5 w-5" />

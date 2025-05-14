@@ -26,10 +26,10 @@ const AnswersPanel = ({ answers }: AnswersPanelProps) => {
   
   return (
     <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
-      <CardHeader className="pb-1">
+      <CardHeader className="pb-0 pt-3 px-4">
         <CardTitle className="text-xl font-semibold">Live Answers</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto space-y-1 pt-1">
+      <CardContent className="flex-grow overflow-y-auto space-y-0.5 pt-1 px-3">
         {answers.length === 0 ? (
           <div className="text-center py-4 text-muted-foreground">
             Waiting for answers...
@@ -37,7 +37,7 @@ const AnswersPanel = ({ answers }: AnswersPanelProps) => {
         ) : (
           answers.map((answer, index) => (
             <div key={index} className="answer-card bg-white/80" style={{ animationDelay: `${index * 0.1}s` }}>
-              <Avatar className="w-8 h-8">
+              <Avatar className="w-7 h-7">
                 <AvatarImage 
                   src={answer.ytProfilePicUrl} 
                   alt={answer.userName} 
@@ -45,8 +45,8 @@ const AnswersPanel = ({ answers }: AnswersPanelProps) => {
                 <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <div className="font-medium">{answer.userName}</div>
-                <div className="flex gap-2 items-center">
+                <div className="font-medium text-sm">{answer.userName}</div>
+                <div className="flex gap-1 items-center">
                   {answer.answerIndex !== undefined && (
                     <span className="text-xs font-medium bg-purple-100 px-1.5 py-0.5 rounded-full">
                       {String.fromCharCode(65 + answer.answerIndex)}

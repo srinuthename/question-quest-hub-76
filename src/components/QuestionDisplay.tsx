@@ -40,15 +40,15 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
 
   return (
     <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md">
-      <CardHeader className="pb-2">
+      <CardHeader className="pb-1">
         <CardTitle className="text-xl font-bold">
           {questionWithNumber}
         </CardTitle>
       </CardHeader>
-      <CardContent className="space-y-2">
+      <CardContent className="space-y-1 px-4 pt-0 pb-4">
 
         {question.questionImageUrl ? (
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
             <div className="flex justify-center">
               <img
                 src={question.questionImageUrl}
@@ -56,7 +56,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 className="w-full max-w-xs rounded-lg shadow-md"
               />
             </div>
-            <div className="space-y-2">
+            <div className="space-y-1">
               {question.choices.map((choice) => (
                 <div
                   key={choice.choiceIndex}
@@ -79,7 +79,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             </div>
           </div>
         ) : (
-          <div className="pt-1 space-y-2">
+          <div className="pt-1 space-y-1">
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
