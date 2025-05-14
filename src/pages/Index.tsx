@@ -129,17 +129,17 @@ const Index = () => {
                 <Button
                   key={game._id}
                   variant="outline"
-                  className="flex justify-between items-center h-auto min-h-14 text-left px-4 py-2 bg-gradient-to-r from-white to-blue-50 hover:from-green-400 hover:to-blue-400 transition-all duration-100"
+                  className="flex justify-between items-center h-auto min-h-14 text-left px-4 py-2 bg-gradient-to-r from-white to-blue-50 hover:from-purple-500 hover:to-indigo-600 hover:text-white transition-all duration-300"
                   onClick={() => handleSelectGame(game._id)}
                 >
                   <div className="flex flex-col">
                     <span className="text-base font-medium">{game.gameTitle}</span>
                     <div className="flex flex-wrap gap-2 mt-1">
-                      <p className="text-xs text-muted-foreground flex items-center">
+                      <p className="text-xs text-muted-foreground flex items-center group-hover:text-white/80">
                         <HelpCircle className="h-3 w-3 mr-1" />
                         {game.questions.length} Questions
                       </p>
-                      <p className="text-xs text-muted-foreground flex items-center">
+                      <p className="text-xs text-muted-foreground flex items-center group-hover:text-white/80">
                         <Calendar className="h-3 w-3 mr-1" />
                         {format(new Date(game.createdAt), 'MMM d, yyyy')}
                       </p>

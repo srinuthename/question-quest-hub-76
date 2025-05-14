@@ -9,7 +9,7 @@ interface HeaderProps {
 
 const Header = ({ className }: HeaderProps) => {
   return (
-    <header className={cn("bg-transparent text-white py-3 px-4 flex items-center justify-between rounded-lg backdrop-blur-sm", className)}>
+    <header className={cn("bg-transparent text-white py-2 px-4 flex items-center justify-between rounded-lg backdrop-blur-sm", className)}>
       <div className="w-20">
         {/* This empty div helps with centering the middle content */}
       </div>
@@ -18,9 +18,9 @@ const Header = ({ className }: HeaderProps) => {
         <h1 className="text-xl font-bold">QuizCube</h1>
       </Link>
       <div className="flex items-center w-20 justify-end">
-        <div className="flex items-center gap-1.5 bg-gradient-to-r from-red-500 to-purple-600 px-3 py-1.5 rounded-md shadow-lg relative overflow-hidden">
+        <div className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-purple-700 px-3 py-1.5 rounded-md shadow-lg relative overflow-hidden">
           {/* Animated background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-red-500 via-yellow-500 to-red-500 bg-[length:200%_100%] animate-[gradient_2s_ease_infinite]"></div>
+          <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-[length:200%_100%] animate-[gradient_2s_ease_infinite]"></div>
           
           {/* Pulsing dot with improved animation */}
           <span className="relative flex h-3 w-3 z-10">
@@ -29,7 +29,7 @@ const Header = ({ className }: HeaderProps) => {
           </span>
           
           {/* Text with shadow for better visibility */}
-          <span className="text-sm font-bold text-white relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.3)]">LIVE</span>
+          <span className="text-sm font-bold text-white relative z-10 drop-shadow-[0_1px_2px_rgba(0,0,0,0.5)]">LIVE</span>
         </div>
       </div>
     </header>

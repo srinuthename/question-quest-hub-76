@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -35,7 +34,7 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
   return (
     <div className="flex justify-center w-full"> {/* Container to center the card */}
       <Card className="w-full max-w-4xl h-full overflow-hidden flex flex-col bg-gradient-to-br from-purple-50 to-green-50 shadow-md">
-        <CardHeader className="pb-1">
+        <CardHeader className="pb-0 pt-4">
           <div className="flex items-center justify-center">
             <Trophy className="mr-2 h-5 w-5 text-yellow-500" />
             <CardTitle className="text-xl font-semibold">
@@ -46,20 +45,20 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
             <CardDescription className="text-center">Congratulations to all our players!</CardDescription>
           )}
         </CardHeader>
-        <CardContent className="flex-grow overflow-y-auto pt-1">
+        <CardContent className="flex-grow overflow-y-auto pt-1 px-4">
           {leaderboard.length === 0 ? (
-            <div className="text-center py-4 text-muted-foreground">
+            <div className="text-center py-3 text-muted-foreground">
               No scores yet...
             </div>
           ) : (
             <>
               {/* Top 3 Players with Trophies */}
               {topThree.length > 0 && (
-                <div className="flex flex-col gap-2 mb-4">
+                <div className="flex flex-col gap-1 mb-3">
                   {topThree.map((entry, index) => (
                     <div 
                       key={index} 
-                      className={`flex items-center p-3 rounded-lg ${
+                      className={`flex items-center p-2 rounded-lg ${
                         index === 0 
                           ? 'bg-gradient-to-r from-yellow-100 to-yellow-200 border border-yellow-300' 
                           : index === 1 
@@ -69,10 +68,10 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
                       style={{ animationDelay: `${index * 0.15}s` }}
                     >
                       <div className="flex items-center flex-1">
-                        <div className={`p-2 rounded-full ${index === 0 ? 'bg-yellow-200' : index === 1 ? 'bg-gray-200' : 'bg-amber-200'} mr-3`}>
+                        <div className="mr-3">
                           <Trophy className={`h-5 w-5 ${trophyColors[index]}`} />
                         </div>
-                        <Avatar className="h-10 w-10 border-2 border-white mr-3 shadow-sm">
+                        <Avatar className="h-8 w-8 border-2 border-white mr-2 shadow-sm">
                           <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                           <AvatarFallback>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
@@ -94,17 +93,17 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
               )}
 
               {/* Other players - Desktop gets 2 column layout */}
-              <div className={`${!isMobile ? "grid grid-cols-2 gap-2" : "space-y-1"}`}>
+              <div className={`${!isMobile ? "grid grid-cols-2 gap-1" : "space-y-0.5"}`}>
                 {isMobile ? (
                   // Mobile view - single column
                   otherPlayers.map((entry, index) => (
-                    <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                    <div key={index} className="flex items-center justify-between p-1.5 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                       <div className="flex items-center">
-                        <Avatar className="h-6 w-6 mr-2">
+                        <Avatar className="h-6 w-6 mr-1.5">
                           <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                           <AvatarFallback>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
-                        <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                        <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-1.5">
                           <span className="text-xs font-medium">{index + 4}</span>
                         </div>
                         <span className="font-medium">{entry.userName}</span>
@@ -116,15 +115,15 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
                   // Desktop view - two columns
                   <>
                     {/* Left column */}
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                       {leftColumnPlayers.map((entry, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                        <div key={index} className="flex items-center justify-between p-1.5 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                           <div className="flex items-center">
-                            <Avatar className="h-6 w-6 mr-2">
+                            <Avatar className="h-6 w-6 mr-1.5">
                               <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                               <AvatarFallback>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
-                            <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                            <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-1.5">
                               <span className="text-xs font-medium">{index + 4}</span>
                             </div>
                             <span className="font-medium">{entry.userName}</span>
@@ -135,15 +134,15 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
                     </div>
 
                     {/* Right column */}
-                    <div className="space-y-1">
+                    <div className="space-y-0.5">
                       {rightColumnPlayers.map((entry, index) => (
-                        <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
+                        <div key={index} className="flex items-center justify-between p-1.5 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                           <div className="flex items-center">
-                            <Avatar className="h-6 w-6 mr-2">
+                            <Avatar className="h-6 w-6 mr-1.5">
                               <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                               <AvatarFallback>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                             </Avatar>
-                            <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
+                            <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-1.5">
                               <span className="text-xs font-medium">{index + leftColumnPlayers.length + 4}</span>
                             </div>
                             <span className="font-medium">{entry.userName}</span>

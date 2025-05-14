@@ -57,7 +57,7 @@ const App = () => (
       <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
         <BrowserRouter>
           <Header />
-          <main className="flex-1">
+          <main className="flex-1 pt-1">
             <AnimatedRoutes />
           </main>
         </BrowserRouter>
