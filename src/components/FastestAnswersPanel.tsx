@@ -6,6 +6,7 @@ import { Check } from "lucide-react";
 interface FastestAnswersPanelProps {
   fastestAnswers: {
     ytProfilePicUrl: string;
+    ytChannelId: string;
     userName: string;
     responseTime: number;
     answerIndex?: number;
