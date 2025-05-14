@@ -27,7 +27,7 @@ const GamePage = () => {
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [answers, setAnswers] = useState<any[]>([]);
   const [fastestAnswers, setFastestAnswers] = useState<any[]>([]);
-  const [leaderboard, setLeaderboard] = useState<[string, number][]>([]);
+  const [leaderboard, setLeaderboard] = useState<any[]>([]);
   const [correctIndex, setCorrectIndex] = useState<number | null>(null);
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [totalQuestions, setTotalQuestions] = useState<number>(10);
@@ -90,7 +90,7 @@ const GamePage = () => {
       // Replace answers instead of appending
       setAnswers(newAnswers.map(answer => ({
         ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
-        userName: answer.ytName || answer.ytChannelId,
+        userName: answer.userName || answer.ytChannelId,
         responseTime: answer.responseTime,
         answerIndex: answer.answerIndex
       })));
@@ -107,19 +107,25 @@ const GamePage = () => {
       console.log('Received fastest answers:', answers);
       setFastestAnswers(answers.map(answer => ({
         ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
-        userName: answer.ytName || answer.ytChannelId,
+        userName: answer.userName || answer.ytChannelId,
         responseTime: answer.responseTime,
         answerIndex: answer.answerIndex
       })));
       setGameState('fastest');
     });
 
-    socketRef.current.on('leaderboard', (scores: [string, number][]) => {
+    socketRef.current.on('leaderboard', (scores: any[]) => {
       console.log('Received leaderboard:', scores);
-      setLeaderboard(scores);
+      setLeaderboard(scores.map(score => ({
+        ytChannelId: score.ytChannelId,
+        score: score.score,
+        ytProfilePicUrl: score.ytProfilePicUrl,
+        userName: score.userName
+      })));
       setGameState('leaderboard');
       resetTimer(LEADERBOARD_TIMER);  // Reset timer for leaderboard phase
     });
+    
 
     socketRef.current.on('gameEnded', () => {
       console.log('Game ended');
