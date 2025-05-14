@@ -2,8 +2,15 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/com
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
+interface LeaderboardEntry {
+  ytChannelId: string;
+  score: number;
+  ytProfilePicUrl: string;
+  userName: string;
+}
+
 interface LeaderboardPanelProps {
-  leaderboard: [string, number][];
+  leaderboard: LeaderboardEntry[];
   gameEnded: boolean;
 }
 
@@ -44,18 +51,18 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
               {/* Top 3 Podium */}
               {topThree.length > 0 && (
                 <div className="podium mb-4">
-                  {topThree.map(([name, score], index) => (
+                  {topThree.map((entry, index) => (
                     <div key={index} className="podium-place">
                       <div className="podium-avatar">
                         <img
-                          src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                          alt={`Player ${name}`}
+                          src={entry.ytProfilePicUrl}
+                          alt={`Player ${entry.userName}`}
                           className="w-full h-full object-cover"
                         />
                       </div>
                       <div className="podium-stand" />
-                      <div className="podium-name">{name}</div>
-                      <div className="podium-score">{score}</div>
+                      <div className="podium-name">{entry.userName}</div>
+                      <div className="podium-score">{entry.score}</div>
                     </div>
                   ))}
                 </div>
@@ -65,22 +72,22 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
               <div className={`${!isMobile ? "grid grid-cols-2 gap-2" : "space-y-1"}`}>
                 {isMobile ? (
                   // Mobile view - single column
-                  otherPlayers.map(([name, score], index) => (
+                  otherPlayers.map((entry, index) => (
                     <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                       <div className="flex items-center">
                         <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
                           <img
-                            src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                            alt={`Player ${name}`}
+                            src={entry.ytProfilePicUrl}
+                            alt={`Player ${entry.userName}`}
                             className="w-full h-full object-cover"
                           />
                         </div>
                         <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
                           <span className="text-xs font-medium">{index + 4}</span>
                         </div>
-                        <span className="font-medium">{name}</span>
+                        <span className="font-medium">{entry.userName}</span>
                       </div>
-                      <span className="font-bold">{score}</span>
+                      <span className="font-bold">{entry.score}</span>
                     </div>
                   ))
                 ) : (
@@ -88,44 +95,44 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
                   <>
                     {/* Left column */}
                     <div className="space-y-1">
-                      {leftColumnPlayers.map(([name, score], index) => (
+                      {leftColumnPlayers.map((entry, index) => (
                         <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                           <div className="flex items-center">
                             <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
                               <img
-                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                                alt={`Player ${name}`}
+                                src={entry.ytProfilePicUrl}
+                                alt={`Player ${entry.userName}`}
                                 className="w-full h-full object-cover"
                               />
                             </div>
                             <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
                               <span className="text-xs font-medium">{index + 4}</span>
                             </div>
-                            <span className="font-medium">{name}</span>
+                            <span className="font-medium">{entry.userName}</span>
                           </div>
-                          <span className="font-bold">{score}</span>
+                          <span className="font-bold">{entry.score}</span>
                         </div>
                       ))}
                     </div>
 
                     {/* Right column */}
                     <div className="space-y-1">
-                      {rightColumnPlayers.map(([name, score], index) => (
+                      {rightColumnPlayers.map((entry, index) => (
                         <div key={index} className="flex items-center justify-between p-2 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                           <div className="flex items-center">
                             <div className="w-6 h-6 rounded-full overflow-hidden mr-2">
                               <img
-                                src={`https://api.dicebear.com/7.x/avataaars/svg?seed=${name}`}
-                                alt={`Player ${name}`}
+                                src={entry.ytProfilePicUrl}
+                                alt={`Player ${entry.userName}`}
                                 className="w-full h-full object-cover"
                               />
                             </div>
                             <div className="w-4 h-4 rounded-full bg-muted-foreground/20 flex items-center justify-center mr-2">
                               <span className="text-xs font-medium">{index + leftColumnPlayers.length + 4}</span>
                             </div>
-                            <span className="font-medium">{name}</span>
+                            <span className="font-medium">{entry.userName}</span>
                           </div>
-                          <span className="font-bold">{score}</span>
+                          <span className="font-bold">{entry.score}</span>
                         </div>
                       ))}
                     </div>
