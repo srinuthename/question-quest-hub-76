@@ -5,6 +5,7 @@ import { useEffect, useRef } from "react";
 
 interface AnswersPanelProps {
   answers: {
+    ytChannelId: string;
     ytProfilePicUrl: string;
     userName: string;
     responseTime: number;
