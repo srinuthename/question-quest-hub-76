@@ -1,3 +1,4 @@
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -43,9 +44,7 @@
 }
 
 @layer components {
-  .quiz-container {
-    background-image: linear-gradient(to right top, #051937, #004d7a, #008793, #00bf72, #a8eb12);
-  }
+  /* ... keep existing code (quiz-container) */
   
   .choice-btn {
     @apply relative overflow-hidden rounded-lg border-2 border-muted text-left p-3 transition-all duration-300;
@@ -105,6 +104,22 @@
     }
   }
   
+  @keyframes gradient {
+    0% { background-position: 0% 50%; }
+    50% { background-position: 100% 50%; }
+    100% { background-position: 0% 50%; }
+  }
+  
+  @keyframes float {
+    0%, 100% { transform: translateY(0); }
+    50% { transform: translateY(-10px); }
+  }
+  
+  @keyframes scale-in {
+    0% { transform: scale(0.9); opacity: 0; }
+    100% { transform: scale(1); opacity: 1; }
+  }
+  
   .animate-fade-in {
     animation: fade-in 0.5s ease-out forwards;
   }
@@ -121,6 +136,14 @@
     background: linear-gradient(45deg, #ff00ea, #00fffc, #ff00ea);
     background-size: 200% 100%;
     animation: glitter 3s linear infinite;
+  }
+  
+  .animate-float {
+    animation: float 3s ease-in-out infinite;
+  }
+  
+  .animate-scale-in {
+    animation: scale-in 0.5s ease-out forwards;
   }
   
   /* Timer animation */
@@ -157,6 +180,12 @@
     @apply w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-background;
   }
   
+  /* Glass card effect */
+  .glass-card {
+    @apply backdrop-blur-sm bg-white/10 border border-white/20;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
+  }
+  
   /* Question transitions */
   .question-enter {
     @apply transition-all duration-500 ease-out opacity-0 transform translate-y-4;
@@ -164,5 +193,15 @@
   
   .question-enter-active {
     @apply opacity-100 transform translate-y-0;
+  }
+  
+  /* Card hover effects */
+  .hover-lift {
+    @apply transition-all duration-300;
+  }
+  
+  .hover-lift:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
   }
 }
