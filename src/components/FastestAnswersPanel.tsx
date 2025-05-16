@@ -37,7 +37,7 @@ const FastestAnswersPanel = ({ fastestAnswers }: FastestAnswersPanelProps) => {
               className="answer-card bg-gradient-to-r from-green-100/70 to-green-50/70" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <Avatar className="w-5 h-5">
+              <Avatar className="w-7.5 h-7.5">
                 <AvatarImage 
                   src={answer.ytProfilePicUrl} 
                   alt={answer.userName}

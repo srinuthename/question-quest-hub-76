@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -67,7 +68,7 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
                         <div className="mr-1.5">
                           <Trophy className={`h-4 w-4 ${trophyColors[index]}`} />
                         </div>
-                        <Avatar className="h-5 w-5 border border-white mr-1.5 shadow-sm">
+                        <Avatar className="h-7.5 w-7.5 border border-white mr-1.5 shadow-sm">
                           <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                           <AvatarFallback>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                         </Avatar>
@@ -93,7 +94,7 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
                 {otherPlayers.map((entry, index) => (
                   <div key={index} className="flex items-center justify-between p-1 bg-white/70 rounded-lg animate-fade-in" style={{ animationDelay: `${index * 0.1}s` }}>
                     <div className="flex items-center">
-                      <Avatar className="h-4 w-4 mr-1">
+                      <Avatar className="h-6 w-6 mr-1">
                         <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                         <AvatarFallback>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
