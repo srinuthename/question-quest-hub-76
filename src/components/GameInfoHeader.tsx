@@ -42,16 +42,16 @@ const GameInfoHeader = ({
   };
   
   return (
-    <Card className="p-2 bg-gradient-to-r from-purple-100 to-green-100 shadow-sm w-full">
-      <div className="flex items-center gap-2">
-        <Hourglass className="h-5 w-5 text-purple-600" />
+    <Card className="p-1.5 bg-gradient-to-r from-purple-100 to-green-100 shadow-sm w-full">
+      <div className="flex items-center gap-1.5">
+        <Hourglass className="h-4 w-4 text-purple-600" />
         <div className="flex-1">
-          <div className="flex justify-between items-center text-sm mb-1">
+          <div className="flex justify-between items-center text-xs mb-0.5">
             <span className="font-medium">{getTimerText()}</span>
           </div>
           <Progress 
             value={progressValue} 
-            className={`h-2 bg-gray-200 ${getTimerColor()}`}
+            className={`h-1.5 bg-gray-200 ${getTimerColor()}`}
           />
         </div>
       </div>

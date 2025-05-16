@@ -10,12 +10,14 @@ import Header from "./components/Header";
 import Footer from "./components/Footer";
 import { Toaster } from "@/components/ui/sonner";
 import { useEffect } from "react";
+import { useIsMobile } from "./hooks/use-mobile";
 
 const queryClient = new QueryClient();
 
 // Animated page transitions component
 const AnimatedRoutes = () => {
   const location = useLocation();
+  const isMobile = useIsMobile();
   
   // Scroll to top on route change
   useEffect(() => {
@@ -51,20 +53,26 @@ const AnimatedRoutes = () => {
   );
 };
 
-const App = () => (
-  <QueryClientProvider client={queryClient}>
-    <TooltipProvider>
-      <div className="min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700">
-        <BrowserRouter>
-          <Header />
-          <main className="flex-1 pt-1">
-            <AnimatedRoutes />
-          </main>
-        </BrowserRouter>
-      </div>
-    </TooltipProvider>
-    <Toaster />
-  </QueryClientProvider>
-);
+const App = () => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <QueryClientProvider client={queryClient}>
+      <TooltipProvider>
+        <div className={`min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 ${
+          isMobile ? 'shorts-container' : ''
+        }`}>
+          <BrowserRouter>
+            <Header />
+            <main className="flex-1">
+              <AnimatedRoutes />
+            </main>
+          </BrowserRouter>
+        </div>
+      </TooltipProvider>
+      <Toaster />
+    </QueryClientProvider>
+  );
+};
 
 export default App;

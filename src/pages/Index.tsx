@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 import { ArrowRight, Calendar, HelpCircle } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Define the quiz game interface based on the provided schema
 interface QuizGame {
@@ -24,6 +25,7 @@ const Index = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
+  const isMobile = useIsMobile();
   
   useEffect(() => {
     const fetchQuizGames = async () => {
@@ -79,24 +81,24 @@ const Index = () => {
   
   if (loading) {
     return (
-      <div className="container mx-auto py-4 px-3">
-        <div className="max-w-4xl mx-auto">
+      <div className="container mx-auto py-2 px-2">
+        <div className={`${isMobile ? 'max-w-full' : 'max-w-4xl'} mx-auto`}>
           <Card className="bg-white shadow-md">
-            <CardHeader className="text-center pb-2">
-              <CardTitle className="text-3xl font-bold">
+            <CardHeader className="text-center pb-2 pt-2">
+              <CardTitle className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>
                 Question Quest Hub
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <h2 className="text-2xl font-semibold mb-4 text-center">Loading Quiz Games...</h2>
-              <div className="grid gap-3">
+            <CardContent className="p-2">
+              <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold mb-2 text-center`}>Loading Quiz Games...</h2>
+              <div className="grid gap-2">
                 {[1, 2, 3].map((index) => (
-                  <div key={index} className="h-16 rounded-md p-4 flex justify-between items-center">
-                    <div className="space-y-2 w-full">
-                      <Skeleton className="h-5 w-3/4" />
-                      <Skeleton className="h-4 w-1/3" />
+                  <div key={index} className="h-14 rounded-md p-2 flex justify-between items-center">
+                    <div className="space-y-1 w-full">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/3" />
                     </div>
-                    <Skeleton className="h-8 w-8 rounded-full" />
+                    <Skeleton className="h-6 w-6 rounded-full" />
                   </div>
                 ))}
               </div>
@@ -108,44 +110,44 @@ const Index = () => {
   }
   
   return (
-    <div className="container mx-auto py-4 px-3">
-      <div className="max-w-4xl mx-auto">
+    <div className="container mx-auto py-2 px-2">
+      <div className={`${isMobile ? 'max-w-full' : 'max-w-4xl'} mx-auto`}>
         <Card className="bg-white/90 shadow-md backdrop-blur-sm">
-          <CardHeader className="text-center pb-3">
-            <CardTitle className="text-3xl font-bold">
+          <CardHeader className="text-center pb-2 pt-2">
+            <CardTitle className={`${isMobile ? 'text-2xl' : 'text-3xl'} font-bold`}>
               Question Quest Hub
             </CardTitle>
           </CardHeader>
-          <CardContent>
+          <CardContent className="p-2">
             {error && (
-              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-3 mb-4 rounded">
-                <p className="text-yellow-800">{error}</p>
+              <div className="bg-yellow-50 border-l-4 border-yellow-400 p-2 mb-2 rounded">
+                <p className="text-yellow-800 text-sm">{error}</p>
               </div>
             )}
             
-            <h2 className="text-2xl font-semibold mb-4 text-center">Available Quiz Games</h2>
-            <div className="grid gap-2">
+            <h2 className={`${isMobile ? 'text-xl' : 'text-2xl'} font-semibold mb-2 text-center`}>Available Quiz Games</h2>
+            <div className="grid gap-1.5">
               {quizGames.map((game) => (
                 <Button
                   key={game._id}
                   variant="outline"
-                  className="flex justify-between items-center h-auto min-h-14 text-left px-4 py-2 bg-gradient-to-r from-white to-blue-50 hover:from-purple-500 hover:to-indigo-600 hover:text-white transition-all duration-300"
+                  className="flex justify-between items-center h-auto min-h-12 text-left px-3 py-1.5 bg-gradient-to-r from-white to-blue-50 hover:from-purple-500 hover:to-indigo-600 hover:text-white transition-all duration-300"
                   onClick={() => handleSelectGame(game._id)}
                 >
                   <div className="flex flex-col">
-                    <span className="text-base font-medium">{game.gameTitle}</span>
-                    <div className="flex flex-wrap gap-2 mt-1">
+                    <span className={`${isMobile ? 'text-sm' : 'text-base'} font-medium`}>{game.gameTitle}</span>
+                    <div className="flex flex-wrap gap-1 mt-0.5">
                       <p className="text-xs text-muted-foreground flex items-center group-hover:text-white/80">
-                        <HelpCircle className="h-3 w-3 mr-1" />
+                        <HelpCircle className="h-3 w-3 mr-0.5" />
                         {game.questions.length} Questions
                       </p>
                       <p className="text-xs text-muted-foreground flex items-center group-hover:text-white/80">
-                        <Calendar className="h-3 w-3 mr-1" />
+                        <Calendar className="h-3 w-3 mr-0.5" />
                         {format(new Date(game.createdAt), 'MMM d, yyyy')}
                       </p>
                     </div>
                   </div>
-                  <ArrowRight className="h-5 w-5" />
+                  <ArrowRight className="h-4 w-4" />
                 </Button>
               ))}
             </div>
