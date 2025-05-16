@@ -23,9 +23,9 @@ const GameInfoHeader = ({
   // Determine timer text based on game state
   const getTimerText = () => {
     if (gameState === 'question') {
-      return `Revealing answer in ${timeLeft}s`;
+      return isMobile ? `${timeLeft}s` : `Revealing answer in ${timeLeft}s`;
     } else if (gameState === 'reveal' || gameState === 'fastest') {
-      return `Next question in ${timeLeft}s`;
+      return isMobile ? `${timeLeft}s` : `Next question in ${timeLeft}s`;
     }
     return `${timeLeft}s`;
   };
@@ -42,9 +42,9 @@ const GameInfoHeader = ({
   };
   
   return (
-    <Card className="p-2 bg-gradient-to-r from-purple-100 to-green-100 shadow-sm w-full">
+    <Card className={`p-${isMobile ? '1' : '2'} bg-gradient-to-r from-purple-100 to-green-100 shadow-sm w-full`}>
       <div className="flex items-center gap-2">
-        <Hourglass className="h-5 w-5 text-purple-600" />
+        <Hourglass className={`h-${isMobile ? '4' : '5'} w-${isMobile ? '4' : '5'} text-purple-600`} />
         <div className="flex-1">
           <div className="flex justify-between items-center text-sm mb-1">
             <span className="font-medium">{getTimerText()}</span>
