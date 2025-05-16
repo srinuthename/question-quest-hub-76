@@ -19,12 +19,6 @@ export default {
 			}
 		},
 		extend: {
-			width: {
-				'7.5': '1.875rem', // 30px - 50% larger than w-5 (1.25rem/20px)
-			},
-			height: {
-				'7.5': '1.875rem', // 30px - 50% larger than h-5 (1.25rem/20px)
-			},
 			colors: {
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
