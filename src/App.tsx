@@ -60,7 +60,7 @@ const App = () => {
     <QueryClientProvider client={queryClient}>
       <TooltipProvider>
         <div className={`min-h-screen flex flex-col bg-gradient-to-br from-indigo-900 via-purple-800 to-pink-700 ${
-          isMobile ? 'shorts-container' : ''
+          isMobile ? 'shorts-container max-w-md mx-auto aspect-[9/16] overflow-hidden' : ''
         }`}>
           <BrowserRouter>
             <Header />
