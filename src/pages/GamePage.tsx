@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { useParams } from "react-router-dom";
 import { Button } from "@/components/ui/button";
@@ -7,6 +6,7 @@ import AnswersPanel from "@/components/AnswersPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
 import LeaderboardPanel from "@/components/LeaderboardPanel";
 import GameInfoHeader from "@/components/GameInfoHeader";
+import FloatingAnswersPanel from "@/components/FloatingAnswersPanel";
 import { Trophy } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { getSocket } from "@/services/socketService";
@@ -37,6 +37,9 @@ const GamePage = () => {
 
   // Flag to determine if question card should be visible
   const isQuestionVisible = gameState !== 'leaderboard' && gameState !== 'ended';
+  
+  // Flag to determine if floating answers should be visible
+  const showFloatingAnswers = gameState === 'question';
 
   useEffect(() => {
     // Fetch the actual game data
@@ -210,6 +213,12 @@ const GamePage = () => {
         </div>
       ) : (
         <>
+          {/* Floating answers that appear regardless of game state */}
+          <FloatingAnswersPanel 
+            answers={answers} 
+            visible={showFloatingAnswers} 
+          />
+          
           {(gameState === 'leaderboard' || gameState === 'ended') ? (
             <div className="flex justify-center w-full mt-4">
               <LeaderboardPanel
