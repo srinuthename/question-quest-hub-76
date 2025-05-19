@@ -4,13 +4,6 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Check } from "lucide-react";
 
 interface FastestAnswersPanelProps {
-  answers?: {
-    ytProfilePicUrl: string;
-    ytChannelId: string;
-    userName: string;
-    responseTime: number;
-    answerIndex?: number;
-  }[];
   fastestAnswers?: {
     ytProfilePicUrl: string;
     ytChannelId: string;
@@ -21,25 +14,22 @@ interface FastestAnswersPanelProps {
   visible?: boolean;
 }
 
-const FastestAnswersPanel = ({ fastestAnswers = [], answers = [], visible = true }: FastestAnswersPanelProps) => {
-  // Use the first non-empty array
-  const displayAnswers = fastestAnswers.length > 0 ? fastestAnswers : answers;
-  
+const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAnswersPanelProps) => {
   if (!visible) return null;
   
   return (
-    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md">
+    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md mt-4">
       <CardHeader className="pb-0 pt-3 px-4">
         <CardTitle className="text-xl font-semibold">Fastest Correct Answers</CardTitle>
         <CardDescription className="text-sm">The quickest players who got it right!</CardDescription>
       </CardHeader>
       <CardContent className="flex-grow overflow-y-auto space-y-0.5 px-3 pt-1">
-        {displayAnswers.length === 0 ? (
+        {fastestAnswers.length === 0 ? (
           <div className="text-center py-8 text-muted-foreground">
             No correct answers yet...
           </div>
         ) : (
-          displayAnswers.map((answer, index) => (
+          fastestAnswers.map((answer, index) => (
             <div 
               key={index} 
               className="answer-card bg-gradient-to-r from-green-100/70 to-green-50/70" 

@@ -6,7 +6,6 @@ import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
 import LeaderboardPanel from "@/components/LeaderboardPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
-import FloatingAnswersPanel from "@/components/FloatingAnswersPanel";
 import { motion } from "framer-motion";
 
 // Get the timing values from .env
@@ -151,6 +150,76 @@ const PlayPage = () => {
     }
   };
 
+  // Rendering different sections based on game state
+  const renderContent = () => {
+    switch (gameState) {
+      case 'waiting':
+        return (
+          <Card className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-none shadow-md">
+            <CardContent className="flex items-center justify-center min-h-[300px]">
+              <div className="text-center">
+                <h2 className="text-2xl font-bold text-white mb-2">Waiting for quiz to start</h2>
+                <p className="text-white/80">The quiz host will start the game soon...</p>
+              </div>
+            </CardContent>
+          </Card>
+        );
+      
+      case 'question':
+        return (
+          <>
+            <QuestionDisplay 
+              question={currentQuestion}
+              correctIndex={null}
+              gameState={gameState}
+              visible={true}
+              questionIndex={questionIndex + 1}
+              totalQuestions={totalQuestions}
+            />
+            
+            <Card className="mt-4">
+              <CardHeader>
+                <CardTitle>Live Answers</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <AnswersPanel answers={answers} />
+              </CardContent>
+            </Card>
+          </>
+        );
+      
+      case 'answer':
+        return (
+          <>
+            <QuestionDisplay 
+              question={currentQuestion}
+              correctIndex={correctAnswerIndex}
+              gameState={gameState}
+              visible={true}
+              questionIndex={questionIndex + 1}
+              totalQuestions={totalQuestions}
+            />
+            
+            <FastestAnswersPanel 
+              fastestAnswers={fastestAnswers} 
+              visible={true}
+            />
+          </>
+        );
+      
+      case 'leaderboard':
+        return (
+          <LeaderboardPanel 
+            leaderboard={leaderboard} 
+            visible={true} 
+          />
+        );
+      
+      default:
+        return null;
+    }
+  };
+
   return (
     <div className="container mx-auto p-4 max-w-7xl">
       <motion.div
@@ -168,46 +237,11 @@ const PlayPage = () => {
           <CardContent className="p-4">
             {/* Main content area */}
             <div className="grid grid-cols-1 gap-6">
-              <QuestionDisplay 
-                question={currentQuestion}
-                correctIndex={correctAnswerIndex}
-                gameState={gameState}
-                visible={gameState === 'question' || gameState === 'answer'}
-                questionIndex={questionIndex + 1}
-                totalQuestions={totalQuestions}
-              />
-              
-              {gameState === 'answer' && (
-                <FastestAnswersPanel 
-                  answers={fastestAnswers} 
-                  visible={gameState === 'answer'}
-                />
-              )}
-              
-              {gameState === 'leaderboard' && (
-                <LeaderboardPanel 
-                  scores={leaderboard} 
-                  visible={gameState === 'leaderboard'} 
-                />
-              )}
-              
-              {gameState === 'waiting' && (
-                <Card className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-none shadow-md">
-                  <CardContent className="flex items-center justify-center min-h-[300px]">
-                    <div className="text-center">
-                      <h2 className="text-2xl font-bold text-white mb-2">Waiting for quiz to start</h2>
-                      <p className="text-white/80">The quiz host will start the game soon...</p>
-                    </div>
-                  </CardContent>
-                </Card>
-              )}
+              {renderContent()}
             </div>
           </CardContent>
         </Card>
       </motion.div>
-
-      {/* Floating answers overlay */}
-      <FloatingAnswersPanel answers={answers} visible={gameState === 'question' || gameState === 'answer'} />
     </div>
   );
 };
