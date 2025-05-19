@@ -63,6 +63,19 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
   const questionWithNumber = questionIndex && totalQuestions 
     ? `${questionIndex}/${totalQuestions} ${question.questionText}`
     : question.questionText;
+    
+  // Helper function to determine choice class
+  const getChoiceClass = (choiceIndex: number) => {
+    if (correctIndex === null || gameState === 'question') {
+      return '';
+    }
+    
+    if (choiceIndex === correctIndex) {
+      return 'bg-green-100 border-green-500 text-green-800';
+    } else {
+      return 'bg-red-50 border-red-300 text-red-800 opacity-60';
+    }
+  };
 
   return (
     <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md">
@@ -102,16 +115,10 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn ${
-                      correctIndex !== null
-                        ? correctIndex === choice.choiceIndex
-                          ? "correct"
-                          : "incorrect"
-                        : ""
-                    } ${gameState === 'question' ? 'cursor-pointer' : ''}`}
+                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)} ${gameState === 'question' ? 'cursor-pointer' : ''}`}
                   >
                     <div className="flex items-center">
-                      <span className="text-xl font-bold mr-2">
+                      <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
                       <span className="text-lg">{choice.choiceText}</span>
@@ -134,16 +141,10 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn ${
-                      correctIndex !== null
-                        ? correctIndex === choice.choiceIndex
-                          ? "correct"
-                          : "incorrect"
-                        : ""
-                    } ${gameState === 'question' ? 'cursor-pointer' : ''}`}
+                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)} ${gameState === 'question' ? 'cursor-pointer' : ''}`}
                   >
                     <div className="flex items-center">
-                      <span className="text-xl font-bold mr-2">
+                      <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
                       <span className="text-lg">{choice.choiceText}</span>
@@ -159,16 +160,10 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`choice-btn ${
-                  correctIndex !== null
-                    ? correctIndex === choice.choiceIndex
-                      ? "correct"
-                      : "incorrect"
-                    : ""
-                } ${gameState === 'question' ? 'cursor-pointer' : ''}`}
+                className={`choice-btn ${getChoiceClass(choice.choiceIndex)} ${gameState === 'question' ? 'cursor-pointer' : ''}`}
               >
                 <div className="flex items-center">
-                  <span className="text-xl font-bold mr-2">
+                  <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                     {String.fromCharCode(65 + choice.choiceIndex)}
                   </span>
                   <span className="text-lg">{choice.choiceText}</span>

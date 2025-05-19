@@ -4,7 +4,7 @@ import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Trophy, Play, ArrowLeft } from "lucide-react";
+import { Trophy, Play, ArrowLeft, Check, Clock } from "lucide-react";
 import { getSocket } from "@/services/socketService";
 import { Socket } from "socket.io-client";
 import { toast } from "sonner";
@@ -15,7 +15,9 @@ const GamePage = () => {
   const [quizGame, setQuizGame] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
   const [gameStarted, setGameStarted] = useState<boolean>(false);
+  const [lastStatusCheck, setLastStatusCheck] = useState<Date | null>(null);
   const socketRef = useRef<Socket | null>(null);
+  const statusCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
 
   useEffect(() => {
     // Fetch the game data
@@ -31,6 +33,12 @@ const GamePage = () => {
         const data = await response.json();
         console.log('Fetched game data:', data);
         setQuizGame(data);
+        
+        // Set gameStarted state based on fetched game data
+        if (data.status === 'active' || data.isActive) {
+          setGameStarted(true);
+        }
+        
         setLoading(false);
       } catch (err) {
         console.error('Error fetching game data:', err);
@@ -53,15 +61,28 @@ const GamePage = () => {
     socketRef.current = getSocket();
 
     // Listen for game status updates
-    socketRef.current.on('gameStarted', () => {
+    socketRef.current.on('gameStarted', (gameData) => {
       setGameStarted(true);
       toast.success("Game started successfully!");
+      
+      // Update game data if available
+      if (gameData) {
+        setQuizGame(prevGame => ({...prevGame, ...gameData}));
+      }
     });
 
     socketRef.current.on('gameEnded', () => {
       setGameStarted(false);
       toast.info("Game has ended");
+      
+      // Refresh game data
+      fetchGameData();
     });
+
+    // Set up periodic status checks
+    statusCheckIntervalRef.current = setInterval(() => {
+      checkGameStatus();
+    }, 5 * 60 * 1000); // Check every 5 minutes
 
     return () => {
       // Remove socket event listeners
@@ -69,8 +90,44 @@ const GamePage = () => {
         socketRef.current.off('gameStarted');
         socketRef.current.off('gameEnded');
       }
+      
+      // Clear status check interval
+      if (statusCheckIntervalRef.current) {
+        clearInterval(statusCheckIntervalRef.current);
+      }
     };
   }, [id]);
+
+  const checkGameStatus = async () => {
+    try {
+      const apiUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
+      const response = await fetch(`${apiUrl}/api/quizgames/${id}`);
+      
+      if (!response.ok) {
+        throw new Error(`API responded with status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      
+      // Update game data
+      setQuizGame(data);
+      
+      // Update game status
+      const isActive = data.status === 'active' || data.isActive;
+      if (isActive !== gameStarted) {
+        setGameStarted(isActive);
+        if (isActive) {
+          toast.success("Game is active");
+        } else {
+          toast.info("Game has ended");
+        }
+      }
+      
+      setLastStatusCheck(new Date());
+    } catch (err) {
+      console.error('Error checking game status:', err);
+    }
+  };
 
   const startGame = () => {
     if (socketRef.current && id) {
@@ -92,7 +149,10 @@ const GamePage = () => {
   };
 
   const goToPlayView = () => {
-    navigate('/play');
+    // Get the current origin (domain)
+    const origin = window.location.origin;
+    // Open play view in new window
+    window.open(`${origin}/play`, '_blank', 'width=1024,height=768');
   };
 
   if (loading) {
@@ -114,9 +174,13 @@ const GamePage = () => {
           <CardHeader>
             <div className="flex justify-between items-center">
               <CardTitle className="text-2xl font-bold">{quizGame.gameTitle}</CardTitle>
-              {gameStarted && (
+              {gameStarted ? (
                 <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                  Game Active
+                  <Check className="mr-1 h-3 w-3" /> Game Active
+                </Badge>
+              ) : (
+                <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-300">
+                  <Clock className="mr-1 h-3 w-3" /> Game Inactive
                 </Badge>
               )}
             </div>
@@ -137,6 +201,15 @@ const GamePage = () => {
                 <div className="flex justify-between items-center">
                   <span className="font-medium">YouTube Channel:</span>
                   <span>{quizGame.youtubeChannel}</span>
+                </div>
+              )}
+              
+              {lastStatusCheck && (
+                <div className="flex justify-between items-center text-sm">
+                  <span className="font-medium">Last Status Check:</span>
+                  <span className="text-gray-600">
+                    {lastStatusCheck.toLocaleTimeString()}
+                  </span>
                 </div>
               )}
             </div>
@@ -166,7 +239,7 @@ const GamePage = () => {
                 className="flex-1 border-blue-300 hover:bg-blue-50"
               >
                 <Play className="mr-2 h-5 w-5" />
-                View Player Screen
+                Open Player Screen
               </Button>
             </div>
           </CardContent>
