@@ -35,7 +35,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
           fastestAnswers.map((answer, index) => (
             <div 
               key={index} 
-              className="answer-card bg-gradient-to-r from-green-100/90 to-green-50/90 py-2" 
+              className="answer-card bg-gradient-to-r from-green-100/90 to-green-50/90 py-2 animate-fade-in" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
               <Avatar className={`${isMobile ? 'w-9 h-9' : 'w-12 h-12'} border-2 border-green-200`}>
@@ -63,6 +63,24 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
           ))
         )}
       </CardContent>
+
+      <style jsx global>{`
+        .answer-card {
+          display: flex;
+          align-items: center;
+          padding: ${isMobile ? '0.5rem' : '0.75rem'};
+          border-radius: 0.5rem;
+          gap: 0.75rem;
+          margin-bottom: 0.5rem;
+          animation: fade-in 0.3s ease-out forwards;
+          border: 1px solid rgba(0, 0, 0, 0.05);
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </Card>
   );
 };

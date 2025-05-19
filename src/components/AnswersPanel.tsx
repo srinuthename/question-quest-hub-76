@@ -36,8 +36,8 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
           {answers.map((answer, index) => (
             <div 
               key={index} 
-              className="answer-card bg-white/80" 
-              style={{ animationDelay: `${index * 0.1}s` }}
+              className="answer-card bg-white/80 animate-fade-in" 
+              style={{ animationDelay: `${index * 0.05}s` }}
             >
               <Avatar className={`${isMobile ? 'w-9 h-9' : 'w-12 h-12'}`}>
                 <AvatarImage 
@@ -63,6 +63,25 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
           ))}
         </div>
       )}
+
+      <style jsx global>{`
+        .answer-card {
+          display: flex;
+          align-items: center;
+          padding: ${isMobile ? '0.5rem' : '0.75rem'};
+          border-radius: 0.5rem;
+          gap: 0.75rem;
+          margin-bottom: 0.5rem;
+          animation: fade-in 0.3s ease-out forwards;
+          border: 1px solid rgba(255, 255, 255, 0.2);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
+        
+        @keyframes fade-in {
+          from { opacity: 0; transform: translateY(5px); }
+          to { opacity: 1; transform: translateY(0); }
+        }
+      `}</style>
     </div>
   );
 };

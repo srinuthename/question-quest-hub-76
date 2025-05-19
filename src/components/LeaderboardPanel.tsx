@@ -1,7 +1,9 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { Badge } from "@/components/ui/badge";
 
 interface LeaderboardEntry {
   ytChannelId: string;
@@ -85,9 +87,9 @@ const LeaderboardPanel = ({
                         <div className="font-extrabold text-xl flex items-center">
                           {entry.userName}
                           {gameEnded && index === 0 && (
-                            <span className="ml-2 text-sm font-bold px-3 py-1 rounded-full bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse">
-                              Winner
-                            </span>
+                            <Badge className="ml-2 px-3 py-1 bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse border-none">
+                              Winner 🏆
+                            </Badge>
                           )}
                         </div>
                       </div>

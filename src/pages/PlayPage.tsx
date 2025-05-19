@@ -1,19 +1,23 @@
+
 import { useState, useEffect, useRef } from "react";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
 import LeaderboardPanel from "@/components/LeaderboardPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
+import CountdownTimer from "@/components/CountdownTimer";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { toast } from "sonner";
 
 // Get the timing values from .env
-const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '20') * 1000;
-const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || '10') * 1000;
-const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || '10') * 1000;
+const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '20');
+const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || '10');
+const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || '10');
+const FINAL_STANDINGS_DURATION = parseInt(import.meta.env.VITE_FINAL_STANDINGS_DURATION || '1200');
 
 const PlayPage = () => {
-  const [gameState, setGameState] = useState<'waiting' | 'question' | 'answer' | 'leaderboard'>('waiting');
+  const [gameState, setGameState] = useState<'waiting' | 'question' | 'answer' | 'leaderboard' | 'ended'>('waiting');
   const [currentQuestion, setCurrentQuestion] = useState<any>(null);
   const [correctAnswerIndex, setCorrectAnswerIndex] = useState<number | null>(null);
   const [answers, setAnswers] = useState<any[]>([]);
@@ -22,19 +26,10 @@ const PlayPage = () => {
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const [timerSeconds, setTimerSeconds] = useState<number>(QUESTION_TIMER);
+  const [gameEndTime, setGameEndTime] = useState<number | null>(null);
   const isMobile = useIsMobile();
   
-  // Timer references for cleanup
-  const timerRefs = useRef<{
-    questionTimer: NodeJS.Timeout | null,
-    answerTimer: NodeJS.Timeout | null,
-    leaderboardTimer: NodeJS.Timeout | null
-  }>({
-    questionTimer: null,
-    answerTimer: null,
-    leaderboardTimer: null
-  });
-
   // Connect to socket and listen to events
   useEffect(() => {
     // Check if already connected
@@ -56,20 +51,24 @@ const PlayPage = () => {
     const onNewQuestion = (question: any) => {
       console.log('New question received:', question);
       
-      // Clear any existing timers
-      clearAllTimers();
-      
       // Reset state for new question
       setCurrentQuestion(question);
       setCorrectAnswerIndex(null);
       setAnswers([]);
       setFastestAnswers([]);
       setGameState('question');
+      setTimerSeconds(QUESTION_TIMER);
       
       // Update question index if available
       if (question.questionIndex !== undefined) {
         setQuestionIndex(question.questionIndex);
       }
+
+      // Show toast for new question
+      toast.info("New question started!", {
+        position: "top-center",
+        duration: 2000,
+      });
     };
 
     const onNewAnswers = (newAnswers: any[]) => {
@@ -77,7 +76,8 @@ const PlayPage = () => {
       
       // Only add answers during question or answer state
       if (gameState === 'question' || gameState === 'answer') {
-        setAnswers(prev => [...prev, ...newAnswers]);
+        // Prepend new answers instead of appending
+        setAnswers(prev => [...newAnswers, ...prev]);
       }
     };
 
@@ -85,6 +85,13 @@ const PlayPage = () => {
       console.log('Answer revealed:', data);
       setCorrectAnswerIndex(data.correctChoiceIndex);
       setGameState('answer');
+      setTimerSeconds(REVEAL_ANSWER_TIMER);
+
+      // Show toast for answer reveal
+      toast.success("Answer revealed!", {
+        position: "top-center",
+        duration: 2000,
+      });
     };
 
     const onFastestAnswers = (fastest: any[]) => {
@@ -96,17 +103,24 @@ const PlayPage = () => {
       console.log('Leaderboard received:', scores);
       setLeaderboard(scores);
       setGameState('leaderboard');
+      setTimerSeconds(LEADERBOARD_TIMER);
     };
 
     const onGameEnded = () => {
       console.log('Game ended');
-      clearAllTimers();
-      setGameState('waiting');
+      setGameState('ended');
       setCurrentQuestion(null);
       setCorrectAnswerIndex(null);
-      setAnswers([]);
-      setFastestAnswers([]);
-      setLeaderboard([]);
+      
+      // Calculate when the final standings should disappear (20 minutes from now)
+      const endTime = Date.now() + (FINAL_STANDINGS_DURATION * 1000);
+      setGameEndTime(endTime);
+      
+      // Show toast for game end
+      toast.info("Game has ended! Final standings displayed.", {
+        position: "top-center",
+        duration: 5000,
+      });
     };
 
     // Register event listeners
@@ -129,24 +143,33 @@ const PlayPage = () => {
       socket.off('fastestCorrectAnswers', onFastestAnswers);
       socket.off('leaderboard', onLeaderboard);
       socket.off('gameEnded', onGameEnded);
-      
-      clearAllTimers();
     };
   }, [gameState]);
 
-  // Helper function to clear all timers
-  const clearAllTimers = () => {
-    if (timerRefs.current.questionTimer) {
-      clearTimeout(timerRefs.current.questionTimer);
-      timerRefs.current.questionTimer = null;
+  // Check if final standings should still be displayed
+  useEffect(() => {
+    if (gameState === 'ended' && gameEndTime) {
+      const intervalId = setInterval(() => {
+        if (Date.now() > gameEndTime) {
+          // Reset to waiting state after 20 minutes
+          setGameState('waiting');
+          setGameEndTime(null);
+          clearInterval(intervalId);
+        }
+      }, 10000); // Check every 10 seconds
+      
+      return () => clearInterval(intervalId);
     }
-    if (timerRefs.current.answerTimer) {
-      clearTimeout(timerRefs.current.answerTimer);
-      timerRefs.current.answerTimer = null;
-    }
-    if (timerRefs.current.leaderboardTimer) {
-      clearTimeout(timerRefs.current.leaderboardTimer);
-      timerRefs.current.leaderboardTimer = null;
+  }, [gameState, gameEndTime]);
+
+  // Timer completion handlers
+  const handleTimerComplete = () => {
+    if (gameState === 'question') {
+      // Auto-transition not implemented, waiting for server event
+    } else if (gameState === 'answer') {
+      // Auto-transition not implemented, waiting for server event
+    } else if (gameState === 'leaderboard') {
+      // Auto-transition not implemented, waiting for server event
     }
   };
 
@@ -167,6 +190,13 @@ const PlayPage = () => {
         return (
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
             <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
+              <div className="mb-2">
+                <CountdownTimer 
+                  initialSeconds={QUESTION_TIMER}
+                  onComplete={handleTimerComplete}
+                  gameState={gameState}
+                />
+              </div>
               <QuestionDisplay 
                 question={currentQuestion}
                 correctIndex={null}
@@ -188,6 +218,13 @@ const PlayPage = () => {
         return (
           <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
             <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
+              <div className="mb-2">
+                <CountdownTimer 
+                  initialSeconds={REVEAL_ANSWER_TIMER}
+                  onComplete={handleTimerComplete}
+                  gameState={gameState}
+                />
+              </div>
               <QuestionDisplay 
                 question={currentQuestion}
                 correctIndex={correctAnswerIndex}
@@ -210,9 +247,27 @@ const PlayPage = () => {
       case 'leaderboard':
         return (
           <div className="w-full h-full">
+            <div className="mb-2">
+              <CountdownTimer 
+                initialSeconds={LEADERBOARD_TIMER}
+                onComplete={handleTimerComplete}
+                gameState={gameState}
+              />
+            </div>
             <LeaderboardPanel 
               leaderboard={leaderboard} 
               visible={true} 
+            />
+          </div>
+        );
+
+      case 'ended':
+        return (
+          <div className="w-full h-full">
+            <LeaderboardPanel 
+              leaderboard={leaderboard} 
+              visible={true}
+              gameEnded={true}
             />
           </div>
         );
