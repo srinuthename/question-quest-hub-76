@@ -283,7 +283,7 @@ const GamePage = () => {
           {gameData?.activeQuestionIndex !== undefined && gameData.questions && (
             <QuestionDisplay
               question={gameData.questions[gameData.activeQuestionIndex]}
-              correctIndex={gameData.isQuestionOpen ? null : gameData.correctChoiceIndex}
+              correctIndex={gameData.correctChoiceIndex}
               gameState={gameData.isQuestionOpen ? "question" : "answer"}
               visible={true}
               questionIndex={gameData.activeQuestionIndex + 1}
@@ -292,16 +292,7 @@ const GamePage = () => {
           )}
         </div>
         
-        <div>
-          <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl">
-            <CardHeader>
-              <CardTitle className="text-white">Recent Answers</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <AnswersPanel answers={[]} />
-            </CardContent>
-          </Card>
-        </div>
+
       </div>
     </div>
   );
