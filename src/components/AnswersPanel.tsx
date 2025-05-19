@@ -4,7 +4,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useRef } from "react";
 
 interface AnswersPanelProps {
-  answers: {
+  answers?: {
     ytChannelId: string;
     ytProfilePicUrl: string;
     userName: string;
@@ -13,7 +13,7 @@ interface AnswersPanelProps {
   }[];
 }
 
-const AnswersPanel = ({ answers }: AnswersPanelProps) => {
+const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
   const prevAnswersCountRef = useRef(0);
   
   useEffect(() => {

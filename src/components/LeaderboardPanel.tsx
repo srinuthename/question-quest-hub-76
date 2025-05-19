@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -11,18 +12,30 @@ interface LeaderboardEntry {
 }
 
 interface LeaderboardPanelProps {
-  leaderboard: LeaderboardEntry[];
-  gameEnded: boolean;
+  leaderboard?: LeaderboardEntry[];
+  scores?: LeaderboardEntry[];
+  gameEnded?: boolean;
+  visible?: boolean;
 }
 
-const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => {
+const LeaderboardPanel = ({ 
+  leaderboard = [], 
+  scores = [], 
+  gameEnded = false,
+  visible = true
+}: LeaderboardPanelProps) => {
   const isMobile = useIsMobile();
+  
+  // Use the first non-empty array
+  const displayData = leaderboard.length > 0 ? leaderboard : scores;
+  
+  if (!visible) return null;
 
   // Get top 3 players for the podium
-  const topThree = leaderboard.slice(0, 3);
+  const topThree = displayData.slice(0, 3);
 
   // Get the rest of the players
-  const otherPlayers = leaderboard.slice(3);
+  const otherPlayers = displayData.slice(3);
 
   // Split other players into two columns for desktop view
   const leftColumnPlayers = otherPlayers.slice(0, Math.ceil(otherPlayers.length / 2));
@@ -46,7 +59,7 @@ const LeaderboardPanel = ({ leaderboard, gameEnded }: LeaderboardPanelProps) => 
           )}
         </CardHeader>
         <CardContent className="flex-grow overflow-y-auto pt-1 px-4">
-          {leaderboard.length === 0 ? (
+          {displayData.length === 0 ? (
             <div className="text-center py-3 text-muted-foreground">
               No scores yet...
             </div>
