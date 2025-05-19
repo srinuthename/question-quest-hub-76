@@ -1,12 +1,11 @@
-
 import { useState, useEffect, useRef } from "react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
 import LeaderboardPanel from "@/components/LeaderboardPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
 import { motion } from "framer-motion";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 // Get the timing values from .env
 const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '20') * 1000;
@@ -23,6 +22,7 @@ const PlayPage = () => {
   const [questionIndex, setQuestionIndex] = useState<number>(0);
   const [totalQuestions, setTotalQuestions] = useState<number>(0);
   const [isConnected, setIsConnected] = useState<boolean>(false);
+  const isMobile = useIsMobile();
   
   // Timer references for cleanup
   const timerRefs = useRef<{
@@ -155,64 +155,66 @@ const PlayPage = () => {
     switch (gameState) {
       case 'waiting':
         return (
-          <Card className="bg-gradient-to-br from-purple-600/20 to-pink-600/20 border-none shadow-md">
-            <CardContent className="flex items-center justify-center min-h-[300px]">
-              <div className="text-center">
-                <h2 className="text-2xl font-bold text-white mb-2">Waiting for quiz to start</h2>
-                <p className="text-white/80">The quiz host will start the game soon...</p>
-              </div>
-            </CardContent>
-          </Card>
+          <div className="flex items-center justify-center h-full min-h-[80vh]">
+            <div className="text-center">
+              <h2 className="text-4xl font-bold text-white mb-4">Waiting for quiz to start</h2>
+              <p className="text-2xl text-white/90 font-semibold">The quiz host will start the game soon...</p>
+            </div>
+          </div>
         );
       
       case 'question':
         return (
-          <>
-            <QuestionDisplay 
-              question={currentQuestion}
-              correctIndex={null}
-              gameState={gameState}
-              visible={true}
-              questionIndex={questionIndex + 1}
-              totalQuestions={totalQuestions}
-            />
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
+            <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
+              <QuestionDisplay 
+                question={currentQuestion}
+                correctIndex={null}
+                gameState={gameState}
+                visible={true}
+                questionIndex={questionIndex + 1}
+                totalQuestions={totalQuestions}
+              />
+            </div>
             
-            <Card className="mt-4">
-              <CardHeader>
-                <CardTitle>Live Answers</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <AnswersPanel answers={answers} />
-              </CardContent>
-            </Card>
-          </>
+            <div className="h-full">
+              <div className="text-3xl font-bold text-white mb-2">Live Answers</div>
+              <AnswersPanel answers={answers} />
+            </div>
+          </div>
         );
       
       case 'answer':
         return (
-          <>
-            <QuestionDisplay 
-              question={currentQuestion}
-              correctIndex={correctAnswerIndex}
-              gameState={gameState}
-              visible={true}
-              questionIndex={questionIndex + 1}
-              totalQuestions={totalQuestions}
-            />
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
+            <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
+              <QuestionDisplay 
+                question={currentQuestion}
+                correctIndex={correctAnswerIndex}
+                gameState={gameState}
+                visible={true}
+                questionIndex={questionIndex + 1}
+                totalQuestions={totalQuestions}
+              />
+            </div>
             
-            <FastestAnswersPanel 
-              fastestAnswers={fastestAnswers} 
-              visible={true}
-            />
-          </>
+            <div className="h-full">
+              <FastestAnswersPanel 
+                fastestAnswers={fastestAnswers} 
+                visible={true}
+              />
+            </div>
+          </div>
         );
       
       case 'leaderboard':
         return (
-          <LeaderboardPanel 
-            leaderboard={leaderboard} 
-            visible={true} 
-          />
+          <div className="w-full h-full">
+            <LeaderboardPanel 
+              leaderboard={leaderboard} 
+              visible={true} 
+            />
+          </div>
         );
       
       default:
@@ -221,26 +223,20 @@ const PlayPage = () => {
   };
 
   return (
-    <div className="container mx-auto p-4 max-w-7xl">
+    <div className="w-full h-screen max-w-full p-0 m-0">
       <motion.div
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="grid grid-cols-1 gap-6"
+        className="w-full h-full p-2"
       >
-        <Card className="bg-white/10 shadow-xl backdrop-blur-sm border-none">
-          <CardHeader>
-            <CardTitle className="text-center text-white">
-              {isConnected ? 'Live Quiz' : 'Connecting...'}
-            </CardTitle>
-          </CardHeader>
-          <CardContent className="p-4">
-            {/* Main content area */}
-            <div className="grid grid-cols-1 gap-6">
-              {renderContent()}
-            </div>
-          </CardContent>
-        </Card>
+        {isConnected ? (
+          renderContent()
+        ) : (
+          <div className="flex items-center justify-center h-full">
+            <h2 className="text-3xl font-bold text-white">Connecting...</h2>
+          </div>
+        )}
       </motion.div>
     </div>
   );

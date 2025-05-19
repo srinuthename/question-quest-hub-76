@@ -1,5 +1,5 @@
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -50,13 +50,11 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
 
   if (!question) {
     return (
-      <Card className="h-full flex items-center justify-center bg-gradient-to-br from-purple-200/50 to-green-200/50 shadow-md">
-        <CardContent className="text-center py-16">
-          <p className="text-2xl font-semibold text-muted-foreground">
-            Waiting for the next question...
-          </p>
-        </CardContent>
-      </Card>
+      <div className="h-full flex items-center justify-center">
+        <p className="text-3xl font-bold text-white/80">
+          Waiting for the next question...
+        </p>
+      </div>
     );
   }
 
@@ -78,13 +76,12 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
   };
 
   return (
-    <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md">
-      <CardHeader className="pb-1">
-        <CardTitle className="text-xl font-bold">
+    <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md h-full overflow-hidden">
+      <CardContent className="p-4">
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-purple-900">
           {questionWithNumber}
-        </CardTitle>
-      </CardHeader>
-      <CardContent className="space-y-1 px-4 pt-0 pb-4">
+        </h2>
+        
         {question.questionImageUrl ? (
           isMobile ? (
             // Mobile layout with alternating content
@@ -100,7 +97,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                   <img
                     src={question.questionImageUrl}
                     alt="Question"
-                    className="w-full max-w-xs rounded-lg shadow-md"
+                    className="w-full max-h-[50vh] object-contain rounded-lg shadow-md"
                   />
                 </div>
               </div>
@@ -118,10 +115,10 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                     className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
                   >
                     <div className="flex items-center">
-                      <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
+                      <span className={`text-2xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
-                      <span className="text-lg">{choice.choiceText}</span>
+                      <span className="text-xl font-bold">{choice.choiceText}</span>
                     </div>
                   </div>
                 ))}
@@ -129,25 +126,25 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             </div>
           ) : (
             // Desktop layout with side-by-side content
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-3">
-              <div className="flex justify-center">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
+              <div className="flex justify-center items-center">
                 <img
                   src={question.questionImageUrl}
                   alt="Question"
-                  className="w-full max-w-xs rounded-lg shadow-md"
+                  className="w-full max-h-[60vh] object-contain rounded-lg shadow-md"
                 />
               </div>
-              <div className="space-y-1">
+              <div className="space-y-4">
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
                     className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
                   >
                     <div className="flex items-center">
-                      <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
+                      <span className={`text-3xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
-                      <span className="text-lg">{choice.choiceText}</span>
+                      <span className="text-2xl font-bold">{choice.choiceText}</span>
                     </div>
                   </div>
                 ))}
@@ -156,17 +153,17 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
           )
         ) : (
           // No image layout
-          <div className="pt-1 space-y-1">
+          <div className="space-y-4 pt-2">
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
                 className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
               >
                 <div className="flex items-center">
-                  <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
+                  <span className={`text-3xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                     {String.fromCharCode(65 + choice.choiceIndex)}
                   </span>
-                  <span className="text-lg">{choice.choiceText}</span>
+                  <span className="text-2xl font-bold">{choice.choiceText}</span>
                 </div>
               </div>
             ))}

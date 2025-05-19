@@ -64,7 +64,7 @@
 }
 
 .choice-btn {
-  @apply w-full px-4 py-2 rounded-md mb-2 flex items-center bg-white border border-gray-200 shadow-sm hover:bg-gray-50;
+  @apply w-full px-5 py-3 rounded-md mb-2 flex items-center bg-white border-2 border-gray-200 shadow-md hover:bg-gray-50 font-bold;
   transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
 }
 
@@ -74,21 +74,21 @@
 }
 
 .choice-btn.incorrect {
-  @apply bg-red-50 border-red-300 border-2 text-red-800 opacity-60;
+  @apply bg-red-50 border-red-300 border-2 text-red-800 opacity-70;
 }
 
 @keyframes pulse-green {
   0%, 100% {
-    background-color: rgba(167, 243, 208, 0.5);
+    background-color: rgba(167, 243, 208, 0.6);
   }
   50% {
-    background-color: rgba(167, 243, 208, 0.8);
+    background-color: rgba(167, 243, 208, 0.9);
   }
 }
 
-/* Answer card animations */
+/* Answer card animations and styling */
 .answer-card {
-  @apply flex items-center gap-2 p-2 rounded-md mb-1;
+  @apply flex items-center gap-3 p-3 rounded-md mb-1;
   animation: slide-in-right 0.3s ease-out forwards;
   transform: translateX(100%);
   opacity: 0;
@@ -103,4 +103,29 @@
     transform: translateX(0);
     opacity: 1;
   }
+}
+
+/* Animation for fading in elements */
+@keyframes fade-in {
+  0% {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+/* For full-screen optimizations */
+#root {
+  max-width: 100%;
+  width: 100%;
+  margin: 0;
+  padding: 0;
+  height: 100vh;
 }

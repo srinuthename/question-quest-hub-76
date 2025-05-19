@@ -2,6 +2,7 @@
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Check } from "lucide-react";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FastestAnswersPanelProps {
   fastestAnswers?: {
@@ -15,27 +16,29 @@ interface FastestAnswersPanelProps {
 }
 
 const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAnswersPanelProps) => {
+  const isMobile = useIsMobile();
+
   if (!visible) return null;
   
   return (
-    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md mt-4">
+    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md">
       <CardHeader className="pb-0 pt-3 px-4">
-        <CardTitle className="text-xl font-semibold">Fastest Correct Answers</CardTitle>
-        <CardDescription className="text-sm">The quickest players who got it right!</CardDescription>
+        <CardTitle className="text-2xl font-extrabold">Fastest Correct Answers</CardTitle>
+        <CardDescription className="text-lg font-semibold">The quickest players who got it right!</CardDescription>
       </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto space-y-0.5 px-3 pt-1">
+      <CardContent className="flex-grow overflow-y-auto space-y-2 px-3 pt-2">
         {fastestAnswers.length === 0 ? (
-          <div className="text-center py-8 text-muted-foreground">
+          <div className="text-center py-8 text-xl font-bold text-gray-500">
             No correct answers yet...
           </div>
         ) : (
           fastestAnswers.map((answer, index) => (
             <div 
               key={index} 
-              className="answer-card bg-gradient-to-r from-green-100/70 to-green-50/70" 
+              className="answer-card bg-gradient-to-r from-green-100/90 to-green-50/90 py-2" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <Avatar className="w-7 h-7">
+              <Avatar className={`${isMobile ? 'w-9 h-9' : 'w-12 h-12'} border-2 border-green-200`}>
                 <AvatarImage 
                   src={answer.ytProfilePicUrl} 
                   alt={answer.userName}
@@ -43,19 +46,19 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                 <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <div className="font-medium text-sm">{answer.userName}</div>
-                <div className="flex gap-1 items-center">
+                <div className={`${isMobile ? 'text-base' : 'text-xl'} font-bold`}>{answer.userName}</div>
+                <div className="flex gap-2 items-center">
                   {answer.answerIndex !== undefined && (
-                    <span className="text-xs font-medium bg-green-100 px-1.5 py-0.5 rounded-full">
+                    <span className={`${isMobile ? 'text-sm' : 'text-base'} font-bold bg-green-200 px-3 py-1 rounded-full`}>
                       {String.fromCharCode(65 + answer.answerIndex)}
                     </span>
                   )}
-                  <span className="text-xs text-muted-foreground">
+                  <span className={`${isMobile ? 'text-sm' : 'text-base'} font-semibold text-gray-700`}>
                     {answer.responseTime}ms
                   </span>
                 </div>
               </div>
-              <Check className="h-4 w-4 text-green-500" />
+              <Check className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-green-500`} />
             </div>
           ))
         )}
