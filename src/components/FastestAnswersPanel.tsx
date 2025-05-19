@@ -64,7 +64,8 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
         )}
       </CardContent>
 
-      <style jsx global>{`
+      <style>
+        {`
         .answer-card {
           display: flex;
           align-items: center;
@@ -80,7 +81,8 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
           from { opacity: 0; transform: translateY(5px); }
           to { opacity: 1; transform: translateY(0); }
         }
-      `}</style>
+        `}
+      </style>
     </Card>
   );
 };

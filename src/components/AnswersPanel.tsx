@@ -64,7 +64,8 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
         </div>
       )}
 
-      <style jsx global>{`
+      <style>
+        {`
         .answer-card {
           display: flex;
           align-items: center;
@@ -81,7 +82,8 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
           from { opacity: 0; transform: translateY(5px); }
           to { opacity: 1; transform: translateY(0); }
         }
-      `}</style>
+        `}
+      </style>
     </div>
   );
 };
