@@ -28,7 +28,7 @@ const PlayPage = () => {
   const [timerSeconds, setTimerSeconds] = useState<number>(QUESTION_TIMER);
   const [gameEndTime, setGameEndTime] = useState<number | null>(null);
   const isMobile = useIsMobile();
-  
+
   // Connect to socket and listen to events
   useEffect(() => {
     // Check if already connected
@@ -49,7 +49,7 @@ const PlayPage = () => {
 
     const onNewQuestion = (question: any) => {
       console.log('New question received:', question);
-      
+
       // Reset state for new question
       setCurrentQuestion(question);
       setCorrectAnswerIndex(null);
@@ -57,7 +57,7 @@ const PlayPage = () => {
       setFastestAnswers([]);
       setGameState('question');
       setTimerSeconds(QUESTION_TIMER);
-      
+
       // Update question index if available
       if (question.questionIndex !== undefined) {
         setQuestionIndex(question.questionIndex);
@@ -72,7 +72,7 @@ const PlayPage = () => {
 
     const onNewAnswers = (newAnswers: any[]) => {
       console.log('New answers received:', newAnswers);
-      
+
       // Only add answers during question or answer state
       if (gameState === 'question' || gameState === 'answer') {
         // Prepend new answers instead of appending
@@ -85,7 +85,7 @@ const PlayPage = () => {
       setCorrectAnswerIndex(data.correctChoiceIndex);
       setGameState('answer');
       setTimerSeconds(REVEAL_ANSWER_TIMER);
-      
+
       // Clear the answers after revealing the correct answer
       setAnswers([]);
 
@@ -113,11 +113,11 @@ const PlayPage = () => {
       setGameState('ended');
       setCurrentQuestion(null);
       setCorrectAnswerIndex(null);
-      
+
       // Calculate when the final standings should disappear (20 minutes from now)
       const endTime = Date.now() + (FINAL_STANDINGS_DURATION * 1000);
       setGameEndTime(endTime);
-      
+
       // Show toast for game end
       toast.info("Game has ended! Final standings displayed.", {
         position: "top-center",
@@ -159,7 +159,7 @@ const PlayPage = () => {
           clearInterval(intervalId);
         }
       }, 10000); // Check every 10 seconds
-      
+
       return () => clearInterval(intervalId);
     }
   }, [gameState, gameEndTime]);
@@ -182,19 +182,19 @@ const PlayPage = () => {
             </div>
           </div>
         );
-      
+
       case 'question':
         return (
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
-            <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-4`}>
+            <div className={`${isMobile ? 'w-full' : 'w-2/3'}`}>
               <div className="mb-1">
-                <CountdownTimer 
+                <CountdownTimer
                   initialSeconds={QUESTION_TIMER}
                   onComplete={handleTimerComplete}
                   gameState={gameState}
                 />
               </div>
-              <QuestionDisplay 
+              <QuestionDisplay
                 question={currentQuestion}
                 correctIndex={null}
                 gameState={gameState}
@@ -203,26 +203,25 @@ const PlayPage = () => {
                 totalQuestions={totalQuestions}
               />
             </div>
-            
-            <div className="h-full">
-              <div className={`${isMobile ? 'text-lg' : 'text-3xl'} font-bold text-white mb-1`}>Live Answers</div>
+
+            <div className={`${isMobile ? 'w-full' : 'w-1/3'}`}>
               <AnswersPanel answers={answers} />
             </div>
           </div>
         );
-      
+
       case 'answer':
         return (
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
-            <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-4`}>
+            <div className={`${isMobile ? 'w-full' : 'w-2/3'}`}>
               <div className="mb-1">
-                <CountdownTimer 
+                <CountdownTimer
                   initialSeconds={REVEAL_ANSWER_TIMER}
                   onComplete={handleTimerComplete}
                   gameState={gameState}
                 />
               </div>
-              <QuestionDisplay 
+              <QuestionDisplay
                 question={currentQuestion}
                 correctIndex={correctAnswerIndex}
                 gameState={gameState}
@@ -231,29 +230,29 @@ const PlayPage = () => {
                 totalQuestions={totalQuestions}
               />
             </div>
-            
-            <div className="h-full">
-              <FastestAnswersPanel 
-                fastestAnswers={fastestAnswers} 
+
+            <div className={`${isMobile ? 'w-full' : 'w-1/3'}`}>
+              <FastestAnswersPanel
+                fastestAnswers={fastestAnswers}
                 visible={true}
               />
             </div>
           </div>
         );
-      
+
       case 'leaderboard':
         return (
           <div className="w-full h-full">
             <div className="mb-1">
-              <CountdownTimer 
+              <CountdownTimer
                 initialSeconds={LEADERBOARD_TIMER}
                 onComplete={handleTimerComplete}
                 gameState={gameState}
               />
             </div>
-            <LeaderboardPanel 
-              leaderboard={leaderboard} 
-              visible={true} 
+            <LeaderboardPanel
+              leaderboard={leaderboard}
+              visible={true}
             />
           </div>
         );
@@ -261,14 +260,14 @@ const PlayPage = () => {
       case 'ended':
         return (
           <div className="w-full h-full">
-            <LeaderboardPanel 
-              leaderboard={leaderboard} 
+            <LeaderboardPanel
+              leaderboard={leaderboard}
               visible={true}
               gameEnded={true}
             />
           </div>
         );
-      
+
       default:
         return null;
     }
