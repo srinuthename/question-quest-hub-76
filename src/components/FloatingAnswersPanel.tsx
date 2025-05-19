@@ -1,76 +1,69 @@
 
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from 'react';
 
-interface FloatingAnswersPanelProps {
-  answers: {
-    ytChannelId: string;
-    ytProfilePicUrl: string;
-    userName: string;
-    responseTime: number;
-    answerIndex?: number;
-  }[];
+// Get the floating answer duration from environment variables
+const FLOATING_ANSWER_DURATION = parseInt(import.meta.env.VITE_FLOATING_ANSWER_DURATION || '8000');
+
+interface FloatingAnswersProps {
+  answers: any[];
   visible: boolean;
 }
 
-const FloatingAnswersPanel = ({ answers, visible }: FloatingAnswersPanelProps) => {
+const FloatingAnswersPanel: React.FC<FloatingAnswersProps> = ({ answers, visible }) => {
   const [displayAnswers, setDisplayAnswers] = useState<any[]>([]);
-  
-  // Animation timing (in ms)
-  const appearDelay = 500; // Half second between each answer appearing
-  const floatDuration = parseInt(import.meta.env.VITE_FLOATING_ANSWER_DURATION || "8000");
-  
-  // Update display answers with animation delay
+
+  // Process new answers as they come in
   useEffect(() => {
-    if (!visible) return;
-    
-    // Process new answers one by one with delay
-    const processAnswers = async () => {
-      // Find new answers not yet in displayAnswers
-      const newAnswers = answers.filter(
-        (answer) => !displayAnswers.some(
-          (displayAnswer) => displayAnswer.ytChannelId === answer.ytChannelId && 
-                            displayAnswer.responseTime === answer.responseTime
+    if (!visible || !answers.length) return;
+
+    // Add any new answers with unique IDs
+    const newAnswers = answers.filter(answer => 
+      !displayAnswers.some(existing => existing._id === answer._id)
+    );
+
+    if (newAnswers.length > 0) {
+      // Add new answers with animation duration
+      const answersWithAnimation = newAnswers.map(answer => ({
+        ...answer,
+        animationId: Math.random().toString(36).substring(2, 9),
+        floatDuration: FLOATING_ANSWER_DURATION
+      }));
+
+      setDisplayAnswers(prev => [...prev, ...answersWithAnimation]);
+    }
+
+    // Cleanup old answers after their animation completes
+    const cleanupInterval = setInterval(() => {
+      setDisplayAnswers(prev => 
+        prev.filter(answer => 
+          Date.now() - new Date(answer.addedAt || Date.now()).getTime() < FLOATING_ANSWER_DURATION
         )
       );
-      
-      // Add each new answer with a delay
-      for (let i = 0; i < newAnswers.length; i++) {
-        await new Promise((resolve) => setTimeout(resolve, appearDelay));
-        setDisplayAnswers(prev => [newAnswers[i], ...prev]);
-      }
-    };
-    
-    processAnswers();
+    }, 1000);
+
+    return () => clearInterval(cleanupInterval);
   }, [answers, visible]);
-  
+
   if (!visible) return null;
-  
+
   return (
     <div className="floating-answers-container">
-      {displayAnswers.map((answer, index) => (
-        <div 
-          key={`${answer.ytChannelId}-${answer.responseTime}`}
+      {displayAnswers.map(answer => (
+        <div
+          key={answer.animationId}
           className="floating-answer animate-float-up"
-          style={{ 
-            animationDelay: `${index * 0.1}s`,
-            opacity: Math.max(0.9 - (index * 0.06), 0.4), // Fade out older messages
-            '--float-duration': `${floatDuration}ms`,
+          style={{
+            '--float-duration': `${answer.floatDuration}ms`
           } as React.CSSProperties}
         >
-          <Avatar className="w-6 h-6">
-            <AvatarImage 
-              src={answer.ytProfilePicUrl} 
-              alt={answer.userName} 
-            />
-            <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
-          </Avatar>
           <span className="answer-username">{answer.userName}</span>
-          {answer.answerIndex !== undefined && (
-            <span className="answer-choice">
-              {String.fromCharCode(65 + answer.answerIndex)}
-            </span>
-          )}
+          <span 
+            className={`answer-choice ${
+              answer.choiceIndex === answer.correctChoiceIndex ? 'bg-green-600' : 'bg-blue-600'
+            }`}
+          >
+            {String.fromCharCode(65 + answer.choiceIndex)}
+          </span>
         </div>
       ))}
     </div>

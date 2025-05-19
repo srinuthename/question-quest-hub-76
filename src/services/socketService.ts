@@ -1,55 +1,53 @@
 
-import { io, Socket } from "socket.io-client";
+import { io } from "socket.io-client";
 
-// Define the base URL for the socket connection
-// In production, you would use your actual backend URL
-const SOCKET_URL = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
-
-let socket: Socket | null = null;
-
-// Initialize the socket connection
-export const initSocket = (): Socket => {
-  if (!socket) {
-    socket = io(SOCKET_URL, {
-      transports: ["websocket"],
-      autoConnect: true,
-    });
-
-    // Log connection events for debugging
-    socket.on("connect", () => {
-      console.log("Socket connected with ID:", socket?.id);
-    });
-
-    socket.on("disconnect", () => {
-      console.log("Socket disconnected");
-    });
-
-    socket.on("connect_error", (error) => {
-      console.error("Socket connection error:", error);
-    });
+// Determine the backend URL based on environment
+const getBackendUrl = () => {
+  // For local development - check if running on localhost
+  if (window.location.hostname === "localhost") {
+    return "http://localhost:50515"; // Your backend port
   }
-
-  return socket;
+  
+  // For production - use the deployed backend URL or infer from current domain
+  // This assumes your backend is deployed on the same domain but different subdomain
+  const currentDomain = window.location.hostname.split('.').slice(-2).join('.');
+  return `https://backendgcube.${currentDomain}`;
 };
 
-// Get the existing socket or create a new one
-export const getSocket = (): Socket => {
-  if (!socket) {
-    return initSocket();
-  }
-  return socket;
-};
+// Create socket instance
+export const socket = io(getBackendUrl(), {
+  transports: ["websocket", "polling"],
+  autoConnect: true,
+  reconnection: true,
+  reconnectionAttempts: 5,
+  reconnectionDelay: 1000,
+});
 
-// Disconnect the socket
-export const disconnectSocket = (): void => {
-  if (socket) {
-    socket.disconnect();
-    socket = null;
-  }
-};
+// Add logging for debugging
+socket.on("connect", () => {
+  console.info("Socket connected with ID:", socket.id);
+});
 
-export default {
-  initSocket,
-  getSocket,
-  disconnectSocket,
+socket.on("connect_error", (error) => {
+  console.error("Socket connection error:", error);
+});
+
+socket.on("disconnect", (reason) => {
+  console.info("Socket disconnected:", reason);
+});
+
+socket.on("error", (error) => {
+  console.error("Socket error:", error);
+});
+
+// Export a function to emit events with error handling
+export const emitEvent = (eventName: string, data: any) => {
+  try {
+    console.info(`Emitting ${eventName} with data:`, data);
+    socket.emit(eventName, data);
+    return true;
+  } catch (error) {
+    console.error(`Error emitting ${eventName}:`, error);
+    return false;
+  }
 };

@@ -3,9 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
-// Define timing variables (in milliseconds)
-const DISPLAY_SWITCH_INTERVAL = 4000; // Time to switch between image and options (4 seconds)
-const DISPLAY_TRANSITION_DURATION = 500; // Duration of the fade transition (0.5 seconds)
+// Define timing variables from environment variables
+const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '4000'); // Time to switch between image and options (4 seconds)
+const DISPLAY_TRANSITION_DURATION = parseInt(import.meta.env.VITE_DISPLAY_TRANSITION_DURATION || '500'); // Duration of the fade transition (0.5 seconds)
 
 interface QuestionDisplayProps {
   question: {
@@ -71,9 +71,9 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
     }
     
     if (choiceIndex === correctIndex) {
-      return 'bg-green-100 border-green-500 text-green-800';
+      return 'correct';
     } else {
-      return 'bg-red-50 border-red-300 text-red-800 opacity-60';
+      return 'incorrect';
     }
   };
 
@@ -115,7 +115,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)} ${gameState === 'question' ? 'cursor-pointer' : ''}`}
+                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
                   >
                     <div className="flex items-center">
                       <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
@@ -141,7 +141,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)} ${gameState === 'question' ? 'cursor-pointer' : ''}`}
+                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
                   >
                     <div className="flex items-center">
                       <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
@@ -160,7 +160,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`choice-btn ${getChoiceClass(choice.choiceIndex)} ${gameState === 'question' ? 'cursor-pointer' : ''}`}
+                className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
               >
                 <div className="flex items-center">
                   <span className={`text-xl font-bold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>

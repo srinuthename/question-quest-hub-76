@@ -69,12 +69,12 @@
 }
 
 .choice-btn.correct {
-  @apply bg-green-100 border-green-400 border-2;
+  @apply bg-green-100 border-green-500 border-2 text-green-800;
   animation: pulse-green 2s infinite;
 }
 
 .choice-btn.incorrect {
-  @apply opacity-60;
+  @apply bg-red-50 border-red-300 border-2 text-red-800 opacity-60;
 }
 
 @keyframes pulse-green {
@@ -139,6 +139,14 @@
   display: flex;
   align-items: center;
   justify-content: center;
+}
+
+.answer-choice.correct {
+  background-color: #16a34a;
+}
+
+.answer-choice.incorrect {
+  background-color: #dc2626;
 }
 
 @keyframes floatUp {

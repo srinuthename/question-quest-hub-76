@@ -1,249 +1,253 @@
 
-import { useState, useEffect, useRef } from "react";
-import { useParams, useNavigate } from "react-router-dom";
-import { Button } from "@/components/ui/button";
+import { useState, useEffect } from "react";
+import { useParams } from "react-router-dom";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Trophy, Play, ArrowLeft, Check, Clock } from "lucide-react";
-import { getSocket } from "@/services/socketService";
-import { Socket } from "socket.io-client";
+import { Button } from "@/components/ui/button";
+import { socket, emitEvent } from "@/services/socketService";
+import QuestionDisplay from "@/components/QuestionDisplay";
+import AnswersPanel from "@/components/AnswersPanel";
+import GameInfoHeader from "@/components/GameInfoHeader";
+import { Check, Clock, Play, Eye, AlertTriangle } from "lucide-react";
 import { toast } from "sonner";
 
 const GamePage = () => {
   const { id } = useParams<{ id: string }>();
-  const navigate = useNavigate();
-  const [quizGame, setQuizGame] = useState<any>(null);
+  const [gameData, setGameData] = useState<any>(null);
   const [loading, setLoading] = useState<boolean>(true);
-  const [gameStarted, setGameStarted] = useState<boolean>(false);
-  const [lastStatusCheck, setLastStatusCheck] = useState<Date | null>(null);
-  const socketRef = useRef<Socket | null>(null);
-  const statusCheckIntervalRef = useRef<NodeJS.Timeout | null>(null);
+  const [error, setError] = useState<string | null>(null);
+  const [gameActive, setGameActive] = useState<boolean>(false);
+  const [lastStatusCheck, setLastStatusCheck] = useState<Date>(new Date());
+  
+  // Game status monitoring interval (5 minutes = 300000 ms)
+  const STATUS_CHECK_INTERVAL = 300000;
 
   useEffect(() => {
-    // Fetch the game data
+    // Fetch game data
     const fetchGameData = async () => {
       try {
-        const apiUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
-        const response = await fetch(`${apiUrl}/api/quizgames/${id}`);
-
+        const response = await fetch(`http://localhost:50515/api/quizgames/${id}`);
         if (!response.ok) {
-          throw new Error(`API responded with status: ${response.status}`);
+          throw new Error(`Failed to fetch game data: ${response.statusText}`);
         }
-
-        const data = await response.json();
-        console.log('Fetched game data:', data);
-        setQuizGame(data);
         
-        // Set gameStarted state based on fetched game data
-        if (data.status === 'active' || data.isActive) {
-          setGameStarted(true);
+        const data = await response.json();
+        console.info("Fetched game data:", data);
+        setGameData(data);
+        
+        // Check if game is already active
+        if (data.isGameOpen) {
+          setGameActive(true);
         }
         
         setLoading(false);
-      } catch (err) {
-        console.error('Error fetching game data:', err);
-
-        // Fallback to mock data
-        const mockGame = {
-          _id: id,
-          gameTitle: "Interactive Quiz Challenge",
-          questions: Array(10).fill({}),
-        };
-
-        setQuizGame(mockGame);
+      } catch (error) {
+        console.error("Error fetching game data:", error);
+        setError("Failed to fetch game data. Please try again.");
         setLoading(false);
       }
     };
 
-    fetchGameData();
-
-    // Initialize socket connection
-    socketRef.current = getSocket();
-
-    // Listen for game status updates
-    socketRef.current.on('gameStarted', (gameData) => {
-      setGameStarted(true);
-      toast.success("Game started successfully!");
-      
-      // Update game data if available
-      if (gameData) {
-        setQuizGame(prevGame => ({...prevGame, ...gameData}));
-      }
-    });
-
-    socketRef.current.on('gameEnded', () => {
-      setGameStarted(false);
-      toast.info("Game has ended");
-      
-      // Refresh game data
+    if (id) {
       fetchGameData();
-    });
-
-    // Set up periodic status checks
-    statusCheckIntervalRef.current = setInterval(() => {
-      checkGameStatus();
-    }, 5 * 60 * 1000); // Check every 5 minutes
-
+    }
+    
+    // Set up socket event listeners
+    socket.on("gameEnded", handleGameEnded);
+    
+    // Clean up
     return () => {
-      // Remove socket event listeners
-      if (socketRef.current) {
-        socketRef.current.off('gameStarted');
-        socketRef.current.off('gameEnded');
-      }
-      
-      // Clear status check interval
-      if (statusCheckIntervalRef.current) {
-        clearInterval(statusCheckIntervalRef.current);
-      }
+      socket.off("gameEnded", handleGameEnded);
     };
   }, [id]);
-
+  
+  // Set up status monitoring
+  useEffect(() => {
+    const statusCheckInterval = setInterval(checkGameStatus, STATUS_CHECK_INTERVAL);
+    
+    // Clean up
+    return () => {
+      clearInterval(statusCheckInterval);
+    };
+  }, [gameData]);
+  
+  // Function to check game status
   const checkGameStatus = async () => {
+    if (!id || !gameActive) return;
+    
     try {
-      const apiUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
-      const response = await fetch(`${apiUrl}/api/quizgames/${id}`);
-      
+      const response = await fetch(`http://localhost:50515/api/quizgames/${id}`);
       if (!response.ok) {
-        throw new Error(`API responded with status: ${response.status}`);
+        throw new Error(`Failed to check game status: ${response.statusText}`);
       }
       
       const data = await response.json();
+      setLastStatusCheck(new Date());
       
-      // Update game data
-      setQuizGame(data);
-      
-      // Update game status
-      const isActive = data.status === 'active' || data.isActive;
-      if (isActive !== gameStarted) {
-        setGameStarted(isActive);
-        if (isActive) {
-          toast.success("Game is active");
-        } else {
-          toast.info("Game has ended");
+      // Update game state if it has changed
+      if (data.isGameOpen !== gameActive) {
+        setGameActive(data.isGameOpen);
+        if (!data.isGameOpen) {
+          toast.info("Game has ended", {
+            description: "The game has been closed or completed."
+          });
         }
       }
       
-      setLastStatusCheck(new Date());
-    } catch (err) {
-      console.error('Error checking game status:', err);
+      // Update the game data
+      setGameData(data);
+    } catch (error) {
+      console.error("Error checking game status:", error);
+      toast.error("Failed to check game status");
     }
   };
-
-  const startGame = () => {
-    if (socketRef.current && id) {
-      console.log('Emitting startGame event with gameId:', id);
-      socketRef.current.emit('startGame', { gameId: id });
-    }
+  
+  // Handler for game ended event
+  const handleGameEnded = () => {
+    setGameActive(false);
+    toast.info("Game has ended", {
+      description: "All questions have been answered."
+    });
   };
-
-  const endGame = () => {
-    if (socketRef.current && id) {
-      console.log('Emitting endGame event with gameId:', id);
-      socketRef.current.emit('endGame', { gameId: id });
-      setGameStarted(false);
-    }
+  
+  // Handler for starting the game
+  const handleStartGame = () => {
+    if (!id) return;
+    
+    console.info("Emitting startGame event with gameId:", id);
+    emitEvent("startGame", { gameId: id });
+    toast.success("Game starting", {
+      description: "The game will start shortly."
+    });
+    setGameActive(true);
   };
-
-  const goBack = () => {
-    navigate('/');
+  
+  // Handler for opening player view
+  const handleOpenPlayerView = () => {
+    if (!id) return;
+    
+    // Open player view in new window
+    const playerWindowUrl = `/play`;
+    window.open(playerWindowUrl, "_blank", "width=1024,height=768");
+    toast.success("Player view opened in new window");
   };
-
-  const goToPlayView = () => {
-    // Get the current origin (domain)
-    const origin = window.location.origin;
-    // Open play view in new window
-    window.open(`${origin}/play`, '_blank', 'width=1024,height=768');
-  };
-
+  
   if (loading) {
     return (
-      <div className="flex items-center justify-center p-4">
-        <div className="animate-pulse text-2xl font-bold text-white">Loading Game Details...</div>
+      <div className="container mx-auto py-8">
+        <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl">
+          <CardContent className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <Clock className="w-12 h-12 animate-pulse mx-auto mb-4 text-white" />
+              <p className="text-xl text-white">Loading game data...</p>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="container mx-auto py-8">
+        <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl">
+          <CardContent className="flex items-center justify-center p-8">
+            <div className="text-center">
+              <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-red-500" />
+              <p className="text-xl text-white mb-4">{error}</p>
+              <Button onClick={() => window.location.reload()}>Try Again</Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-4 px-3">
-      <Button variant="outline" onClick={goBack} className="mb-4">
-        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Games
-      </Button>
+    <div className="container mx-auto p-4 max-w-7xl">
+      <GameInfoHeader
+        gameTitle={gameData?.gameTitle}
+        gameStartedAt={gameData?.gameStartedAt}
+        isGameOpen={gameData?.isGameOpen}
+        questionIndex={gameData?.activeQuestionIndex}
+        totalQuestions={gameData?.questions?.length}
+      />
       
-      <div className="max-w-2xl mx-auto">
-        <Card className="bg-white shadow-lg">
-          <CardHeader>
-            <div className="flex justify-between items-center">
-              <CardTitle className="text-2xl font-bold">{quizGame.gameTitle}</CardTitle>
-              {gameStarted ? (
-                <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
-                  <Check className="mr-1 h-3 w-3" /> Game Active
-                </Badge>
-              ) : (
-                <Badge variant="outline" className="bg-gray-100 text-gray-600 border-gray-300">
-                  <Clock className="mr-1 h-3 w-3" /> Game Inactive
-                </Badge>
-              )}
-            </div>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid gap-4">
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Total Questions:</span>
-                <span>{quizGame.questions?.length || 0}</span>
-              </div>
-              
-              <div className="flex justify-between items-center">
-                <span className="font-medium">Game ID:</span>
-                <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{quizGame._id}</span>
-              </div>
-              
-              {quizGame.youtubeChannel && (
-                <div className="flex justify-between items-center">
-                  <span className="font-medium">YouTube Channel:</span>
-                  <span>{quizGame.youtubeChannel}</span>
-                </div>
-              )}
-              
-              {lastStatusCheck && (
-                <div className="flex justify-between items-center text-sm">
-                  <span className="font-medium">Last Status Check:</span>
-                  <span className="text-gray-600">
-                    {lastStatusCheck.toLocaleTimeString()}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
+        <div className="lg:col-span-2">
+          <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl mb-6">
+            <CardHeader>
+              <CardTitle className="flex justify-between items-center">
+                <span className="text-white">Game Controls</span>
+                <div className="flex items-center space-x-2">
+                  <span className="text-sm text-white/70">
+                    Last checked: {new Date(lastStatusCheck).toLocaleTimeString()}
                   </span>
+                  {gameActive ? (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                      <Check className="w-3 h-3 mr-1" /> Active
+                    </span>
+                  ) : (
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                      Inactive
+                    </span>
+                  )}
                 </div>
-              )}
-            </div>
-            
-            <div className="flex flex-col sm:flex-row gap-3 pt-4">
-              {!gameStarted ? (
+              </CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="flex flex-wrap gap-4">
                 <Button 
-                  onClick={startGame} 
-                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                  onClick={handleStartGame} 
+                  disabled={gameActive}
+                  className="flex items-center gap-2"
                 >
-                  <Trophy className="mr-2 h-5 w-5" />
-                  Start Game
+                  <Play size={18} />
+                  {gameActive ? "Game Started" : "Start Game"}
                 </Button>
-              ) : (
-                <Button 
-                  onClick={endGame}
-                  variant="destructive"
-                  className="flex-1"
+                <Button
+                  onClick={handleOpenPlayerView}
+                  variant="outline"
+                  className="flex items-center gap-2 bg-white/20 text-white hover:bg-white/30"
                 >
-                  End Game
+                  <Eye size={18} />
+                  Open Player View
                 </Button>
-              )}
+              </div>
               
-              <Button 
-                onClick={goToPlayView} 
-                variant="outline" 
-                className="flex-1 border-blue-300 hover:bg-blue-50"
-              >
-                <Play className="mr-2 h-5 w-5" />
-                Open Player Screen
-              </Button>
-            </div>
-          </CardContent>
-        </Card>
+              <div className="mt-4">
+                <h3 className="font-medium text-white mb-2">Game Information</h3>
+                <div className="bg-white/20 rounded-md p-4 text-white space-y-2">
+                  <p><strong>Game Title:</strong> {gameData?.gameTitle}</p>
+                  <p><strong>Total Questions:</strong> {gameData?.questions?.length}</p>
+                  <p><strong>Current Question:</strong> {gameData?.activeQuestionIndex !== undefined ? gameData.activeQuestionIndex + 1 : "Not started"}</p>
+                  <p><strong>Status:</strong> {gameData?.isGameOpen ? "Open" : "Closed"}</p>
+                </div>
+              </div>
+            </CardContent>
+          </Card>
+          
+          {gameData?.activeQuestionIndex !== undefined && gameData.questions && (
+            <QuestionDisplay
+              question={gameData.questions[gameData.activeQuestionIndex]}
+              correctIndex={gameData.isQuestionOpen ? null : gameData.correctChoiceIndex}
+              gameState={gameData.isQuestionOpen ? "question" : "answer"}
+              visible={true}
+              questionIndex={gameData.activeQuestionIndex + 1}
+              totalQuestions={gameData.questions.length}
+            />
+          )}
+        </div>
+        
+        <div>
+          <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl">
+            <CardHeader>
+              <CardTitle className="text-white">Recent Answers</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <AnswersPanel />
+            </CardContent>
+          </Card>
+        </div>
       </div>
     </div>
   );
