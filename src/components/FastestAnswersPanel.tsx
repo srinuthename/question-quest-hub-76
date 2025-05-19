@@ -22,23 +22,22 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
   
   return (
     <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md">
-      <CardHeader className="pb-0 pt-3 px-4">
-        <CardTitle className="text-2xl font-extrabold">Fastest Correct Answers</CardTitle>
-        <CardDescription className="text-lg font-semibold">The quickest players who got it right!</CardDescription>
+      <CardHeader className={`${isMobile ? 'p-1' : 'pb-0 pt-3 px-4'}`}>
+        <CardTitle className={`${isMobile ? 'text-lg' : 'text-2xl'} font-extrabold`}>Fastest Correct</CardTitle>
       </CardHeader>
-      <CardContent className="flex-grow overflow-y-auto space-y-2 px-3 pt-2">
+      <CardContent className={`flex-grow overflow-y-auto ${isMobile ? 'space-y-1 px-1 pt-1' : 'space-y-2 px-3 pt-2'}`}>
         {fastestAnswers.length === 0 ? (
-          <div className="text-center py-8 text-xl font-bold text-gray-500">
-            No correct answers yet...
+          <div className="text-center py-2 text-lg font-bold text-gray-500">
+            No correct answers yet
           </div>
         ) : (
           fastestAnswers.map((answer, index) => (
             <div 
               key={index} 
-              className="answer-card bg-gradient-to-r from-green-100/90 to-green-50/90 py-2 animate-fade-in" 
+              className="answer-card bg-gradient-to-r from-green-100/90 to-green-50/90 animate-fade-in" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <Avatar className={`${isMobile ? 'w-9 h-9' : 'w-12 h-12'} border-2 border-green-200`}>
+              <Avatar className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} border-2 border-green-200`}>
                 <AvatarImage 
                   src={answer.ytProfilePicUrl} 
                   alt={answer.userName}
@@ -46,19 +45,19 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                 <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
-                <div className={`${isMobile ? 'text-base' : 'text-xl'} font-bold`}>{answer.userName}</div>
-                <div className="flex gap-2 items-center">
+                <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
+                <div className="flex gap-1 items-center">
                   {answer.answerIndex !== undefined && (
-                    <span className={`${isMobile ? 'text-sm' : 'text-base'} font-bold bg-green-200 px-3 py-1 rounded-full`}>
+                    <span className={`${isMobile ? 'text-xs px-1.5 py-0' : 'text-base px-3 py-1'} font-bold bg-green-200 rounded-full`}>
                       {String.fromCharCode(65 + answer.answerIndex)}
                     </span>
                   )}
-                  <span className={`${isMobile ? 'text-sm' : 'text-base'} font-semibold text-gray-700`}>
+                  <span className={`${isMobile ? 'text-xs' : 'text-base'} font-semibold text-gray-700`}>
                     {answer.responseTime}ms
                   </span>
                 </div>
               </div>
-              <Check className={`${isMobile ? 'h-6 w-6' : 'h-8 w-8'} text-green-500`} />
+              <Check className={`${isMobile ? 'h-4 w-4' : 'h-8 w-8'} text-green-500`} />
             </div>
           ))
         )}
@@ -69,10 +68,10 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
         .answer-card {
           display: flex;
           align-items: center;
-          padding: ${isMobile ? '0.5rem' : '0.75rem'};
+          padding: ${isMobile ? '0.25rem' : '0.75rem'};
           border-radius: 0.5rem;
-          gap: 0.75rem;
-          margin-bottom: 0.5rem;
+          gap: ${isMobile ? '0.3rem' : '0.75rem'};
+          margin-bottom: ${isMobile ? '0.2rem' : '0.5rem'};
           animation: fade-in 0.3s ease-out forwards;
           border: 1px solid rgba(0, 0, 0, 0.05);
         }

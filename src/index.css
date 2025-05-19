@@ -1,4 +1,6 @@
 
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
@@ -57,6 +59,7 @@
 @layer base {
   * {
     @apply border-border;
+    font-family: 'Outfit', system-ui, sans-serif;
   }
   body {
     @apply bg-background text-foreground;
@@ -68,12 +71,19 @@
   transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
 }
 
-.choice-btn.correct {
+.choice-btn-mobile {
+  @apply w-full px-3 py-1.5 rounded-md mb-1 flex items-center bg-white border border-gray-200 shadow-sm hover:bg-gray-50 font-bold;
+  transition: background-color 0.2s, border-color 0.2s, opacity 0.2s;
+}
+
+.choice-btn.correct,
+.choice-btn-mobile.correct {
   @apply bg-green-100 border-green-500 border-2 text-green-800;
   animation: pulse-green 2s infinite;
 }
 
-.choice-btn.incorrect {
+.choice-btn.incorrect,
+.choice-btn-mobile.incorrect {
   @apply bg-red-50 border-red-300 border-2 text-red-800 opacity-70;
 }
 

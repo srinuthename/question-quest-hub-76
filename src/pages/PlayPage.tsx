@@ -54,7 +54,7 @@ const PlayPage = () => {
       // Reset state for new question
       setCurrentQuestion(question);
       setCorrectAnswerIndex(null);
-      setAnswers([]);
+      setAnswers([]); // Clear all previous answers
       setFastestAnswers([]);
       setGameState('question');
       setTimerSeconds(QUESTION_TIMER);
@@ -86,6 +86,9 @@ const PlayPage = () => {
       setCorrectAnswerIndex(data.correctChoiceIndex);
       setGameState('answer');
       setTimerSeconds(REVEAL_ANSWER_TIMER);
+      
+      // Clear the answers after revealing the correct answer
+      setAnswers([]);
 
       // Show toast for answer reveal
       toast.success("Answer revealed!", {
@@ -164,13 +167,8 @@ const PlayPage = () => {
 
   // Timer completion handlers
   const handleTimerComplete = () => {
-    if (gameState === 'question') {
-      // Auto-transition not implemented, waiting for server event
-    } else if (gameState === 'answer') {
-      // Auto-transition not implemented, waiting for server event
-    } else if (gameState === 'leaderboard') {
-      // Auto-transition not implemented, waiting for server event
-    }
+    // Auto-transition not implemented, waiting for server events
+    console.log("Timer completed for state:", gameState);
   };
 
   // Rendering different sections based on game state
@@ -188,9 +186,9 @@ const PlayPage = () => {
       
       case 'question':
         return (
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-1' : 'grid-cols-3 gap-6'} h-full`}>
             <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
-              <div className="mb-2">
+              <div className="mb-1">
                 <CountdownTimer 
                   initialSeconds={QUESTION_TIMER}
                   onComplete={handleTimerComplete}
@@ -208,7 +206,7 @@ const PlayPage = () => {
             </div>
             
             <div className="h-full">
-              <div className="text-3xl font-bold text-white mb-2">Live Answers</div>
+              <div className={`${isMobile ? 'text-lg' : 'text-3xl'} font-bold text-white mb-1`}>Live Answers</div>
               <AnswersPanel answers={answers} />
             </div>
           </div>
@@ -216,9 +214,9 @@ const PlayPage = () => {
       
       case 'answer':
         return (
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-1' : 'grid-cols-3 gap-6'} h-full`}>
             <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
-              <div className="mb-2">
+              <div className="mb-1">
                 <CountdownTimer 
                   initialSeconds={REVEAL_ANSWER_TIMER}
                   onComplete={handleTimerComplete}
@@ -247,7 +245,7 @@ const PlayPage = () => {
       case 'leaderboard':
         return (
           <div className="w-full h-full">
-            <div className="mb-2">
+            <div className="mb-1">
               <CountdownTimer 
                 initialSeconds={LEADERBOARD_TIMER}
                 onComplete={handleTimerComplete}
@@ -283,7 +281,7 @@ const PlayPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className="w-full h-full p-2"
+        className={`w-full h-full ${isMobile ? 'p-0.5' : 'p-1'}`}
       >
         {isConnected ? (
           renderContent()

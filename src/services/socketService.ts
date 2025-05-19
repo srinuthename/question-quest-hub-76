@@ -1,15 +1,21 @@
 
 import { io } from "socket.io-client";
 
-// Determine the backend URL based on environment
+// Get backend URL from environment variable
 const getBackendUrl = () => {
+  const envBackendUrl = import.meta.env.VITE_BACKEND_URL;
+  
+  // If environment variable is set, use it
+  if (envBackendUrl) {
+    return envBackendUrl;
+  }
+  
   // For local development - check if running on localhost
   if (window.location.hostname === "localhost") {
-    return "http://localhost:50515"; // Your backend port
+    return "http://localhost:50515"; // Fallback port
   }
   
   // For production - use the deployed backend URL or infer from current domain
-  // This assumes your backend is deployed on the same domain but different subdomain
   const currentDomain = window.location.hostname.split('.').slice(-2).join('.');
   return `https://backendgcube.${currentDomain}`;
 };
