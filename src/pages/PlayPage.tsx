@@ -1,4 +1,3 @@
-
 import { useState, useEffect, useRef } from "react";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
@@ -11,7 +10,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
 
 // Get the timing values from .env
-const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '20');
+const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '30');
 const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || '10');
 const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || '10');
 const FINAL_STANDINGS_DURATION = parseInt(import.meta.env.VITE_FINAL_STANDINGS_DURATION || '1200');
@@ -186,7 +185,7 @@ const PlayPage = () => {
       
       case 'question':
         return (
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-1' : 'grid-cols-3 gap-6'} h-full`}>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
             <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
               <div className="mb-1">
                 <CountdownTimer 
@@ -214,7 +213,7 @@ const PlayPage = () => {
       
       case 'answer':
         return (
-          <div className={`grid ${isMobile ? 'grid-cols-1 gap-1' : 'grid-cols-3 gap-6'} h-full`}>
+          <div className={`grid ${isMobile ? 'grid-cols-1 gap-4' : 'grid-cols-3 gap-6'} h-full`}>
             <div className={`${isMobile ? 'col-span-1' : 'col-span-2'}`}>
               <div className="mb-1">
                 <CountdownTimer 
