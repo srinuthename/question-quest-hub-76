@@ -18,6 +18,7 @@ const FloatingAnswersPanel = ({ answers, visible }: FloatingAnswersPanelProps) =
   
   // Animation timing (in ms)
   const appearDelay = 500; // Half second between each answer appearing
+  const floatDuration = parseInt(import.meta.env.VITE_FLOATING_ANSWER_DURATION || "8000");
   
   // Update display answers with animation delay
   useEffect(() => {
@@ -53,8 +54,9 @@ const FloatingAnswersPanel = ({ answers, visible }: FloatingAnswersPanelProps) =
           className="floating-answer animate-float-up"
           style={{ 
             animationDelay: `${index * 0.1}s`,
-            opacity: Math.max(0.9 - (index * 0.06), 0.4) // Fade out older messages
-          }}
+            opacity: Math.max(0.9 - (index * 0.06), 0.4), // Fade out older messages
+            '--float-duration': `${floatDuration}ms`,
+          } as React.CSSProperties}
         >
           <Avatar className="w-6 h-6">
             <AvatarImage 

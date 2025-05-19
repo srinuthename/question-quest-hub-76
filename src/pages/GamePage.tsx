@@ -1,48 +1,24 @@
+
 import { useState, useEffect, useRef } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useNavigate } from "react-router-dom";
 import { Button } from "@/components/ui/button";
-import QuestionDisplay from "@/components/QuestionDisplay";
-import AnswersPanel from "@/components/AnswersPanel";
-import FastestAnswersPanel from "@/components/FastestAnswersPanel";
-import LeaderboardPanel from "@/components/LeaderboardPanel";
-import GameInfoHeader from "@/components/GameInfoHeader";
-import FloatingAnswersPanel from "@/components/FloatingAnswersPanel";
-import { Trophy } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Badge } from "@/components/ui/badge";
+import { Trophy, Play, ArrowLeft } from "lucide-react";
 import { getSocket } from "@/services/socketService";
 import { Socket } from "socket.io-client";
-
-// Game state type
-type GameState = 'waiting' | 'question' | 'reveal' | 'fastest' | 'leaderboard' | 'ended';
-
-// Get timer values from environment variables
-const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || "20");
-const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || "10");
-const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || "10");
+import { toast } from "sonner";
 
 const GamePage = () => {
   const { id } = useParams<{ id: string }>();
-  const [gameState, setGameState] = useState<GameState>('waiting');
+  const navigate = useNavigate();
   const [quizGame, setQuizGame] = useState<any>(null);
-  const [currentQuestion, setCurrentQuestion] = useState<any>(null);
-  const [answers, setAnswers] = useState<any[]>([]);
-  const [fastestAnswers, setFastestAnswers] = useState<any[]>([]);
-  const [leaderboard, setLeaderboard] = useState<any[]>([]);
-  const [correctIndex, setCorrectIndex] = useState<number | null>(null);
-  const [questionIndex, setQuestionIndex] = useState<number>(0);
-  const [totalQuestions, setTotalQuestions] = useState<number>(10);
-  const [timeLeft, setTimeLeft] = useState<number>(QUESTION_TIMER);
-  const timerRef = useRef<NodeJS.Timeout | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+  const [gameStarted, setGameStarted] = useState<boolean>(false);
   const socketRef = useRef<Socket | null>(null);
 
-  // Flag to determine if question card should be visible
-  const isQuestionVisible = gameState !== 'leaderboard' && gameState !== 'ended';
-  
-  // Flag to determine if floating answers should be visible
-  const showFloatingAnswers = gameState === 'question';
-
   useEffect(() => {
-    // Fetch the actual game data
+    // Fetch the game data
     const fetchGameData = async () => {
       try {
         const apiUrl = import.meta.env.VITE_BACKEND_URL || "http://localhost:50515";
@@ -55,7 +31,7 @@ const GamePage = () => {
         const data = await response.json();
         console.log('Fetched game data:', data);
         setQuizGame(data);
-        setTotalQuestions(data.questions.length);
+        setLoading(false);
       } catch (err) {
         console.error('Error fetching game data:', err);
 
@@ -67,7 +43,7 @@ const GamePage = () => {
         };
 
         setQuizGame(mockGame);
-        setTotalQuestions(mockGame.questions.length);
+        setLoading(false);
       }
     };
 
@@ -76,77 +52,21 @@ const GamePage = () => {
     // Initialize socket connection
     socketRef.current = getSocket();
 
-    // Set up socket event listeners
-    socketRef.current.on('newQuestion', (question: any) => {
-      console.log('Received new question:', question);
-      setCurrentQuestion(question);
-      setAnswers([]);  // Clear previous answers
-      setFastestAnswers([]);
-      setCorrectIndex(null);
-      setQuestionIndex(prev => prev + 1);
-      setGameState('question');
-      resetTimer(QUESTION_TIMER);  // Reset timer for new question
+    // Listen for game status updates
+    socketRef.current.on('gameStarted', () => {
+      setGameStarted(true);
+      toast.success("Game started successfully!");
     });
-
-    socketRef.current.on('newAnswers', (newAnswers: any[]) => {
-      console.log('Received new answers:', newAnswers);
-      // Replace answers instead of appending
-      setAnswers(newAnswers.map(answer => ({
-        ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
-        userName: answer.userName || answer.ytChannelId,
-        responseTime: answer.responseTime,
-        answerIndex: answer.answerIndex
-      })));
-    });
-
-    socketRef.current.on('revealAnswer', (data: any) => {
-      console.log('Received correct answer:', data);
-      setCorrectIndex(data.correctChoiceIndex);
-      setGameState('reveal');
-      resetTimer(REVEAL_ANSWER_TIMER);  // Reset timer for answer reveal phase
-    });
-
-    socketRef.current.on('fastestCorrectAnswers', (answers: any[]) => {
-      console.log('Received fastest answers:', answers);
-      setFastestAnswers(answers.map(answer => ({
-        ytProfilePicUrl: answer.ytProfilePicUrl || `https://api.dicebear.com/7.x/avataaars/svg?seed=${answer.ytChannelId || 'default'}`,
-        userName: answer.userName || answer.ytChannelId,
-        responseTime: answer.responseTime,
-        answerIndex: answer.answerIndex
-      })));
-      setGameState('fastest');
-    });
-
-    socketRef.current.on('leaderboard', (scores: any[]) => {
-      console.log('Received leaderboard:', scores);
-      setLeaderboard(scores.map(score => ({
-        ytChannelId: score.ytChannelId,
-        score: score.score,
-        ytProfilePicUrl: score.ytProfilePicUrl,
-        userName: score.userName
-      })));
-      setGameState('leaderboard');
-      resetTimer(LEADERBOARD_TIMER);  // Reset timer for leaderboard phase
-    });
-    
 
     socketRef.current.on('gameEnded', () => {
-      console.log('Game ended');
-      setGameState('ended');
+      setGameStarted(false);
+      toast.info("Game has ended");
     });
 
     return () => {
-      if (timerRef.current) {
-        clearInterval(timerRef.current);
-      }
-
-      // Remove all socket event listeners
+      // Remove socket event listeners
       if (socketRef.current) {
-        socketRef.current.off('newQuestion');
-        socketRef.current.off('newAnswers');
-        socketRef.current.off('revealAnswer');
-        socketRef.current.off('fastestCorrectAnswers');
-        socketRef.current.off('leaderboard');
+        socketRef.current.off('gameStarted');
         socketRef.current.off('gameEnded');
       }
     };
@@ -159,113 +79,99 @@ const GamePage = () => {
     }
   };
 
-  const resetTimer = (seconds: number) => {
-    setTimeLeft(seconds);
-
-    if (timerRef.current) {
-      clearInterval(timerRef.current);
+  const endGame = () => {
+    if (socketRef.current && id) {
+      console.log('Emitting endGame event with gameId:', id);
+      socketRef.current.emit('endGame', { gameId: id });
+      setGameStarted(false);
     }
-
-    timerRef.current = setInterval(() => {
-      setTimeLeft(prev => {
-        if (prev <= 1) {
-          clearInterval(timerRef.current!);
-          return 0;
-        }
-        return prev - 1;
-      });
-    }, 1000);
   };
 
-  // Calculate timer progress
-  const timerProgress = `${Math.max(0, (timeLeft / 
-    (gameState === 'question' ? QUESTION_TIMER : 
-     gameState === 'leaderboard' ? LEADERBOARD_TIMER : REVEAL_ANSWER_TIMER)) * 100)}%`;
+  const goBack = () => {
+    navigate('/');
+  };
 
-  if (!quizGame) {
+  const goToPlayView = () => {
+    navigate('/play');
+  };
+
+  if (loading) {
     return (
       <div className="flex items-center justify-center p-4">
-        <div className="animate-pulse text-2xl font-bold text-white">Loading Game...</div>
+        <div className="animate-pulse text-2xl font-bold text-white">Loading Game Details...</div>
       </div>
     );
   }
 
   return (
-    <div className="container mx-auto py-3 px-3">
-      {gameState === 'waiting' ? (
-        <div className="max-w-xl mx-auto mt-16">
-          <div className="text-center space-y-6">
-            <Card className="bg-gradient-to-r from-green-50 to-blue-50 p-6 shadow-lg">
-              <h1 className="text-3xl font-bold">
-                {quizGame.gameTitle}
-              </h1>
-              <p className="text-xl mt-3">Number of Questions: {totalQuestions}</p>
-              <Button
-                size="lg"
-                onClick={startGame}
-                className="text-xl px-6 py-5 mt-5 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 shadow-lg hover:shadow-purple-500/25 transition-all duration-300"
-              >
-                Start Game
-                <Trophy className="ml-2 h-5 w-5" />
-              </Button>
-            </Card>
-          </div>
-        </div>
-      ) : (
-        <>
-          {/* Floating answers that appear regardless of game state */}
-          <FloatingAnswersPanel 
-            answers={answers} 
-            visible={showFloatingAnswers} 
-          />
-          
-          {(gameState === 'leaderboard' || gameState === 'ended') ? (
-            <div className="flex justify-center w-full mt-4">
-              <LeaderboardPanel
-                leaderboard={leaderboard}
-                gameEnded={gameState === 'ended'}
-              />
+    <div className="container mx-auto py-4 px-3">
+      <Button variant="outline" onClick={goBack} className="mb-4">
+        <ArrowLeft className="mr-2 h-4 w-4" /> Back to Games
+      </Button>
+      
+      <div className="max-w-2xl mx-auto">
+        <Card className="bg-white shadow-lg">
+          <CardHeader>
+            <div className="flex justify-between items-center">
+              <CardTitle className="text-2xl font-bold">{quizGame.gameTitle}</CardTitle>
+              {gameStarted && (
+                <Badge variant="outline" className="bg-green-100 text-green-800 border-green-300">
+                  Game Active
+                </Badge>
+              )}
             </div>
-          ) : (
-            <>
-              <div className="grid grid-cols-1 md:grid-cols-12 gap-2 mt-3">
-                {/* Question section - 8 columns on desktop */}
-                <div className="md:col-span-8">
-                  {/* Timer bar */}
-                  <div className="mb-2">
-                    <GameInfoHeader
-                      timeLeft={timeLeft}
-                      timerProgress={timerProgress}
-                      gameState={gameState}
-                    />
-                  </div>
-                  
-                  {/* Question display */}
-                  <QuestionDisplay
-                    question={currentQuestion}
-                    correctIndex={correctIndex}
-                    gameState={gameState}
-                    visible={isQuestionVisible}
-                    questionIndex={questionIndex}
-                    totalQuestions={totalQuestions}
-                  />
-                </div>
-
-                {/* Right panel - 4 columns on desktop */}
-                <div className="md:col-span-4">
-                  {gameState === 'question' && (
-                    <AnswersPanel answers={answers} />
-                  )}
-
-                  {(gameState === 'reveal' || gameState === 'fastest') && (
-                    <FastestAnswersPanel fastestAnswers={fastestAnswers} />
-                  )}
-                </div>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid gap-4">
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Total Questions:</span>
+                <span>{quizGame.questions?.length || 0}</span>
               </div>
-            </>
-          )}
-        </>
-      )}
+              
+              <div className="flex justify-between items-center">
+                <span className="font-medium">Game ID:</span>
+                <span className="font-mono text-sm bg-gray-100 px-2 py-1 rounded">{quizGame._id}</span>
+              </div>
+              
+              {quizGame.youtubeChannel && (
+                <div className="flex justify-between items-center">
+                  <span className="font-medium">YouTube Channel:</span>
+                  <span>{quizGame.youtubeChannel}</span>
+                </div>
+              )}
+            </div>
+            
+            <div className="flex flex-col sm:flex-row gap-3 pt-4">
+              {!gameStarted ? (
+                <Button 
+                  onClick={startGame} 
+                  className="flex-1 bg-gradient-to-r from-purple-500 to-pink-500 hover:from-purple-600 hover:to-pink-600 text-white"
+                >
+                  <Trophy className="mr-2 h-5 w-5" />
+                  Start Game
+                </Button>
+              ) : (
+                <Button 
+                  onClick={endGame}
+                  variant="destructive"
+                  className="flex-1"
+                >
+                  End Game
+                </Button>
+              )}
+              
+              <Button 
+                onClick={goToPlayView} 
+                variant="outline" 
+                className="flex-1 border-blue-300 hover:bg-blue-50"
+              >
+                <Play className="mr-2 h-5 w-5" />
+                View Player Screen
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
+      </div>
     </div>
   );
 };

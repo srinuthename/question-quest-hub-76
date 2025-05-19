@@ -5,32 +5,48 @@
 
 @layer base {
   :root {
-    --background: 210 40% 96%;
-    --foreground: 222 47% 11%;
+    --background: 0 0% 100%;
+    --foreground: 222.2 84% 4.9%;
     --card: 0 0% 100%;
-    --card-foreground: 222 47% 11%;
+    --card-foreground: 222.2 84% 4.9%;
     --popover: 0 0% 100%;
-    --popover-foreground: 222 47% 11%;
-    --primary: 142 76% 50%;     /* Bright green */
+    --popover-foreground: 222.2 84% 4.9%;
+    --primary: 221.2 83.2% 53.3%;
     --primary-foreground: 210 40% 98%;
-    --secondary: 282 90% 60%;   /* Vivid purple */
-    --secondary-foreground: 210 40% 98%;
-    --muted: 210 40% 90%;
-    --muted-foreground: 215 16% 47%;
-    --accent: 282 90% 60%;      /* Vivid purple */
-    --accent-foreground: 0 0% 98%;
-    --destructive: 0 62.8% 60.6%;
-    --destructive-foreground: 0 0% 98%;
-    --border: 214 32% 91%;
-    --input: 214 32% 91%;
-    --ring: 142 76% 50%;
-    
-    --correct: 142 76% 50%;     /* Success green */
-    --correct-foreground: 0 0% 98%;
-    --incorrect: 0 80% 60%;     /* Error red */
-    --incorrect-foreground: 0 0% 98%;
-    
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 222.2 47.4% 11.2%;
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 40% 96.1%;
+    --accent-foreground: 222.2 47.4% 11.2%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 221.2 83.2% 53.3%;
     --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 222.2 84% 4.9%;
+    --foreground: 210 40% 98%;
+    --card: 222.2 84% 4.9%;
+    --card-foreground: 210 40% 98%;
+    --popover: 222.2 84% 4.9%;
+    --popover-foreground: 210 40% 98%;
+    --primary: 217.2 91.2% 59.8%;
+    --primary-foreground: 222.2 47.4% 11.2%;
+    --secondary: 217.2 32.6% 17.5%;
+    --secondary-foreground: 210 40% 98%;
+    --muted: 217.2 32.6% 17.5%;
+    --muted-foreground: 215 20.2% 65.1%;
+    --accent: 217.2 32.6% 17.5%;
+    --accent-foreground: 210 40% 98%;
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 210 40% 98%;
+    --border: 217.2 32.6% 17.5%;
+    --input: 217.2 32.6% 17.5%;
+    --ring: 224.3 76.5% 48%;
   }
 }
 
@@ -43,202 +59,90 @@
   }
 }
 
-@layer components {
-  /* Quiz container */
-  .quiz-container {
-    @apply max-w-4xl mx-auto p-6 rounded-lg shadow-xl bg-white;
+.choice-btn {
+  @apply w-full px-4 py-2 rounded-md mb-2 flex items-center bg-white border border-gray-200 shadow-sm hover:bg-gray-50;
+}
+
+.choice-btn.correct {
+  @apply bg-green-100 border-green-400 animate-pulse;
+}
+
+.choice-btn.incorrect {
+  @apply opacity-60;
+}
+
+/* Floating answers styling */
+.floating-answers-container {
+  position: fixed;
+  bottom: 20px;
+  right: 20px;
+  width: 260px;
+  max-height: 70vh;
+  display: flex;
+  flex-direction: column-reverse;
+  gap: 8px;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 40;
+}
+
+.floating-answer {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border-radius: 20px;
+  background-color: rgba(255, 255, 255, 0.7);
+  backdrop-filter: blur(5px);
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  width: fit-content;
+  max-width: 100%;
+  margin-left: auto;
+  transform: translateY(0);
+  opacity: 0;
+  animation-fill-mode: forwards;
+}
+
+.answer-username {
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #333;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 150px;
+}
+
+.answer-choice {
+  font-size: 0.7rem;
+  font-weight: 700;
+  background-color: #6366f1;
+  color: white;
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@keyframes floatUp {
+  0% {
+    transform: translateY(30px);
+    opacity: 0;
   }
-  
-  /* ... keep existing code (quiz-container) */
-  
-  .choice-btn {
-    @apply relative overflow-hidden rounded-lg border border-muted text-left p-2 my-1 transition-all duration-300;
+  10% {
+    opacity: 1;
   }
-  
-  .choice-btn:hover {
-    @apply border-primary bg-muted;
-    transform: translateY(-2px);
-    box-shadow: 0 8px 20px -5px rgba(0, 0, 0, 0.1);
+  90% {
+    opacity: 1;
   }
-  
-  .choice-btn.correct {
-    @apply bg-correct text-correct-foreground border-correct;
-    animation: pulse-success 2s infinite;
-  }
-  
-  .choice-btn.incorrect {
-    @apply bg-incorrect text-incorrect-foreground border-incorrect;
-  }
-  
-  /* Floating answers styling */
-  .floating-answers-container {
-    @apply fixed bottom-0 w-full md:w-1/3 right-0 px-2 md:px-4 py-1 pointer-events-none z-30 max-h-64 md:max-h-96 overflow-hidden flex flex-col-reverse;
-  }
-  
-  .floating-answer {
-    @apply flex items-center gap-1 mb-1 py-1 px-2 rounded-full bg-black/60 text-white backdrop-blur-sm 
-           border border-white/20 shadow-lg transform transition-all duration-300 text-sm;
-    max-width: calc(100% - 16px);
-  }
-  
-  .answer-username {
-    @apply font-medium text-xs truncate max-w-[100px] md:max-w-[150px];
-  }
-  
-  .answer-choice {
-    @apply bg-purple-500/70 text-white text-xs font-bold px-1.5 py-0.5 rounded-full ml-1;
-  }
-  
-  /* Animation for floating answers */
-  @keyframes float-up {
-    0% { transform: translateY(20px); opacity: 0; }
-    10% { transform: translateY(0); opacity: 1; }
-    90% { transform: translateY(0); opacity: 1; }
-    100% { transform: translateY(-20px); opacity: 0; }
-  }
-  
-  .animate-float-up {
-    animation: float-up 8s ease-out forwards;
-  }
-  
-  /* Animations */
-  @keyframes fade-in {
-    0% { opacity: 0; transform: translateY(10px); }
-    100% { opacity: 1; transform: translateY(0); }
-  }
-  
-  @keyframes fade-slide-in {
-    0% { opacity: 0; transform: translateX(20px); }
-    100% { opacity: 1; transform: translateX(0); }
-  }
-  
-  @keyframes pulse-success {
-    0% { box-shadow: 0 0 0 0 hsla(142, 76%, 50%, 0.7); }
-    70% { box-shadow: 0 0 0 10px hsla(142, 76%, 50%, 0); }
-    100% { box-shadow: 0 0 0 0 hsla(142, 76%, 50%, 0); }
-  }
-  
-  @keyframes pulse-ring {
-    0% { box-shadow: 0 0 0 0 hsla(282, 90%, 60%, 0.4); }
-    70% { box-shadow: 0 0 0 20px hsla(282, 90%, 60%, 0); }
-    100% { box-shadow: 0 0 0 0 hsla(282, 90%, 60%, 0); }
-  }
-  
-  @keyframes marquee {
-    0% { transform: translateX(0); }
-    100% { transform: translateX(-50%); }
-  }
-  
-  @keyframes glitter {
-    0%, 100% { 
-      background-position: -500% 0;
-      opacity: 0.8;
-    }
-    50% { 
-      background-position: 500% 0;
-      opacity: 1;
-    }
-  }
-  
-  @keyframes gradient {
-    0% { background-position: 0% 50%; }
-    50% { background-position: 100% 50%; }
-    100% { background-position: 0% 50%; }
-  }
-  
-  @keyframes float {
-    0%, 100% { transform: translateY(0); }
-    50% { transform: translateY(-10px); }
-  }
-  
-  @keyframes scale-in {
-    0% { transform: scale(0.9); opacity: 0; }
-    100% { transform: scale(1); opacity: 1; }
-  }
-  
-  .animate-fade-in {
-    animation: fade-in 0.5s ease-out forwards;
-  }
-  
-  .animate-fade-slide-in {
-    animation: fade-slide-in 0.5s ease-out forwards;
-  }
-  
-  .animate-marquee {
-    animation: marquee 15s linear infinite;
-  }
-  
-  .animate-glitter {
-    background: linear-gradient(45deg, #ff00ea, #00fffc, #ff00ea);
-    background-size: 200% 100%;
-    animation: glitter 3s linear infinite;
-  }
-  
-  .animate-float {
-    animation: float 3s ease-in-out infinite;
-  }
-  
-  .animate-scale-in {
-    animation: scale-in 0.5s ease-out forwards;
-  }
-  
-  /* Timer animation */
-  .timer {
-    @apply relative flex items-center justify-center text-xl font-bold;
-  }
-  
-  .timer-ring {
-    @apply absolute inset-0 rounded-full;
-    background: conic-gradient(
-      from 0deg at 50% 50%,
-      hsl(var(--secondary)) var(--progress),
-      hsl(var(--primary)) var(--progress),
-      transparent calc(var(--progress) + 0.5%)
-    );
-    mask: radial-gradient(transparent 55%, black 56%);
-    --progress: 0%;
-    animation: pulse-ring 2s ease-in-out infinite;
-  }
-  
-  /* Answer cards */
-  .answer-card {
-    @apply flex items-center gap-1 p-1.5 rounded-lg bg-muted mb-0.5 animate-fade-slide-in opacity-0;
-    animation-fill-mode: forwards;
-  }
-  
-  .answer-card:nth-child(1) { animation-delay: 0s; }
-  .answer-card:nth-child(2) { animation-delay: 0.1s; }
-  .answer-card:nth-child(3) { animation-delay: 0.2s; }
-  .answer-card:nth-child(4) { animation-delay: 0.3s; }
-  .answer-card:nth-child(5) { animation-delay: 0.4s; }
-  
-  .avatar-sm {
-    @apply w-8 h-8 rounded-full overflow-hidden flex items-center justify-center bg-background;
-  }
-  
-  /* Glass card effect */
-  .glass-card {
-    @apply backdrop-blur-sm bg-white/10 border border-white/20;
-    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Question transitions */
-  .question-enter {
-    @apply transition-all duration-500 ease-out opacity-0 transform translate-y-4;
-  }
-  
-  .question-enter-active {
-    @apply opacity-100 transform translate-y-0;
-  }
-  
-  /* Card hover effects */
-  .hover-lift {
-    @apply transition-all duration-300;
-  }
-  
-  .hover-lift:hover {
-    transform: translateY(-5px);
-    box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.1);
+  100% {
+    transform: translateY(-8px);
+    opacity: 0.8;
   }
 }
 
+.animate-float-up {
+  animation: floatUp var(--float-duration, 8000ms) ease-out;
+}

@@ -5,6 +5,7 @@ import { TooltipProvider } from "@/components/ui/tooltip";
 import { AnimatePresence, motion } from "framer-motion";
 import Index from "./pages/Index";
 import GamePage from "./pages/GamePage";
+import PlayPage from "./pages/PlayPage";
 import NotFound from "./pages/NotFound";
 import Header from "./components/Header";
 import Footer from "./components/Footer";
@@ -35,7 +36,7 @@ const AnimatedRoutes = () => {
             <Index />
           </motion.div>
         } />
-        <Route path="/game/:id" element={
+        <Route path="/admin/game/:id" element={
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -43,6 +44,16 @@ const AnimatedRoutes = () => {
             transition={{ duration: 0.4 }}
           >
             <GamePage />
+          </motion.div>
+        } />
+        <Route path="/play" element={
+          <motion.div
+            initial={{ opacity: 0, y: 20 }}
+            animate={{ opacity: 1, y: 0 }}
+            exit={{ opacity: 0 }}
+            transition={{ duration: 0.4 }}
+          >
+            <PlayPage />
           </motion.div>
         } />
         <Route path="*" element={<NotFound />} />

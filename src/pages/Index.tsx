@@ -3,7 +3,7 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { useNavigate } from "react-router-dom";
-import { ArrowRight, Calendar, HelpCircle } from "lucide-react";
+import { ArrowRight, Calendar, HelpCircle, Play } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
 
@@ -74,7 +74,11 @@ const Index = () => {
   }, []);
   
   const handleSelectGame = (gameId: string) => {
-    navigate(`/game/${gameId}`);
+    navigate(`/admin/game/${gameId}`);
+  };
+  
+  const handleGoToPlay = () => {
+    navigate('/play');
   };
   
   if (loading) {
@@ -123,7 +127,18 @@ const Index = () => {
               </div>
             )}
             
-            <h2 className="text-2xl font-semibold mb-4 text-center">Available Quiz Games</h2>
+            <div className="flex justify-between items-center mb-4">
+              <h2 className="text-2xl font-semibold text-center">Admin Panel - Game Selection</h2>
+              <Button 
+                variant="outline" 
+                onClick={handleGoToPlay}
+                className="bg-gradient-to-r from-green-100 to-blue-100 hover:from-green-500 hover:to-blue-500 hover:text-white"
+              >
+                <Play className="w-4 h-4 mr-2" />
+                Go to Player View
+              </Button>
+            </div>
+            
             <div className="grid gap-2">
               {quizGames.map((game) => (
                 <Button
