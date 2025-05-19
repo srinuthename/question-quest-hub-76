@@ -1,5 +1,3 @@
-
-import { Card, CardContent } from "@/components/ui/card";
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -26,7 +24,7 @@ interface QuestionDisplayProps {
 const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionIndex, totalQuestions }: QuestionDisplayProps) => {
   const isMobile = useIsMobile();
   const [showImage, setShowImage] = useState<boolean>(true);
-  
+
   // Timer to switch between image and options on mobile
   useEffect(() => {
     // Only activate the alternating display if we're on mobile and have an image
@@ -34,16 +32,16 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
       const interval = setInterval(() => {
         setShowImage(prev => !prev);
       }, DISPLAY_SWITCH_INTERVAL);
-      
+
       return () => clearInterval(interval);
     }
-    
+
     // If not mobile or no image, always show both
     if (!isMobile || !question?.questionImageUrl) {
       setShowImage(true);
     }
   }, [isMobile, question, gameState]);
-  
+
   if (!visible) {
     return null;
   }
@@ -58,16 +56,16 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
     );
   }
 
-  const questionWithNumber = questionIndex && totalQuestions 
+  const questionWithNumber = questionIndex && totalQuestions
     ? `${questionIndex}/${totalQuestions} ${question.questionText}`
     : question.questionText;
-    
+
   // Helper function to determine choice class
   const getChoiceClass = (choiceIndex: number) => {
     if (correctIndex === null || gameState === 'question') {
       return '';
     }
-    
+
     if (choiceIndex === correctIndex) {
       return 'correct';
     } else {
@@ -76,35 +74,35 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
   };
 
   return (
-    <div className={`${isMobile ? 'h-[50vh] mb-2 overflow-hidden' : 'h-full'} bg-gradient-to-br from-purple-100/70 to-green-100/70 rounded-lg shadow-md`}>
+    <div className={`${isMobile ? 'h-[50vh] mb-2 overflow-hidden' : 'h-full'} rounded-lg shadow-md`}>
       <div className={`${isMobile ? 'p-2' : 'p-4'} h-full`}>
-        <h2 className={`${isMobile ? 'text-base' : 'text-3xl sm:text-4xl'} font-extrabold mb-1 text-purple-900`}>
+        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl sm:text-4xl'} font-extrabold mb-1 text-white`}>
           {questionWithNumber}
         </h2>
-        
+
         {question.questionImageUrl ? (
           isMobile ? (
             // Mobile layout with alternating content in a fixed height container
             <div className="grid grid-cols-1 gap-1 h-[calc(100%-2rem)]">
               {/* Image section with fade transition */}
-              <div 
+              <div
                 className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${showImage ? 'opacity-100 h-full' : 'opacity-0 h-0 overflow-hidden'}`}
                 style={{
                   transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`,
                   height: showImage ? '100%' : '0'
                 }}
               >
-                <div className="flex justify-center h-full">
+                <div className="flex h-full">
                   <img
                     src={question.questionImageUrl}
                     alt="Question"
-                    className="w-full h-full object-contain"
+                    className="w-full h-full object-contain rounded-lg "
                   />
                 </div>
               </div>
-              
+
               {/* Options section with fade transition */}
-              <div 
+              <div
                 className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${!showImage ? 'opacity-100 h-full' : 'opacity-0 h-0 overflow-hidden'}`}
                 style={{
                   transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`,
@@ -120,7 +118,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                       <span className={`text-lg font-extrabold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
-                      <span className="text-sm font-bold">{choice.choiceText}</span>
+                      <span className="text-xl font-bold">{choice.choiceText}</span>
                     </div>
                   </div>
                 ))}
@@ -129,14 +127,14 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
           ) : (
             // Desktop layout with side-by-side content
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-              <div className="flex justify-center items-center">
+              <div className="flex ">
                 <img
                   src={question.questionImageUrl}
                   alt="Question"
-                  className="w-full max-h-[60vh] object-contain rounded-lg shadow-md"
+                  className="w-full max-h-[60vh] object-contain rounded-lg "
                 />
               </div>
-              <div className="space-y-4">
+              <div className="flex flex-col  space-y-4">
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
