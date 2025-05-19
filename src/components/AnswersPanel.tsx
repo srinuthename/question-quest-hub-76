@@ -26,13 +26,13 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
   }, [answers]);
 
   return (
-    <div className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md rounded-lg">
+    <div className="h-full overflow-hidden flex flex-col  shadow-md rounded-lg">
       <div className={`${isMobile ? 'p-1' : 'pb-0 pt-3 px-4'}`}>
-        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold`}>Live Answers</h3>
+        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white`}>Live Answers</h3>
       </div>
       <div className={`flex-grow overflow-y-auto ${isMobile ? 'px-1 pt-1' : 'px-3 pt-2'}`}>
         {answers.length === 0 ? (
-          <div className="text-center py-2 text-gray-600 font-bold text-sm">
+          <div className="text-center py-2 text-white font-bold text-sm">
             Waiting for answers...
           </div>
         ) : (
