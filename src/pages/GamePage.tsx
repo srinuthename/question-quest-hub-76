@@ -7,7 +7,7 @@ import { socket, emitEvent } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
 import GameInfoHeader from "@/components/GameInfoHeader";
-import { Check, Clock, Play, Eye, AlertTriangle } from "lucide-react";
+import { Check, Clock, Play, Eye, AlertTriangle, StopCircle } from "lucide-react";
 import { toast } from "sonner";
 
 const GamePage = () => {
@@ -17,6 +17,7 @@ const GamePage = () => {
   const [error, setError] = useState<string | null>(null);
   const [gameActive, setGameActive] = useState<boolean>(false);
   const [lastStatusCheck, setLastStatusCheck] = useState<Date>(new Date());
+  const [stoppingGame, setStoppingGame] = useState<boolean>(false);
   
   // Game status monitoring interval (5 minutes = 300000 ms)
   const STATUS_CHECK_INTERVAL = 300000;
@@ -107,6 +108,10 @@ const GamePage = () => {
     toast.info("Game has ended", {
       description: "All questions have been answered."
     });
+    // Refresh game data
+    if (id) {
+      checkGameStatus();
+    }
   };
   
   // Handler for starting the game
@@ -131,6 +136,44 @@ const GamePage = () => {
     toast.success("Player view opened in new window");
   };
   
+  // Handler for stopping the game
+  const handleStopGame = async () => {
+    if (!id) return;
+    
+    try {
+      setStoppingGame(true);
+      
+      // Call the API endpoint to stop the game
+      const response = await fetch(`http://localhost:50515/api/quizgames/${id}/end`, {
+        method: "POST",
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      });
+      
+      if (!response.ok) {
+        throw new Error(`Failed to stop game: ${response.statusText}`);
+      }
+      
+      // Update local state
+      setGameActive(false);
+      toast.success("Game stopped", {
+        description: "The game has been stopped successfully."
+      });
+      
+      // Refresh game data
+      checkGameStatus();
+      
+    } catch (error) {
+      console.error("Error stopping game:", error);
+      toast.error("Failed to stop game", {
+        description: "Please try again."
+      });
+    } finally {
+      setStoppingGame(false);
+    }
+  };
+
   if (loading) {
     return (
       <div className="container mx-auto py-8">
@@ -204,6 +247,17 @@ const GamePage = () => {
                   <Play size={18} />
                   {gameActive ? "Game Started" : "Start Game"}
                 </Button>
+                
+                <Button
+                  onClick={handleStopGame}
+                  disabled={!gameActive || stoppingGame}
+                  variant="destructive"
+                  className="flex items-center gap-2"
+                >
+                  <StopCircle size={18} />
+                  {stoppingGame ? "Stopping..." : "Stop Game"}
+                </Button>
+                
                 <Button
                   onClick={handleOpenPlayerView}
                   variant="outline"
@@ -244,7 +298,7 @@ const GamePage = () => {
               <CardTitle className="text-white">Recent Answers</CardTitle>
             </CardHeader>
             <CardContent>
-              <AnswersPanel />
+              <AnswersPanel answers={[]} />
             </CardContent>
           </Card>
         </div>

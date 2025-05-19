@@ -51,3 +51,24 @@ export const emitEvent = (eventName: string, data: any) => {
     return false;
   }
 };
+
+// Function to stop a game
+export const stopGame = async (gameId: string) => {
+  try {
+    const response = await fetch(`${getBackendUrl()}/api/quizgames/${gameId}/end`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    });
+    
+    if (!response.ok) {
+      throw new Error(`Failed to stop game: ${response.statusText}`);
+    }
+    
+    return await response.json();
+  } catch (error) {
+    console.error('Error stopping game:', error);
+    throw error;
+  }
+};
