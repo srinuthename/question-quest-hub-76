@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
@@ -148,6 +148,19 @@ const PlayPage = () => {
     };
   }, [gameState]);
 
+  // Clear answers when new question appears or answer is revealed
+  useEffect(() => {
+    if (gameState === 'question') {
+      // Clear answers when a new question starts
+      setAnswers([]);
+    }
+    
+    if (gameState === 'answer') {
+      // Clear answers after revealing the correct answer
+      setAnswers([]);
+    }
+  }, [gameState]);
+
   // Check if final standings should still be displayed
   useEffect(() => {
     if (gameState === 'ended' && gameEndTime) {
@@ -185,7 +198,7 @@ const PlayPage = () => {
 
       case 'question':
         return (
-          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-4`}>
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-2`}>
             <div className={`${isMobile ? 'w-full' : 'w-2/3'}`}>
               <div className="mb-1">
                 <CountdownTimer
@@ -204,7 +217,7 @@ const PlayPage = () => {
               />
             </div>
 
-            <div className={`${isMobile ? 'w-full' : 'w-1/3'}`}>
+            <div className={`${isMobile ? 'w-full h-[45vh]' : 'w-1/3'}`}>
               <AnswersPanel answers={answers} />
             </div>
           </div>
@@ -212,7 +225,7 @@ const PlayPage = () => {
 
       case 'answer':
         return (
-          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-4`}>
+          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-2`}>
             <div className={`${isMobile ? 'w-full' : 'w-2/3'}`}>
               <div className="mb-1">
                 <CountdownTimer
@@ -231,7 +244,7 @@ const PlayPage = () => {
               />
             </div>
 
-            <div className={`${isMobile ? 'w-full' : 'w-1/3'}`}>
+            <div className={`${isMobile ? 'w-full h-[45vh]' : 'w-1/3'}`}>
               <FastestAnswersPanel
                 fastestAnswers={fastestAnswers}
                 visible={true}

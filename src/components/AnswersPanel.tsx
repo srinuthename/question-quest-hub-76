@@ -1,7 +1,7 @@
+
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { useEffect, useRef } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card"; // Import Card components
 
 interface AnswersPanelProps {
   answers: {
@@ -26,24 +26,24 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
   }, [answers]);
 
   return (
-    <Card className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md">
-      <CardHeader className={`${isMobile ? 'p-1' : 'pb-0 pt-3 px-4'}`}>
-        <CardTitle className={`${isMobile ? 'text-lg' : 'text-2xl'} font-extrabold`}>Live Answers</CardTitle>
-      </CardHeader>
-      <CardContent className={`flex-grow overflow-y-auto ${isMobile ? 'space-y-1 px-1 pt-1' : 'space-y-2 px-3 pt-2'}`}>
+    <div className="h-full overflow-hidden flex flex-col bg-gradient-to-br from-green-50 to-purple-50 shadow-md rounded-lg">
+      <div className={`${isMobile ? 'p-1' : 'pb-0 pt-3 px-4'}`}>
+        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold`}>Live Answers</h3>
+      </div>
+      <div className={`flex-grow overflow-y-auto ${isMobile ? 'px-1 pt-1' : 'px-3 pt-2'}`}>
         {answers.length === 0 ? (
-          <div className="text-center py-4 text-white font-bold text-lg">
+          <div className="text-center py-2 text-gray-600 font-bold text-sm">
             Waiting for answers...
           </div>
         ) : (
-          <div className={`space-y-${isMobile ? '1' : '2'}`}>
+          <div className={`space-y-${isMobile ? '0.5' : '2'}`}>
             {answers.map((answer, index) => (
               <div
                 key={index}
                 className="answer-card bg-white/80 animate-fade-in"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <Avatar className={`${isMobile ? 'w-7 h-7' : 'w-12 h-12'}`}>
+                <Avatar className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'}`}>
                   <AvatarImage
                     src={answer.ytProfilePicUrl}
                     alt={answer.userName}
@@ -51,10 +51,10 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
                   <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
-                  <div className={`${isMobile ? 'text-sm' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
+                  <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
                   <div className="flex gap-1 items-center">
                     {answer.answerIndex !== undefined && (
-                      <span className={`${isMobile ? 'text-xs px-2 py-0.5' : 'text-base px-3 py-1'} font-bold bg-purple-100 rounded-full`}>
+                      <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-purple-100 rounded-full`}>
                         {String.fromCharCode(65 + answer.answerIndex)}
                       </span>
                     )}
@@ -67,17 +67,16 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
             ))}
           </div>
         )}
-      </CardContent>
+      </div>
 
-      <style>
-        {`
+      <style>{`
         .answer-card {
           display: flex;
           align-items: center;
-          padding: ${isMobile ? '0.35rem' : '0.75rem'};
+          padding: ${isMobile ? '0.25rem' : '0.75rem'};
           border-radius: 0.5rem;
-          gap: ${isMobile ? '0.4rem' : '0.75rem'};
-          margin-bottom: ${isMobile ? '0.25rem' : '0.5rem'};
+          gap: ${isMobile ? '0.3rem' : '0.75rem'};
+          margin-bottom: ${isMobile ? '0.15rem' : '0.5rem'};
           animation: fade-in 0.3s ease-out forwards;
           border: 1px solid rgba(255, 255, 255, 0.2);
           box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
@@ -87,9 +86,8 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
           from { opacity: 0; transform: translateY(5px); }
           to { opacity: 1; transform: translateY(0); }
         }
-        `}
-      </style>
-    </Card>
+      `}</style>
+    </div>
   );
 };
 

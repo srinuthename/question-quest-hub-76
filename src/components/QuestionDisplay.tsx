@@ -4,8 +4,8 @@ import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 // Define timing variables from environment variables
-const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '4000'); // Time to switch between image and options (4 seconds)
-const DISPLAY_TRANSITION_DURATION = parseInt(import.meta.env.VITE_DISPLAY_TRANSITION_DURATION || '500'); // Duration of the fade transition (0.5 seconds)
+const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '3000'); // Time to switch between image and options
+const DISPLAY_TRANSITION_DURATION = parseInt(import.meta.env.VITE_DISPLAY_TRANSITION_DURATION || '500'); // Duration of the fade transition
 
 interface QuestionDisplayProps {
   question: {
@@ -76,37 +76,39 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
   };
 
   return (
-    <Card className="bg-gradient-to-br from-purple-100/70 to-green-100/70 border-purple-200 shadow-md h-full overflow-hidden">
-      <CardContent className={`${isMobile ? 'p-2' : 'p-4'}`}>
-        <h2 className={`${isMobile ? 'text-lg' : 'text-3xl sm:text-4xl'} font-extrabold mb-2 text-purple-900`}>
+    <div className={`${isMobile ? 'h-[50vh] mb-2 overflow-hidden' : 'h-full'} bg-gradient-to-br from-purple-100/70 to-green-100/70 rounded-lg shadow-md`}>
+      <div className={`${isMobile ? 'p-2' : 'p-4'} h-full`}>
+        <h2 className={`${isMobile ? 'text-base' : 'text-3xl sm:text-4xl'} font-extrabold mb-1 text-purple-900`}>
           {questionWithNumber}
         </h2>
         
         {question.questionImageUrl ? (
           isMobile ? (
-            // Mobile layout with alternating content
-            <div className="grid grid-cols-1 gap-2">
+            // Mobile layout with alternating content in a fixed height container
+            <div className="grid grid-cols-1 gap-1 h-[calc(100%-2rem)]">
               {/* Image section with fade transition */}
               <div 
-                className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${showImage ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}
+                className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${showImage ? 'opacity-100 h-full' : 'opacity-0 h-0 overflow-hidden'}`}
                 style={{
-                  transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`
+                  transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`,
+                  height: showImage ? '100%' : '0'
                 }}
               >
-                <div className="flex justify-center">
+                <div className="flex justify-center h-full">
                   <img
                     src={question.questionImageUrl}
                     alt="Question"
-                    className="w-full max-h-[25vh] object-contain rounded-lg shadow-md"
+                    className="w-full h-full object-contain"
                   />
                 </div>
               </div>
               
               {/* Options section with fade transition */}
               <div 
-                className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${!showImage ? 'opacity-100' : 'opacity-0 h-0 overflow-hidden'}`}
+                className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${!showImage ? 'opacity-100 h-full' : 'opacity-0 h-0 overflow-hidden'}`}
                 style={{
-                  transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`
+                  transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`,
+                  height: !showImage ? '100%' : '0'
                 }}
               >
                 {question.choices.map((choice) => (
@@ -153,7 +155,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
           )
         ) : (
           // No image layout
-          <div className={`${isMobile ? 'space-y-1 pt-1' : 'space-y-4 pt-2'}`}>
+          <div className={`${isMobile ? 'space-y-1 pt-1 h-[calc(100%-2rem)]' : 'space-y-4 pt-2'}`}>
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
@@ -169,8 +171,8 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             ))}
           </div>
         )}
-      </CardContent>
-    </Card>
+      </div>
+    </div>
   );
 };
 
