@@ -10,6 +10,9 @@ import GameInfoHeader from "@/components/GameInfoHeader";
 import { Check, Clock, Play, Eye, AlertTriangle, StopCircle } from "lucide-react";
 import { toast } from "sonner";
 
+// Get API URL from environment variables
+const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:50515';
+
 const GamePage = () => {
   const { id } = useParams<{ id: string }>();
   const [gameData, setGameData] = useState<any>(null);
@@ -26,7 +29,7 @@ const GamePage = () => {
     // Fetch game data
     const fetchGameData = async () => {
       try {
-        const response = await fetch(`http://localhost:50515/api/quizgames/${id}`);
+        const response = await fetch(`${API_URL}/api/quizgames/${id}`);
         if (!response.ok) {
           throw new Error(`Failed to fetch game data: ${response.statusText}`);
         }
@@ -76,7 +79,7 @@ const GamePage = () => {
     if (!id || !gameActive) return;
     
     try {
-      const response = await fetch(`http://localhost:50515/api/quizgames/${id}`);
+      const response = await fetch(`${API_URL}/api/quizgames/${id}`);
       if (!response.ok) {
         throw new Error(`Failed to check game status: ${response.statusText}`);
       }
@@ -144,7 +147,7 @@ const GamePage = () => {
       setStoppingGame(true);
       
       // Call the API endpoint to stop the game
-      const response = await fetch(`http://localhost:50515/api/quizgames/${id}/end`, {
+      const response = await fetch(`${API_URL}/api/quizgames/${id}/end`, {
         method: "POST",
         headers: {
           'Content-Type': 'application/json'
@@ -177,7 +180,7 @@ const GamePage = () => {
   if (loading) {
     return (
       <div className="container mx-auto py-8">
-        <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl">
+        <Card className="glass-card border-none shadow-xl">
           <CardContent className="flex items-center justify-center p-8">
             <div className="text-center">
               <Clock className="w-12 h-12 animate-pulse mx-auto mb-4 text-white" />
@@ -192,12 +195,17 @@ const GamePage = () => {
   if (error) {
     return (
       <div className="container mx-auto py-8">
-        <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl">
+        <Card className="glass-card border-none shadow-xl">
           <CardContent className="flex items-center justify-center p-8">
             <div className="text-center">
               <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-red-500" />
               <p className="text-xl text-white mb-4">{error}</p>
-              <Button onClick={() => window.location.reload()}>Try Again</Button>
+              <Button 
+                onClick={() => window.location.reload()} 
+                className="bg-gradient-to-r from-[#008793] to-[#00bf72] hover:opacity-90 transition-all border-none shadow-lg"
+              >
+                Try Again
+              </Button>
             </div>
           </CardContent>
         </Card>
@@ -217,7 +225,7 @@ const GamePage = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
         <div className="lg:col-span-2">
-          <Card className="bg-white/10 backdrop-blur-sm border-none shadow-xl mb-6">
+          <Card className="glass-card border-none shadow-xl mb-6">
             <CardHeader>
               <CardTitle className="flex justify-between items-center">
                 <span className="text-white">Game Controls</span>
@@ -226,11 +234,11 @@ const GamePage = () => {
                     Last checked: {new Date(lastStatusCheck).toLocaleTimeString()}
                   </span>
                   {gameActive ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#00bf72] to-[#a8eb12] text-white shadow-md">
                       <Check className="w-3 h-3 mr-1" /> Active
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#051937] to-[#004d7a] text-white">
                       Inactive
                     </span>
                   )}
@@ -242,7 +250,7 @@ const GamePage = () => {
                 <Button 
                   onClick={handleStartGame} 
                   disabled={gameActive}
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#008793] to-[#00bf72] hover:opacity-90 transition-all border-none shadow-lg text-white"
                 >
                   <Play size={18} />
                   {gameActive ? "Game Started" : "Start Game"}
@@ -252,7 +260,7 @@ const GamePage = () => {
                   onClick={handleStopGame}
                   disabled={!gameActive || stoppingGame}
                   variant="destructive"
-                  className="flex items-center gap-2"
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#990000] to-[#ff4d4d] hover:opacity-90 transition-all border-none shadow-lg text-white"
                 >
                   <StopCircle size={18} />
                   {stoppingGame ? "Stopping..." : "Stop Game"}
@@ -260,8 +268,7 @@ const GamePage = () => {
                 
                 <Button
                   onClick={handleOpenPlayerView}
-                  variant="outline"
-                  className="flex items-center gap-2 bg-white/20 text-white hover:bg-white/30"
+                  className="flex items-center gap-2 bg-gradient-to-r from-[#051937] to-[#004d7a] hover:opacity-90 transition-all border-none shadow-lg text-white"
                 >
                   <Eye size={18} />
                   Open Player View
@@ -270,7 +277,7 @@ const GamePage = () => {
               
               <div className="mt-4">
                 <h3 className="font-medium text-white mb-2">Game Information</h3>
-                <div className="bg-white/20 rounded-md p-4 text-white space-y-2">
+                <div className="glass-card-dark rounded-md p-4 text-white space-y-2">
                   <p><strong>Game Title:</strong> {gameData?.gameTitle}</p>
                   <p><strong>Total Questions:</strong> {gameData?.questions?.length}</p>
                   <p><strong>Current Question:</strong> {gameData?.activeQuestionIndex !== undefined ? gameData.activeQuestionIndex + 1 : "Not started"}</p>

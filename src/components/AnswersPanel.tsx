@@ -26,13 +26,13 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
   }, [answers]);
 
   return (
-    <div className="h-full overflow-hidden flex flex-col  shadow-md rounded-lg">
+    <div className="h-full overflow-hidden flex flex-col shadow-md rounded-lg glass-card">
       <div className={`${isMobile ? 'p-1' : 'pb-0 pt-3 px-4'}`}>
-        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white`}>Live Answers</h3>
+        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white drop-shadow-md`}>Live Answers</h3>
       </div>
       <div className={`flex-grow overflow-y-auto ${isMobile ? 'px-1 pt-1' : 'px-3 pt-2'}`}>
         {answers.length === 0 ? (
-          <div className="text-center py-2 text-white font-bold text-sm">
+          <div className="text-center py-2 text-white font-bold text-sm glass-card-dark rounded-md p-2">
             Waiting for answers...
           </div>
         ) : (
@@ -40,21 +40,21 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
             {answers.map((answer, index) => (
               <div
                 key={index}
-                className="answer-card bg-white/80 animate-fade-in"
+                className="answer-card bg-gradient-to-r from-white/80 to-white/70 animate-fade-in"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <Avatar className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'}`}>
+                <Avatar className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} avatar-glow`}>
                   <AvatarImage
                     src={answer.ytProfilePicUrl}
                     alt={answer.userName}
                   />
-                  <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-gradient-to-r from-[#004d7a] to-[#008793] text-white">{answer.userName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
                   <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
                   <div className="flex gap-1 items-center">
                     {answer.answerIndex !== undefined && (
-                      <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-purple-100 rounded-full`}>
+                      <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-gradient-to-r from-[#008793] to-[#00bf72] text-white rounded-full shadow-sm`}>
                         {String.fromCharCode(65 + answer.answerIndex)}
                       </span>
                     )}

@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
@@ -14,6 +15,7 @@ const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '30');
 const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || '10');
 const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || '10');
 const FINAL_STANDINGS_DURATION = parseInt(import.meta.env.VITE_FINAL_STANDINGS_DURATION || '1200');
+const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '3000');
 
 const PlayPage = () => {
   const [gameState, setGameState] = useState<'waiting' | 'question' | 'answer' | 'leaderboard' | 'ended'>('waiting');
@@ -189,7 +191,7 @@ const PlayPage = () => {
       case 'waiting':
         return (
           <div className="flex items-center justify-center h-full min-h-[80vh]">
-            <div className="text-center">
+            <div className="text-center glass-card p-8 rounded-xl shadow-2xl">
               <h2 className="text-4xl font-bold text-white mb-4">Waiting for quiz to start</h2>
               <p className="text-2xl text-white/90 font-semibold">The quiz host will start the game soon...</p>
             </div>
@@ -298,7 +300,9 @@ const PlayPage = () => {
           renderContent()
         ) : (
           <div className="flex items-center justify-center h-full">
-            <h2 className="text-3xl font-bold text-white">Connecting...</h2>
+            <div className="glass-card p-8 rounded-xl">
+              <h2 className="text-3xl font-bold text-white">Connecting...</h2>
+            </div>
           </div>
         )}
       </motion.div>

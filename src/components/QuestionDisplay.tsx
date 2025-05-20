@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
@@ -74,9 +75,9 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
   };
 
   return (
-    <div className={`${isMobile ? 'h-[50vh] mb-2 overflow-hidden' : 'h-full'} rounded-lg shadow-md`}>
+    <div className={`${isMobile ? 'h-[50vh] mb-2 overflow-hidden' : 'h-full'} rounded-lg shadow-md glass-card`}>
       <div className={`${isMobile ? 'p-2' : 'p-4'} h-full`}>
-        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl sm:text-4xl'} font-extrabold mb-1 text-white`}>
+        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl sm:text-4xl'} font-extrabold mb-1 text-white drop-shadow-md`}>
           {questionWithNumber}
         </h2>
 
@@ -96,7 +97,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                   <img
                     src={question.questionImageUrl}
                     alt="Question"
-                    className="w-full h-full object-contain rounded-lg "
+                    className="w-full h-full object-contain rounded-lg shadow-lg"
                   />
                 </div>
               </div>
@@ -112,7 +113,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn-mobile ${getChoiceClass(choice.choiceIndex)}`}
+                    className={`choice-btn-mobile ${getChoiceClass(choice.choiceIndex)} gradient-border`}
                   >
                     <div className="flex items-center">
                       <span className={`text-lg font-extrabold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
@@ -127,18 +128,18 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
           ) : (
             // Desktop layout with side-by-side content
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-              <div className="flex ">
+              <div className="flex">
                 <img
                   src={question.questionImageUrl}
                   alt="Question"
-                  className="w-full max-h-[60vh] object-contain rounded-lg "
+                  className="w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
                 />
               </div>
-              <div className="flex flex-col  space-y-4">
+              <div className="flex flex-col space-y-4">
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
+                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)} gradient-border`}
                   >
                     <div className="flex items-center">
                       <span className={`text-3xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
@@ -157,7 +158,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`${isMobile ? 'choice-btn-mobile' : 'choice-btn'} ${getChoiceClass(choice.choiceIndex)}`}
+                className={`${isMobile ? 'choice-btn-mobile' : 'choice-btn'} ${getChoiceClass(choice.choiceIndex)} gradient-border`}
               >
                 <div className="flex items-center">
                   <span className={`${isMobile ? 'text-lg mr-2' : 'text-3xl mr-3'} font-extrabold ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
