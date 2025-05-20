@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
@@ -87,8 +88,8 @@ const PlayPage = () => {
       setGameState('answer');
       setTimerSeconds(REVEAL_ANSWER_TIMER);
 
-      // Clear the answers after revealing the correct answer
-      setAnswers([]);
+      // Don't clear answers anymore, they're stored in QuestionDisplay component
+      // setAnswers([]);
 
       // Show toast for answer reveal
       toast.success("Answer revealed!", {
@@ -147,19 +148,6 @@ const PlayPage = () => {
       socket.off('leaderboard', onLeaderboard);
       socket.off('gameEnded', onGameEnded);
     };
-  }, [gameState]);
-
-  // Clear answers when new question appears or answer is revealed
-  useEffect(() => {
-    if (gameState === 'question') {
-      // Clear answers when a new question starts
-      setAnswers([]);
-    }
-    
-    if (gameState === 'answer') {
-      // Clear answers after revealing the correct answer
-      setAnswers([]);
-    }
   }, [gameState]);
 
   // Check if final standings should still be displayed
@@ -231,25 +219,49 @@ const PlayPage = () => {
                 gameState={gameState}
               />
             </div>
-            <div className="grid grid-cols-3 gap-4 h-full">
-              <div className="col-span-2">
-                <QuestionDisplay
-                  question={currentQuestion}
-                  correctIndex={correctAnswerIndex}
-                  gameState={gameState}
-                  visible={true}
-                  questionIndex={questionIndex + 1}
-                  totalQuestions={totalQuestions}
-                  answers={answers}
-                />
+            {isMobile ? (
+              // Mobile layout: Stack components vertically
+              <div className="flex flex-col gap-4 h-full">
+                <div className="flex-grow">
+                  <QuestionDisplay
+                    question={currentQuestion}
+                    correctIndex={correctAnswerIndex}
+                    gameState={gameState}
+                    visible={true}
+                    questionIndex={questionIndex + 1}
+                    totalQuestions={totalQuestions}
+                    answers={answers}
+                  />
+                </div>
+                <div>
+                  <FastestAnswersPanel
+                    fastestAnswers={fastestAnswers}
+                    visible={true}
+                  />
+                </div>
               </div>
-              <div>
-                <FastestAnswersPanel
-                  fastestAnswers={fastestAnswers}
-                  visible={true}
-                />
+            ) : (
+              // Desktop layout: Side-by-side components
+              <div className="grid grid-cols-2 gap-4 h-full">
+                <div>
+                  <QuestionDisplay
+                    question={currentQuestion}
+                    correctIndex={correctAnswerIndex}
+                    gameState={gameState}
+                    visible={true}
+                    questionIndex={questionIndex + 1}
+                    totalQuestions={totalQuestions}
+                    answers={answers}
+                  />
+                </div>
+                <div>
+                  <FastestAnswersPanel
+                    fastestAnswers={fastestAnswers}
+                    visible={true}
+                  />
+                </div>
               </div>
-            </div>
+            )}
           </div>
         );
 

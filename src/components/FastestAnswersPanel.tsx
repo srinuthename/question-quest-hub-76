@@ -1,6 +1,6 @@
 
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
-import { Check } from "lucide-react";
+import { Check, Clock } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
 
 interface FastestAnswersPanelProps {
@@ -30,56 +30,40 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
             No correct answers yet
           </div>
         ) : (
-          fastestAnswers.map((answer, index) => (
-            <div 
-              key={index} 
-              className="answer-card bg-white/90 animate-fade-in" 
-              style={{ animationDelay: `${index * 0.1}s` }}
-            >
-              <Avatar className={`${isMobile ? 'w-5 h-5' : 'w-12 h-12'} border-2 border-[#b0a8b9] avatar-glow`}>
-                <AvatarImage 
-                  src={answer.ytProfilePicUrl} 
-                  alt={answer.userName}
-                />
-                <AvatarFallback className="bg-[#845ec2] text-white">{answer.userName.charAt(0)}</AvatarFallback>
-              </Avatar>
-              <div className="flex-grow">
-                <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
-                <div className="flex gap-1 items-center">
-                  {answer.answerIndex !== undefined && (
-                    <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-[#c34a36] text-white rounded-full shadow-sm`}>
-                      {String.fromCharCode(65 + answer.answerIndex)}
+          <div className={isMobile ? "flex flex-col" : "grid grid-cols-2 gap-2"}>
+            {fastestAnswers.map((answer, index) => (
+              <div 
+                key={index} 
+                className="answer-card" 
+                style={{ animationDelay: `${index * 0.1}s` }}
+              >
+                <Avatar className={`${isMobile ? 'w-5 h-5' : 'w-12 h-12'} border-2 border-[#b0a8b9] avatar-glow`}>
+                  <AvatarImage 
+                    src={answer.ytProfilePicUrl} 
+                    alt={answer.userName}
+                  />
+                  <AvatarFallback className="bg-[#845ec2] text-white">{answer.userName.charAt(0)}</AvatarFallback>
+                </Avatar>
+                <div className="flex-grow">
+                  <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
+                  <div className="flex gap-1 items-center">
+                    {answer.answerIndex !== undefined && (
+                      <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-[#c34a36] text-white rounded-full shadow-sm`}>
+                        {String.fromCharCode(65 + answer.answerIndex)}
+                      </span>
+                    )}
+                    <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-gray-400 mr-1`} />
+                    <span className={`${isMobile ? 'text-xs' : 'text-base'} font-semibold text-gray-700`}>
+                      {answer.responseTime}ms
                     </span>
-                  )}
-                  <span className={`${isMobile ? 'text-xs' : 'text-base'} font-semibold text-gray-700`}>
-                    {answer.responseTime}ms
-                  </span>
+                  </div>
                 </div>
+                <Check className={`${isMobile ? 'h-3 w-3' : 'h-8 w-8'} text-green-500`} />
               </div>
-              <Check className={`${isMobile ? 'h-3 w-3' : 'h-8 w-8'} text-green-500`} />
-            </div>
-          ))
+            ))}
+          </div>
         )}
       </div>
-
-      <style>{`
-        .answer-card {
-          display: flex;
-          align-items: center;
-          padding: ${isMobile ? '0.15rem' : '0.75rem'};
-          border-radius: 0.5rem;
-          gap: ${isMobile ? '0.25rem' : '0.75rem'};
-          margin-bottom: ${isMobile ? '0.15rem' : '0.5rem'};
-          animation: fade-in 0.3s ease-out forwards;
-          border: 1px solid rgba(176, 168, 185, 0.2);
-          box-shadow: 0 2px 8px rgba(195, 74, 54, 0.1);
-        }
-        
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(5px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 };

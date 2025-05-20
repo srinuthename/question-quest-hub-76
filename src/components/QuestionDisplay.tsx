@@ -127,7 +127,7 @@ const QuestionDisplay = ({
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`choice-container ${getChoiceClass(choice.choiceIndex)} ${choice.choiceIndex === correctIndex ? 'animate-pulse-light' : ''}`}
+                className={`choice-container ${getChoiceClass(choice.choiceIndex)}`}
                 style={{ display: choice.choiceIndex === correctIndex ? 'flex' : 'none' }}
               >
                 <div className={`choice-btn flex items-center ${getChoiceClass(choice.choiceIndex)}`}>
@@ -164,7 +164,7 @@ const QuestionDisplay = ({
                 />
               </div>
             ) : (
-              // Options view
+              // Options view - now stacked in a single column
               <div className="grid grid-cols-1 gap-3 h-full transition-all duration-500">
                 {question.choices.map((choice) => (
                   <div
@@ -178,7 +178,7 @@ const QuestionDisplay = ({
                       <span className="text-lg font-bold text-white">{choice.choiceText}</span>
                     </div>
                     
-                    {/* User avatars for this choice */}
+                    {/* User avatars for this choice - no usernames displayed */}
                     <div className="avatars-container mt-1">
                       {answersByChoice[choice.choiceIndex] && answersByChoice[choice.choiceIndex].length > 0 ? (
                         <div className="flex flex-wrap gap-1">
@@ -206,9 +206,9 @@ const QuestionDisplay = ({
           </div>
         ) : (
           // Desktop layout
-          <div className="grid grid-cols-3 gap-6 h-[calc(100%-5rem)]">
-            {/* Image section - takes 1/3 of the width */}
-            {question.questionImageUrl && (
+          <div className={`grid ${gameState === 'answer' ? 'grid-cols-2' : 'grid-cols-3'} gap-6 h-[calc(100%-5rem)]`}>
+            {/* Image section - takes 1/3 of the width in question state, not shown in answer state */}
+            {question.questionImageUrl && (gameState !== 'answer' || !isMobile) && (
               <div className="flex flex-col">
                 <img
                   src={question.questionImageUrl}
@@ -218,12 +218,16 @@ const QuestionDisplay = ({
               </div>
             )}
 
-            {/* Options section - takes 2/3 of the width if image exists, otherwise full width */}
-            <div className={`grid grid-cols-2 gap-4 ${question.questionImageUrl ? 'col-span-2' : 'col-span-3'}`}>
+            {/* Options section - takes 2/3 of the width in question state, full column in answer state */}
+            <div className={`${gameState === 'answer' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-2 gap-4'} ${question.questionImageUrl && gameState !== 'answer' ? 'col-span-2' : 'col-span-1'}`}>
               {question.choices.map((choice) => (
                 <div
                   key={choice.choiceIndex}
                   className={`choice-container ${getChoiceClass(choice.choiceIndex)}`}
+                  style={{
+                    display: gameState === 'answer' && choice.choiceIndex !== correctIndex ? 'none' : 'flex',
+                    flexDirection: 'column'
+                  }}
                 >
                   <div className={`choice-btn flex items-center ${getChoiceClass(choice.choiceIndex)}`}>
                     <span className="text-3xl font-extrabold mr-3 text-white">
@@ -264,3 +268,4 @@ const QuestionDisplay = ({
 };
 
 export default QuestionDisplay;
+
