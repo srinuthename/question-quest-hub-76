@@ -1,11 +1,12 @@
-
 import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
+import { soundService } from "@/services/soundService";
 import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
 import LeaderboardPanel from "@/components/LeaderboardPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
 import CountdownTimer from "@/components/CountdownTimer";
+import ConfettiEffect from "@/components/ConfettiEffect";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
@@ -15,7 +16,6 @@ const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '30');
 const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || '10');
 const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || '10');
 const FINAL_STANDINGS_DURATION = parseInt(import.meta.env.VITE_FINAL_STANDINGS_DURATION || '1200');
-const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '3000');
 
 const PlayPage = () => {
   const [gameState, setGameState] = useState<'waiting' | 'question' | 'answer' | 'leaderboard' | 'ended'>('waiting');
@@ -52,6 +52,9 @@ const PlayPage = () => {
     const onNewQuestion = (question: any) => {
       console.log('New question received:', question);
 
+      // Play question start sound
+      soundService.play('questionStart');
+
       // Reset state for new question
       setCurrentQuestion(question);
       setCorrectAnswerIndex(null);
@@ -84,12 +87,13 @@ const PlayPage = () => {
 
     const onRevealAnswer = (data: any) => {
       console.log('Answer revealed:', data);
+      
+      // Play answer reveal sound
+      soundService.play('answerReveal');
+      
       setCorrectAnswerIndex(data.correctChoiceIndex);
       setGameState('answer');
       setTimerSeconds(REVEAL_ANSWER_TIMER);
-
-      // Don't clear answers anymore, they're stored in QuestionDisplay component
-      // setAnswers([]);
 
       // Show toast for answer reveal
       toast.success("Answer revealed!", {
@@ -105,6 +109,10 @@ const PlayPage = () => {
 
     const onLeaderboard = (scores: any[]) => {
       console.log('Leaderboard received:', scores);
+      
+      // Play leaderboard sound
+      soundService.play('leaderboard');
+      
       setLeaderboard(scores);
       setGameState('leaderboard');
       setTimerSeconds(LEADERBOARD_TIMER);
@@ -112,6 +120,10 @@ const PlayPage = () => {
 
     const onGameEnded = () => {
       console.log('Game ended');
+      
+      // Play leaderboard sound for final standings too
+      soundService.play('leaderboard');
+      
       setGameState('ended');
       setCurrentQuestion(null);
       setCorrectAnswerIndex(null);
@@ -147,6 +159,9 @@ const PlayPage = () => {
       socket.off('fastestCorrectAnswers', onFastestAnswers);
       socket.off('leaderboard', onLeaderboard);
       socket.off('gameEnded', onGameEnded);
+      
+      // Stop all sounds when component unmounts
+      soundService.stopAll();
     };
   }, [gameState]);
 
@@ -221,8 +236,8 @@ const PlayPage = () => {
             </div>
             {isMobile ? (
               // Mobile layout: Stack components vertically
-              <div className="flex flex-col gap-4 h-full">
-                <div className="flex-grow">
+              <div className="flex flex-col gap-2 h-full mobile-vertical-layout">
+                <div>
                   <QuestionDisplay
                     question={currentQuestion}
                     correctIndex={correctAnswerIndex}
@@ -241,7 +256,7 @@ const PlayPage = () => {
                 </div>
               </div>
             ) : (
-              // Desktop layout: Side-by-side components
+              // Desktop layout: Side-by-side components, options in one column
               <div className="grid grid-cols-2 gap-4 h-full">
                 <div>
                   <QuestionDisplay
@@ -285,6 +300,7 @@ const PlayPage = () => {
       case 'ended':
         return (
           <div className="w-full h-full">
+            <ConfettiEffect active={true} />
             <LeaderboardPanel
               leaderboard={leaderboard}
               visible={true}

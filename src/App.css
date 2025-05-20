@@ -138,5 +138,28 @@
   .question-image-mobile {
     margin-top: -0.5rem;
   }
+  
+  /* Improved mobile vertical layout */
+  .mobile-vertical-layout {
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    gap: 0.25rem;
+    padding-bottom: 0;
+  }
+  
+  .mobile-vertical-layout > div {
+    margin-bottom: 0.25rem;
+  }
 }
 
+/* Confetti animation */
+.confetti-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  pointer-events: none;
+  z-index: 1000;
+}
