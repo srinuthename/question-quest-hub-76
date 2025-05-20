@@ -1,4 +1,3 @@
-
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -21,19 +20,19 @@ const CountdownTimer = ({
   const [timeLeft, setTimeLeft] = useState(initialSeconds);
   const [progress, setProgress] = useState(100);
   const isMobile = useIsMobile();
-  
+
   useEffect(() => {
     // Reset timer when initialSeconds changes
     setTimeLeft(initialSeconds);
     setProgress(100);
   }, [initialSeconds, gameState]);
-  
+
   useEffect(() => {
     if (timeLeft <= 0) {
       if (onComplete) onComplete();
       return;
     }
-    
+
     const timer = setInterval(() => {
       setTimeLeft((prev) => {
         const newTime = prev - 1;
@@ -43,17 +42,17 @@ const CountdownTimer = ({
         return newTime;
       });
     }, 1000);
-    
+
     return () => clearInterval(timer);
   }, [timeLeft, initialSeconds, onComplete]);
-  
-  // Determine color based on time left (always green to orange to red)
+
+  // Determine color based on time left (green to orange to red)
   const getColorClass = () => {
     if (timeLeft > initialSeconds * 0.66) return "bg-green-500";
     if (timeLeft > initialSeconds * 0.33) return "bg-orange-500";
     return "bg-red-500";
   };
-  
+
   // Determine text based on game state
   const getTimerText = () => {
     if (gameState === 'question') {
@@ -65,7 +64,7 @@ const CountdownTimer = ({
     }
     return `${timeLeft}s`;
   };
-  
+
   return (
     <div className={`w-full flex flex-col ${className}`}>
       <div className="flex items-center justify-between mb-1">
@@ -76,7 +75,12 @@ const CountdownTimer = ({
           </Badge>
         </div>
       </div>
-      <Progress value={progress} className={`h-2 ${getColorClass()}`} />
+      <div className="w-full bg-gray-200 rounded-full h-2.5">
+        <div
+          className={`h-2.5 rounded-full transition-all duration-1000 ease-in-out ${getColorClass()}`}
+          style={{ width: `${progress}%` }}
+        ></div>
+      </div>
     </div>
   );
 };
