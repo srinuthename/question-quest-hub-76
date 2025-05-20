@@ -22,8 +22,8 @@ const GamePage = () => {
   const [lastStatusCheck, setLastStatusCheck] = useState<Date>(new Date());
   const [stoppingGame, setStoppingGame] = useState<boolean>(false);
   
-  // Game status monitoring interval (5 minutes = 300000 ms)
-  const STATUS_CHECK_INTERVAL = 300000;
+  // Game status monitoring interval (1 minutes = 60000 ms)
+  const STATUS_CHECK_INTERVAL = 60000;
 
   useEffect(() => {
     // Fetch game data
@@ -128,7 +128,17 @@ const GamePage = () => {
     });
     setGameActive(true);
   };
-  
+
+    const handleStopGame = () => {
+    if (!id) return;
+    
+    console.info("Emitting stopGame event with gameId:", id);
+    emitEvent("stopGame", { gameId: id });
+    toast.success("Game stopping", {
+      description: "The game will stop shortly."
+    });
+    setGameActive(false); 
+  };
   // Handler for opening player view
   const handleOpenPlayerView = () => {
     if (!id) return;
@@ -139,43 +149,7 @@ const GamePage = () => {
     toast.success("Player view opened in new window");
   };
   
-  // Handler for stopping the game
-  const handleStopGame = async () => {
-    if (!id) return;
-    
-    try {
-      setStoppingGame(true);
-      
-      // Call the API endpoint to stop the game
-      const response = await fetch(`${API_URL}/api/quizgames/${id}/end`, {
-        method: "POST",
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      });
-      
-      if (!response.ok) {
-        throw new Error(`Failed to stop game: ${response.statusText}`);
-      }
-      
-      // Update local state
-      setGameActive(false);
-      toast.success("Game stopped", {
-        description: "The game has been stopped successfully."
-      });
-      
-      // Refresh game data
-      checkGameStatus();
-      
-    } catch (error) {
-      console.error("Error stopping game:", error);
-      toast.error("Failed to stop game", {
-        description: "Please try again."
-      });
-    } finally {
-      setStoppingGame(false);
-    }
-  };
+
 
   if (loading) {
     return (
