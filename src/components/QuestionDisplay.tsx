@@ -161,77 +161,7 @@ const QuestionDisplay = ({
         </div>
       </div>
 
-      <style jsx>{`
-        .choice-container {
-          display: flex;
-          flex-direction: column;
-          border-radius: 0.75rem;
-          padding: 0.5rem;
-          background: rgba(255, 255, 255, 0.1);
-          transition: all 0.3s ease;
-        }
-        
-        .choice-container.correct {
-          background: rgba(34, 197, 94, 0.2);
-          border: 2px solid rgba(34, 197, 94, 0.5);
-        }
-        
-        .choice-container.incorrect {
-          background: rgba(225, 29, 72, 0.1);
-          border: 2px solid rgba(225, 29, 72, 0.3);
-          opacity: 0.7;
-        }
-        
-        .choice-btn {
-          padding: 0.75rem;
-          border-radius: 0.5rem;
-          background: rgba(255, 255, 255, 0.1);
-          border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        
-        .choice-btn.correct {
-          background: rgba(34, 197, 94, 0.3);
-          border: 1px solid rgba(34, 197, 94, 0.5);
-        }
-        
-        .choice-btn.incorrect {
-          background: rgba(225, 29, 72, 0.2);
-          border: 1px solid rgba(225, 29, 72, 0.3);
-        }
-        
-        .avatars-container {
-          min-height: 40px;
-          padding: 0.5rem;
-        }
-        
-        .avatar-tooltip {
-          position: relative;
-          display: inline-block;
-        }
-        
-        .avatar-tooltip .tooltip-text {
-          visibility: hidden;
-          background-color: rgba(0, 0, 0, 0.8);
-          color: white;
-          text-align: center;
-          border-radius: 6px;
-          padding: 5px;
-          position: absolute;
-          z-index: 1;
-          bottom: 125%;
-          left: 50%;
-          transform: translateX(-50%);
-          opacity: 0;
-          transition: opacity 0.3s;
-          white-space: nowrap;
-          font-size: 0.75rem;
-        }
-        
-        .avatar-tooltip:hover .tooltip-text {
-          visibility: visible;
-          opacity: 1;
-        }
-      `}</style>
+      {/* Replace the style jsx tag with regular CSS classes that are already in App.css */}
     </div>
   );
 };
