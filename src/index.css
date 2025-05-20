@@ -1,4 +1,3 @@
-
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -64,21 +63,21 @@
   body {
     @apply bg-background text-foreground;
     background-color: #845ec2;
-    background-image: linear-gradient(to right top, #845ec2, #d65db1, #ff6f91, #ff9671, #ffc75f, #f9f871);
+    background-image: linear-gradient(to right top, #845ec2, #4b4453, #b0a8b9, #c34a36, #ff8066);
     background-attachment: fixed;
     min-height: 100vh;
   }
 }
 
 .choice-btn {
-  @apply w-full px-5 py-3 rounded-md mb-2 flex items-center bg-white/90 border-2 border-[#d65db1] shadow-lg hover:bg-white hover:shadow-xl hover:border-[#ff6f91] font-bold text-white;
+  @apply w-full px-5 py-3 rounded-md mb-2 flex items-center bg-white/90 border-2 border-[#4b4453] shadow-lg hover:bg-white hover:shadow-xl hover:border-[#ff8066] font-bold text-white;
   transition: all 0.2s ease;
   backdrop-filter: blur(8px);
   background-color: rgba(132, 94, 194, 0.8);
 }
 
 .choice-btn-mobile {
-  @apply w-full px-3 py-1.5 rounded-md mb-1 flex items-center bg-white/90 border border-[#d65db1] shadow-sm hover:bg-white hover:shadow-md hover:border-[#ff6f91] font-bold text-white;
+  @apply w-full px-3 py-1.5 rounded-md mb-1 flex items-center bg-white/90 border border-[#4b4453] shadow-sm hover:bg-white hover:shadow-md hover:border-[#ff8066] font-bold text-white;
   transition: all 0.2s ease;
   backdrop-filter: blur(8px);
   background-color: rgba(132, 94, 194, 0.8);
@@ -152,7 +151,7 @@
 
 /* Card styling enhancements */
 .glass-card {
-  background: rgba(214, 93, 177, 0.15);
+  background: rgba(75, 68, 83, 0.15);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
@@ -160,7 +159,7 @@
 }
 
 .glass-card-dark {
-  background: rgba(255, 111, 145, 0.25);
+  background: rgba(255, 128, 102, 0.25);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
@@ -178,14 +177,14 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: #ff9671;
+  background: #ff8066;
   z-index: -1;
   border-radius: 0.7rem;
 }
 
 /* Avatar enhancements */
 .avatar-glow {
-  box-shadow: 0 0 10px rgba(255, 150, 113, 0.6);
+  box-shadow: 0 0 10px rgba(255, 128, 102, 0.6);
 }
 
 /* Custom scrollbar */
@@ -199,10 +198,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #d65db1;
+  background: #4b4453;
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #ff6f91;
+  background: #c34a36;
 }

@@ -36,18 +36,18 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
               className="answer-card bg-white/90 animate-fade-in" 
               style={{ animationDelay: `${index * 0.1}s` }}
             >
-              <Avatar className={`${isMobile ? 'w-5 h-5' : 'w-12 h-12'} border-2 border-[#0089ba] avatar-glow`}>
+              <Avatar className={`${isMobile ? 'w-5 h-5' : 'w-12 h-12'} border-2 border-[#b0a8b9] avatar-glow`}>
                 <AvatarImage 
                   src={answer.ytProfilePicUrl} 
                   alt={answer.userName}
                 />
-                <AvatarFallback className="bg-[#0081cf] text-white">{answer.userName.charAt(0)}</AvatarFallback>
+                <AvatarFallback className="bg-[#845ec2] text-white">{answer.userName.charAt(0)}</AvatarFallback>
               </Avatar>
               <div className="flex-grow">
                 <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
                 <div className="flex gap-1 items-center">
                   {answer.answerIndex !== undefined && (
-                    <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-[#008f7a] text-white rounded-full shadow-sm`}>
+                    <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-[#c34a36] text-white rounded-full shadow-sm`}>
                       {String.fromCharCode(65 + answer.answerIndex)}
                     </span>
                   )}
@@ -56,7 +56,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                   </span>
                 </div>
               </div>
-              <Check className={`${isMobile ? 'h-3 w-3' : 'h-8 w-8'} text-[#008f7a]`} />
+              <Check className={`${isMobile ? 'h-3 w-3' : 'h-8 w-8'} text-green-500`} />
             </div>
           ))
         )}
@@ -71,8 +71,8 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
           gap: ${isMobile ? '0.25rem' : '0.75rem'};
           margin-bottom: ${isMobile ? '0.15rem' : '0.5rem'};
           animation: fade-in 0.3s ease-out forwards;
-          border: 1px solid rgba(0, 137, 186, 0.2);
-          box-shadow: 0 2px 8px rgba(0, 143, 155, 0.1);
+          border: 1px solid rgba(176, 168, 185, 0.2);
+          box-shadow: 0 2px 8px rgba(195, 74, 54, 0.1);
         }
         
         @keyframes fade-in {

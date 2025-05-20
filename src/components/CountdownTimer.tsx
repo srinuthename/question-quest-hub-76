@@ -47,15 +47,11 @@ const CountdownTimer = ({
     return () => clearInterval(timer);
   }, [timeLeft, initialSeconds, onComplete]);
   
-  // Determine color based on time left and game state
+  // Determine color based on time left (always green to orange to red)
   const getColorClass = () => {
-    if (gameState === 'question') {
-      if (timeLeft > initialSeconds * 0.75) return "bg-[#008f7a]";
-      if (timeLeft > initialSeconds * 0.5) return "bg-[#0089ba]";
-      return "bg-[#845ec2]";
-    } else {
-      return "bg-[#2c73d2]";
-    }
+    if (timeLeft > initialSeconds * 0.66) return "bg-green-500";
+    if (timeLeft > initialSeconds * 0.33) return "bg-orange-500";
+    return "bg-red-500";
   };
   
   // Determine text based on game state

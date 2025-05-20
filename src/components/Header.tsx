@@ -18,7 +18,7 @@ const Header = ({ className }: HeaderProps) => {
         <h1 className="text-xl font-bold">QuizCube</h1>
       </Link>
       <div className="flex items-center w-20 justify-end">
-        <div className="flex items-center gap-1.5 bg-[#d65db1] px-3 py-1.5 rounded-md shadow-lg relative overflow-hidden">
+        <div className="flex items-center gap-1.5 bg-[#c34a36] px-3 py-1.5 rounded-md shadow-lg relative overflow-hidden">
           {/* Pulsing dot with improved animation */}
           <span className="relative flex h-3 w-3 z-10">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>

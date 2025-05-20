@@ -9,7 +9,7 @@ const Footer = ({ className }: FooterProps) => {
   const currentYear = new Date().getFullYear();
 
   return (
-    <footer className={cn("bg-[#d65db1] text-white py-3 px-4 flex items-center justify-center shadow-md", className)}>
+    <footer className={cn("bg-[#4b4453] text-white py-3 px-4 flex items-center justify-center shadow-md", className)}>
       <p>&copy; {currentYear} QuizCube. All rights reserved.</p>
     </footer>
   );
