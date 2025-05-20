@@ -113,13 +113,13 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn-mobile ${getChoiceClass(choice.choiceIndex)} gradient-border`}
+                    className={`choice-btn-mobile ${getChoiceClass(choice.choiceIndex)}`}
                   >
                     <div className="flex items-center">
-                      <span className={`text-lg font-extrabold mr-2 ${correctIndex === choice.choiceIndex ? 'text-white' : ''}`}>
+                      <span className="text-lg font-extrabold mr-2 text-white">
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
-                      <span className="text-xl font-bold">{choice.choiceText}</span>
+                      <span className="text-xl font-bold text-white">{choice.choiceText}</span>
                     </div>
                   </div>
                 ))}
@@ -139,13 +139,13 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 {question.choices.map((choice) => (
                   <div
                     key={choice.choiceIndex}
-                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)} gradient-border`}
+                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
                   >
                     <div className="flex items-center">
-                      <span className={`text-3xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-white' : ''}`}>
+                      <span className="text-3xl font-extrabold mr-3 text-white">
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
-                      <span className="text-2xl font-bold">{choice.choiceText}</span>
+                      <span className="text-2xl font-bold text-white">{choice.choiceText}</span>
                     </div>
                   </div>
                 ))}
@@ -158,13 +158,13 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`${isMobile ? 'choice-btn-mobile' : 'choice-btn'} ${getChoiceClass(choice.choiceIndex)} gradient-border`}
+                className={`${isMobile ? 'choice-btn-mobile' : 'choice-btn'} ${getChoiceClass(choice.choiceIndex)}`}
               >
                 <div className="flex items-center">
-                  <span className={`${isMobile ? 'text-lg mr-2' : 'text-3xl mr-3'} font-extrabold ${correctIndex === choice.choiceIndex ? 'text-white' : ''}`}>
+                  <span className={`${isMobile ? 'text-lg mr-2' : 'text-3xl mr-3'} font-extrabold text-white`}>
                     {String.fromCharCode(65 + choice.choiceIndex)}
                   </span>
-                  <span className={`${isMobile ? 'text-sm' : 'text-2xl'} font-bold`}>{choice.choiceText}</span>
+                  <span className={`${isMobile ? 'text-sm' : 'text-2xl'} font-bold text-white`}>{choice.choiceText}</span>
                 </div>
               </div>
             ))}
