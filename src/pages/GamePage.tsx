@@ -240,12 +240,12 @@ const GamePage = () => {
                   {stoppingGame ? "Stopping..." : "Stop Game"}
                 </Button>
                 
-                <Button
+                    <Button
                   onClick={handleOpenPlayerView}
                   className="flex items-center gap-2 bg-gradient-to-r from-[#051937] to-[#004d7a] hover:opacity-90 transition-all border-none shadow-lg text-white"
                 >
                   <Eye size={18} />
-                  Open Player View
+                  Open Player View                  
                 </Button>
               </div>
               
@@ -261,17 +261,7 @@ const GamePage = () => {
             </CardContent>
           </Card>
           
-          {gameData?.activeQuestionIndex !== undefined && gameData.questions && (
-            <QuestionDisplay
-              question={gameData.questions[gameData.activeQuestionIndex]}
-              correctIndex={gameData.correctChoiceIndex}
-              gameState={gameData.isQuestionOpen ? "question" : "answer"}
-              visible={true}
-              questionIndex={gameData.activeQuestionIndex + 1}
-              totalQuestions={gameData.questions.length}
-            />
-          )}
-        </div>
+       </div>
         
 
       </div>
