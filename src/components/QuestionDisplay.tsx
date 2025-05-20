@@ -4,7 +4,7 @@ import { useIsMobile } from "@/hooks/use-mobile";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 // Define timing variables from environment variables
-const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '3000'); // Time to switch between image and options
+const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '5000'); // Time to switch between image and options (changed to 5 seconds)
 const DISPLAY_TRANSITION_DURATION = parseInt(import.meta.env.VITE_DISPLAY_TRANSITION_DURATION || '500'); // Duration of the fade transition
 
 interface QuestionDisplayProps {
@@ -41,9 +41,10 @@ const QuestionDisplay = ({
 }: QuestionDisplayProps) => {
   const isMobile = useIsMobile();
   const [showImage, setShowImage] = useState<boolean>(true);
+  const [storedAnswers, setStoredAnswers] = useState<typeof answers>([]);
 
   // Group answers by choice index
-  const answersByChoice = answers.reduce((acc, answer) => {
+  const answersByChoice = (gameState === 'answer' ? storedAnswers : answers).reduce((acc, answer) => {
     if (answer.answerIndex !== undefined) {
       if (!acc[answer.answerIndex]) {
         acc[answer.answerIndex] = [];
@@ -53,10 +54,17 @@ const QuestionDisplay = ({
     return acc;
   }, {} as Record<number, typeof answers>);
 
+  // Store answers when transitioning to answer reveal state
+  useEffect(() => {
+    if (gameState === 'answer' && answers.length > 0) {
+      setStoredAnswers(answers);
+    }
+  }, [gameState, answers]);
+
   // Timer to switch between image and options on mobile
   useEffect(() => {
     // Only activate the alternating display if we're on mobile and have an image
-    if (isMobile && question?.questionImageUrl && gameState === 'question') {
+    if (isMobile && question?.questionImageUrl && (gameState === 'question')) {
       const interval = setInterval(() => {
         setShowImage(prev => !prev);
       }, DISPLAY_SWITCH_INTERVAL);
@@ -67,6 +75,11 @@ const QuestionDisplay = ({
     // If not mobile or no image, always show both
     if (!isMobile || !question?.questionImageUrl) {
       setShowImage(true);
+    }
+    
+    // In mobile view when answer is revealed, don't show the image
+    if (isMobile && gameState === 'answer') {
+      setShowImage(false);
     }
   }, [isMobile, question, gameState]);
 
@@ -101,31 +114,21 @@ const QuestionDisplay = ({
     }
   };
 
-  return (
-    <div className="h-full rounded-lg shadow-md glass-card">
-      <div className="p-4 h-full">
-        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white drop-shadow-md">
-          {questionWithNumber}
-        </h2>
+  // In mobile view for answer state, just show the options with correct answer highlighted
+  if (isMobile && gameState === 'answer') {
+    return (
+      <div className="h-full rounded-lg shadow-md glass-card">
+        <div className="p-4 h-full">
+          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white drop-shadow-md">
+            {questionWithNumber}
+          </h2>
 
-        <div className="grid grid-cols-3 gap-6 h-[calc(100%-5rem)]">
-          {/* Image section - takes 1/3 of the width */}
-          {question.questionImageUrl && (
-            <div className="flex flex-col">
-              <img
-                src={question.questionImageUrl}
-                alt="Question"
-                className="w-full h-auto object-contain rounded-lg shadow-lg mb-4"
-              />
-            </div>
-          )}
-
-          {/* Options section - takes 2/3 of the width if image exists, otherwise full width */}
-          <div className={`grid grid-cols-2 gap-4 ${question.questionImageUrl ? 'col-span-2' : 'col-span-3'}`}>
+          <div className="grid grid-cols-1 gap-4">
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`choice-container ${getChoiceClass(choice.choiceIndex)}`}
+                className={`choice-container ${getChoiceClass(choice.choiceIndex)} ${choice.choiceIndex === correctIndex ? 'animate-pulse-light' : ''}`}
+                style={{ display: choice.choiceIndex === correctIndex ? 'flex' : 'none' }}
               >
                 <div className={`choice-btn flex items-center ${getChoiceClass(choice.choiceIndex)}`}>
                   <span className="text-3xl font-extrabold mr-3 text-white">
@@ -133,35 +136,129 @@ const QuestionDisplay = ({
                   </span>
                   <span className="text-xl font-bold text-white">{choice.choiceText}</span>
                 </div>
-                
-                {/* User avatars for this choice */}
-                <div className="avatars-container mt-2">
-                  {answersByChoice[choice.choiceIndex] && answersByChoice[choice.choiceIndex].length > 0 ? (
-                    <div className="flex flex-wrap gap-1">
-                      {answersByChoice[choice.choiceIndex].map((answer, idx) => (
-                        <div key={`${answer.ytChannelId}-${idx}`} className="avatar-tooltip">
-                          <Avatar className="w-8 h-8 border-2 border-white/30">
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="h-full rounded-lg shadow-md glass-card">
+      <div className="p-4 h-full">
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white drop-shadow-md">
+          {questionWithNumber}
+        </h2>
+
+        {isMobile ? (
+          // Mobile layout with alternating view
+          <div className="h-[calc(100%-5rem)]">
+            {showImage && question.questionImageUrl ? (
+              // Image view
+              <div className="flex flex-col h-full justify-center transition-all duration-500">
+                <img
+                  src={question.questionImageUrl}
+                  alt="Question"
+                  className="w-full h-auto max-h-full object-contain rounded-lg shadow-lg"
+                />
+              </div>
+            ) : (
+              // Options view
+              <div className="grid grid-cols-1 gap-3 h-full transition-all duration-500">
+                {question.choices.map((choice) => (
+                  <div
+                    key={choice.choiceIndex}
+                    className={`choice-container ${getChoiceClass(choice.choiceIndex)}`}
+                  >
+                    <div className={`choice-btn flex items-center ${getChoiceClass(choice.choiceIndex)}`}>
+                      <span className="text-2xl font-extrabold mr-2 text-white">
+                        {String.fromCharCode(65 + choice.choiceIndex)}
+                      </span>
+                      <span className="text-lg font-bold text-white">{choice.choiceText}</span>
+                    </div>
+                    
+                    {/* User avatars for this choice */}
+                    <div className="avatars-container mt-1">
+                      {answersByChoice[choice.choiceIndex] && answersByChoice[choice.choiceIndex].length > 0 ? (
+                        <div className="flex flex-wrap gap-1">
+                          {answersByChoice[choice.choiceIndex].map((answer, idx) => (
+                            <Avatar 
+                              key={`${answer.ytChannelId}-${idx}`} 
+                              className="w-6 h-6 border-2 border-white/30"
+                            >
+                              <AvatarImage 
+                                src={answer.ytProfilePicUrl} 
+                                alt={answer.userName} 
+                              />
+                              <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
+                            </Avatar>
+                          ))}
+                        </div>
+                      ) : (
+                        <div className="text-sm text-white/50 italic">No answers yet</div>
+                      )}
+                    </div>
+                  </div>
+                ))}
+              </div>
+            )}
+          </div>
+        ) : (
+          // Desktop layout
+          <div className="grid grid-cols-3 gap-6 h-[calc(100%-5rem)]">
+            {/* Image section - takes 1/3 of the width */}
+            {question.questionImageUrl && (
+              <div className="flex flex-col">
+                <img
+                  src={question.questionImageUrl}
+                  alt="Question"
+                  className="w-full h-auto object-contain rounded-lg shadow-lg mb-4"
+                />
+              </div>
+            )}
+
+            {/* Options section - takes 2/3 of the width if image exists, otherwise full width */}
+            <div className={`grid grid-cols-2 gap-4 ${question.questionImageUrl ? 'col-span-2' : 'col-span-3'}`}>
+              {question.choices.map((choice) => (
+                <div
+                  key={choice.choiceIndex}
+                  className={`choice-container ${getChoiceClass(choice.choiceIndex)}`}
+                >
+                  <div className={`choice-btn flex items-center ${getChoiceClass(choice.choiceIndex)}`}>
+                    <span className="text-3xl font-extrabold mr-3 text-white">
+                      {String.fromCharCode(65 + choice.choiceIndex)}
+                    </span>
+                    <span className="text-xl font-bold text-white">{choice.choiceText}</span>
+                  </div>
+                  
+                  {/* User avatars for this choice - no usernames displayed */}
+                  <div className="avatars-container mt-2">
+                    {answersByChoice[choice.choiceIndex] && answersByChoice[choice.choiceIndex].length > 0 ? (
+                      <div className="flex flex-wrap gap-1">
+                        {answersByChoice[choice.choiceIndex].map((answer, idx) => (
+                          <Avatar 
+                            key={`${answer.ytChannelId}-${idx}`} 
+                            className="w-8 h-8 border-2 border-white/30 avatar-glow"
+                          >
                             <AvatarImage 
                               src={answer.ytProfilePicUrl} 
                               alt={answer.userName} 
                             />
                             <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
                           </Avatar>
-                          <span className="tooltip-text">{answer.userName}</span>
-                        </div>
-                      ))}
-                    </div>
-                  ) : (
-                    <div className="text-sm text-white/50 italic">No answers yet</div>
-                  )}
+                        ))}
+                      </div>
+                    ) : (
+                      <div className="text-sm text-white/50 italic">No answers yet</div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
+        )}
       </div>
-
-      {/* Replace the style jsx tag with regular CSS classes that are already in App.css */}
     </div>
   );
 };
