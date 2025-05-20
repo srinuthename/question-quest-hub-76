@@ -33,12 +33,6 @@ const PlayPage = () => {
 
   // Connect to socket and listen to events
   useEffect(() => {
-    // Ensure we're only creating one socket connection
-    if (socket.hasListeners('newQuestion')) {
-      console.log('Socket listeners already registered, skipping initialization');
-      return;
-    }
-
     // Check if already connected
     if (socket.connected) {
       setIsConnected(true);
@@ -169,7 +163,7 @@ const PlayPage = () => {
       // Stop all sounds when component unmounts
       soundService.stopAll();
     };
-  }, []); // Remove gameState dependency to prevent re-initializing socket listeners
+  }, [gameState]);
 
   // Check if final standings should still be displayed
   useEffect(() => {
