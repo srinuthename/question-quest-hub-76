@@ -36,7 +36,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
             No correct answers yet
           </div>
         ) : (
-          <div className="flex flex-col">
+          <div className={`${!isMobile ? 'grid grid-cols-2 gap-2' : 'flex flex-col'}`}>
             {fastestAnswers.map((answer, index) => {
               const score = calculateScore(answer.responseTime);
               return (
