@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
@@ -200,15 +199,15 @@ const PlayPage = () => {
 
       case 'question':
         return (
-          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-2`}>
-            <div className={`${isMobile ? 'w-full' : 'w-2/3'}`}>
-              <div className="mb-1">
-                <CountdownTimer
-                  initialSeconds={QUESTION_TIMER}
-                  onComplete={handleTimerComplete}
-                  gameState={gameState}
-                />
-              </div>
+          <div className="flex flex-col h-full">
+            <div className="mb-2">
+              <CountdownTimer
+                initialSeconds={QUESTION_TIMER}
+                onComplete={handleTimerComplete}
+                gameState={gameState}
+              />
+            </div>
+            <div className="flex-grow">
               <QuestionDisplay
                 question={currentQuestion}
                 correctIndex={null}
@@ -216,41 +215,40 @@ const PlayPage = () => {
                 visible={true}
                 questionIndex={questionIndex + 1}
                 totalQuestions={totalQuestions}
+                answers={answers}
               />
-            </div>
-
-            <div className={`${isMobile ? 'w-full h-[45vh]' : 'w-1/3'}`}>
-              <AnswersPanel answers={answers} />
             </div>
           </div>
         );
 
       case 'answer':
         return (
-          <div className={`flex ${isMobile ? 'flex-col' : 'flex-row'} h-full gap-2`}>
-            <div className={`${isMobile ? 'w-full' : 'w-2/3'}`}>
-              <div className="mb-1">
-                <CountdownTimer
-                  initialSeconds={REVEAL_ANSWER_TIMER}
-                  onComplete={handleTimerComplete}
-                  gameState={gameState}
-                />
-              </div>
-              <QuestionDisplay
-                question={currentQuestion}
-                correctIndex={correctAnswerIndex}
+          <div className="flex flex-col h-full">
+            <div className="mb-2">
+              <CountdownTimer
+                initialSeconds={REVEAL_ANSWER_TIMER}
+                onComplete={handleTimerComplete}
                 gameState={gameState}
-                visible={true}
-                questionIndex={questionIndex + 1}
-                totalQuestions={totalQuestions}
               />
             </div>
-
-            <div className={`${isMobile ? 'w-full h-[45vh]' : 'w-1/3'}`}>
-              <FastestAnswersPanel
-                fastestAnswers={fastestAnswers}
-                visible={true}
-              />
+            <div className="grid grid-cols-3 gap-4 h-full">
+              <div className="col-span-2">
+                <QuestionDisplay
+                  question={currentQuestion}
+                  correctIndex={correctAnswerIndex}
+                  gameState={gameState}
+                  visible={true}
+                  questionIndex={questionIndex + 1}
+                  totalQuestions={totalQuestions}
+                  answers={answers}
+                />
+              </div>
+              <div>
+                <FastestAnswersPanel
+                  fastestAnswers={fastestAnswers}
+                  visible={true}
+                />
+              </div>
             </div>
           </div>
         );
@@ -258,7 +256,7 @@ const PlayPage = () => {
       case 'leaderboard':
         return (
           <div className="w-full h-full">
-            <div className="mb-1">
+            <div className="mb-2">
               <CountdownTimer
                 initialSeconds={LEADERBOARD_TIMER}
                 onComplete={handleTimerComplete}
@@ -294,7 +292,7 @@ const PlayPage = () => {
         initial={{ opacity: 0, y: 20 }}
         animate={{ opacity: 1, y: 0 }}
         transition={{ duration: 0.5 }}
-        className={`w-full h-full ${isMobile ? 'p-0.5' : 'p-1'}`}
+        className="w-full h-full p-1"
       >
         {isConnected ? (
           renderContent()

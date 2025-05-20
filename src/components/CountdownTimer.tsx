@@ -1,3 +1,4 @@
+
 import { useEffect, useState } from "react";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
@@ -56,11 +57,11 @@ const CountdownTimer = ({
   // Determine text based on game state
   const getTimerText = () => {
     if (gameState === 'question') {
-      return isMobile ? `${timeLeft}s` : `Question ends in ${timeLeft}s`;
+      return `Question: ${timeLeft}s`;
     } else if (gameState === 'answer') {
-      return isMobile ? `${timeLeft}s` : `Next in ${timeLeft}s`;
+      return `Next: ${timeLeft}s`;
     } else if (gameState === 'leaderboard') {
-      return isMobile ? `${timeLeft}s` : `Next question in ${timeLeft}s`;
+      return `Next: ${timeLeft}s`;
     }
     return `${timeLeft}s`;
   };
@@ -69,7 +70,7 @@ const CountdownTimer = ({
     <div className={`w-full flex flex-col ${className}`}>
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
-          <Clock className={`${isMobile ? 'h-5 w-5' : 'h-6 w-6'} text-white`} />
+          <Clock className="h-6 w-6 text-white" />
           <Badge variant="outline" className="text-white border-white/40 bg-white/10 font-bold text-base px-3 py-1">
             {getTimerText()}
           </Badge>

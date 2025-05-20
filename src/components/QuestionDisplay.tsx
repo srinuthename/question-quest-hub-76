@@ -1,6 +1,7 @@
 
 import { useState, useEffect } from "react";
 import { useIsMobile } from "@/hooks/use-mobile";
+import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 
 // Define timing variables from environment variables
 const DISPLAY_SWITCH_INTERVAL = parseInt(import.meta.env.VITE_DISPLAY_SWITCH_INTERVAL || '3000'); // Time to switch between image and options
@@ -20,11 +21,37 @@ interface QuestionDisplayProps {
   visible: boolean;
   questionIndex?: number;
   totalQuestions?: number;
+  answers?: {
+    ytChannelId: string;
+    ytProfilePicUrl: string;
+    userName: string;
+    responseTime: number;
+    answerIndex?: number;
+  }[];
 }
 
-const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionIndex, totalQuestions }: QuestionDisplayProps) => {
+const QuestionDisplay = ({ 
+  question, 
+  correctIndex, 
+  gameState, 
+  visible, 
+  questionIndex, 
+  totalQuestions,
+  answers = []
+}: QuestionDisplayProps) => {
   const isMobile = useIsMobile();
   const [showImage, setShowImage] = useState<boolean>(true);
+
+  // Group answers by choice index
+  const answersByChoice = answers.reduce((acc, answer) => {
+    if (answer.answerIndex !== undefined) {
+      if (!acc[answer.answerIndex]) {
+        acc[answer.answerIndex] = [];
+      }
+      acc[answer.answerIndex].push(answer);
+    }
+    return acc;
+  }, {} as Record<number, typeof answers>);
 
   // Timer to switch between image and options on mobile
   useEffect(() => {
@@ -75,102 +102,136 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
   };
 
   return (
-    <div className={`${isMobile ? 'h-[50vh] mb-2 overflow-hidden' : 'h-full'} rounded-lg shadow-md glass-card`}>
-      <div className={`${isMobile ? 'p-2' : 'p-4'} h-full`}>
-        <h2 className={`${isMobile ? 'text-2xl' : 'text-3xl sm:text-4xl'} font-extrabold mb-1 text-white drop-shadow-md`}>
+    <div className="h-full rounded-lg shadow-md glass-card">
+      <div className="p-4 h-full">
+        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white drop-shadow-md">
           {questionWithNumber}
         </h2>
 
-        {question.questionImageUrl ? (
-          isMobile ? (
-            // Mobile layout with alternating content in a fixed height container
-            <div className="grid grid-cols-1 gap-1 h-[calc(100%-2rem)]">
-              {/* Image section with fade transition */}
-              <div
-                className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${showImage ? 'opacity-100 h-full' : 'opacity-0 h-0 overflow-hidden'}`}
-                style={{
-                  transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`,
-                  height: showImage ? '100%' : '0'
-                }}
-              >
-                <div className="flex h-full">
-                  <img
-                    src={question.questionImageUrl}
-                    alt="Question"
-                    className="w-full h-full object-contain rounded-lg shadow-lg"
-                  />
-                </div>
-              </div>
+        <div className="grid grid-cols-3 gap-6 h-[calc(100%-5rem)]">
+          {/* Image section - takes 1/3 of the width */}
+          {question.questionImageUrl && (
+            <div className="flex flex-col">
+              <img
+                src={question.questionImageUrl}
+                alt="Question"
+                className="w-full h-auto object-contain rounded-lg shadow-lg mb-4"
+              />
+            </div>
+          )}
 
-              {/* Options section with fade transition */}
-              <div
-                className={`transition-opacity duration-${DISPLAY_TRANSITION_DURATION} ease-in-out ${!showImage ? 'opacity-100 h-full' : 'opacity-0 h-0 overflow-hidden'}`}
-                style={{
-                  transitionDuration: `${DISPLAY_TRANSITION_DURATION}ms`,
-                  height: !showImage ? '100%' : '0'
-                }}
-              >
-                {question.choices.map((choice) => (
-                  <div
-                    key={choice.choiceIndex}
-                    className={`choice-btn-mobile ${getChoiceClass(choice.choiceIndex)}`}
-                  >
-                    <div className="flex items-center">
-                      <span className="text-lg font-extrabold mr-2 text-white">
-                        {String.fromCharCode(65 + choice.choiceIndex)}
-                      </span>
-                      <span className="text-xl font-bold text-white">{choice.choiceText}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ) : (
-            // Desktop layout with side-by-side content
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 h-full">
-              <div className="flex">
-                <img
-                  src={question.questionImageUrl}
-                  alt="Question"
-                  className="w-full max-h-[60vh] object-contain rounded-lg shadow-lg"
-                />
-              </div>
-              <div className="flex flex-col space-y-4">
-                {question.choices.map((choice) => (
-                  <div
-                    key={choice.choiceIndex}
-                    className={`choice-btn ${getChoiceClass(choice.choiceIndex)}`}
-                  >
-                    <div className="flex items-center">
-                      <span className="text-3xl font-extrabold mr-3 text-white">
-                        {String.fromCharCode(65 + choice.choiceIndex)}
-                      </span>
-                      <span className="text-2xl font-bold text-white">{choice.choiceText}</span>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-          )
-        ) : (
-          // No image layout
-          <div className={`${isMobile ? 'space-y-1 pt-1 h-[calc(100%-2rem)]' : 'space-y-4 pt-2'}`}>
+          {/* Options section - takes 2/3 of the width if image exists, otherwise full width */}
+          <div className={`grid grid-cols-2 gap-4 ${question.questionImageUrl ? 'col-span-2' : 'col-span-3'}`}>
             {question.choices.map((choice) => (
               <div
                 key={choice.choiceIndex}
-                className={`${isMobile ? 'choice-btn-mobile' : 'choice-btn'} ${getChoiceClass(choice.choiceIndex)}`}
+                className={`choice-container ${getChoiceClass(choice.choiceIndex)}`}
               >
-                <div className="flex items-center">
-                  <span className={`${isMobile ? 'text-lg mr-2' : 'text-3xl mr-3'} font-extrabold text-white`}>
+                <div className={`choice-btn flex items-center ${getChoiceClass(choice.choiceIndex)}`}>
+                  <span className="text-3xl font-extrabold mr-3 text-white">
                     {String.fromCharCode(65 + choice.choiceIndex)}
                   </span>
-                  <span className={`${isMobile ? 'text-sm' : 'text-2xl'} font-bold text-white`}>{choice.choiceText}</span>
+                  <span className="text-xl font-bold text-white">{choice.choiceText}</span>
+                </div>
+                
+                {/* User avatars for this choice */}
+                <div className="avatars-container mt-2">
+                  {answersByChoice[choice.choiceIndex] && answersByChoice[choice.choiceIndex].length > 0 ? (
+                    <div className="flex flex-wrap gap-1">
+                      {answersByChoice[choice.choiceIndex].map((answer, idx) => (
+                        <div key={`${answer.ytChannelId}-${idx}`} className="avatar-tooltip">
+                          <Avatar className="w-8 h-8 border-2 border-white/30">
+                            <AvatarImage 
+                              src={answer.ytProfilePicUrl} 
+                              alt={answer.userName} 
+                            />
+                            <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
+                          </Avatar>
+                          <span className="tooltip-text">{answer.userName}</span>
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <div className="text-sm text-white/50 italic">No answers yet</div>
+                  )}
                 </div>
               </div>
             ))}
           </div>
-        )}
+        </div>
       </div>
+
+      <style jsx>{`
+        .choice-container {
+          display: flex;
+          flex-direction: column;
+          border-radius: 0.75rem;
+          padding: 0.5rem;
+          background: rgba(255, 255, 255, 0.1);
+          transition: all 0.3s ease;
+        }
+        
+        .choice-container.correct {
+          background: rgba(34, 197, 94, 0.2);
+          border: 2px solid rgba(34, 197, 94, 0.5);
+        }
+        
+        .choice-container.incorrect {
+          background: rgba(225, 29, 72, 0.1);
+          border: 2px solid rgba(225, 29, 72, 0.3);
+          opacity: 0.7;
+        }
+        
+        .choice-btn {
+          padding: 0.75rem;
+          border-radius: 0.5rem;
+          background: rgba(255, 255, 255, 0.1);
+          border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        
+        .choice-btn.correct {
+          background: rgba(34, 197, 94, 0.3);
+          border: 1px solid rgba(34, 197, 94, 0.5);
+        }
+        
+        .choice-btn.incorrect {
+          background: rgba(225, 29, 72, 0.2);
+          border: 1px solid rgba(225, 29, 72, 0.3);
+        }
+        
+        .avatars-container {
+          min-height: 40px;
+          padding: 0.5rem;
+        }
+        
+        .avatar-tooltip {
+          position: relative;
+          display: inline-block;
+        }
+        
+        .avatar-tooltip .tooltip-text {
+          visibility: hidden;
+          background-color: rgba(0, 0, 0, 0.8);
+          color: white;
+          text-align: center;
+          border-radius: 6px;
+          padding: 5px;
+          position: absolute;
+          z-index: 1;
+          bottom: 125%;
+          left: 50%;
+          transform: translateX(-50%);
+          opacity: 0;
+          transition: opacity 0.3s;
+          white-space: nowrap;
+          font-size: 0.75rem;
+        }
+        
+        .avatar-tooltip:hover .tooltip-text {
+          visibility: visible;
+          opacity: 1;
+        }
+      `}</style>
     </div>
   );
 };
