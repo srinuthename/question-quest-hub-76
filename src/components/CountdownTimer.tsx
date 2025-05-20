@@ -50,11 +50,11 @@ const CountdownTimer = ({
   // Determine color based on time left and game state
   const getColorClass = () => {
     if (gameState === 'question') {
-      if (timeLeft > initialSeconds * 0.75) return "bg-green-500";
-      if (timeLeft > initialSeconds * 0.5) return "bg-yellow-500";
-      return "bg-red-500";
+      if (timeLeft > initialSeconds * 0.75) return "bg-[#008f7a]";
+      if (timeLeft > initialSeconds * 0.5) return "bg-[#0089ba]";
+      return "bg-[#845ec2]";
     } else {
-      return "bg-purple-500";
+      return "bg-[#2c73d2]";
     }
   };
   

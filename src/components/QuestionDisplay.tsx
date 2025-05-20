@@ -116,7 +116,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                     className={`choice-btn-mobile ${getChoiceClass(choice.choiceIndex)} gradient-border`}
                   >
                     <div className="flex items-center">
-                      <span className={`text-lg font-extrabold mr-2 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
+                      <span className={`text-lg font-extrabold mr-2 ${correctIndex === choice.choiceIndex ? 'text-white' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
                       <span className="text-xl font-bold">{choice.choiceText}</span>
@@ -142,7 +142,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                     className={`choice-btn ${getChoiceClass(choice.choiceIndex)} gradient-border`}
                   >
                     <div className="flex items-center">
-                      <span className={`text-3xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
+                      <span className={`text-3xl font-extrabold mr-3 ${correctIndex === choice.choiceIndex ? 'text-white' : ''}`}>
                         {String.fromCharCode(65 + choice.choiceIndex)}
                       </span>
                       <span className="text-2xl font-bold">{choice.choiceText}</span>
@@ -161,7 +161,7 @@ const QuestionDisplay = ({ question, correctIndex, gameState, visible, questionI
                 className={`${isMobile ? 'choice-btn-mobile' : 'choice-btn'} ${getChoiceClass(choice.choiceIndex)} gradient-border`}
               >
                 <div className="flex items-center">
-                  <span className={`${isMobile ? 'text-lg mr-2' : 'text-3xl mr-3'} font-extrabold ${correctIndex === choice.choiceIndex ? 'text-green-700' : ''}`}>
+                  <span className={`${isMobile ? 'text-lg mr-2' : 'text-3xl mr-3'} font-extrabold ${correctIndex === choice.choiceIndex ? 'text-white' : ''}`}>
                     {String.fromCharCode(65 + choice.choiceIndex)}
                   </span>
                   <span className={`${isMobile ? 'text-sm' : 'text-2xl'} font-bold`}>{choice.choiceText}</span>

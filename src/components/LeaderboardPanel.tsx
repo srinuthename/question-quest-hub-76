@@ -42,7 +42,7 @@ const LeaderboardPanel = ({
   
   return (
     <Card className="w-full h-full overflow-hidden flex flex-col glass-card shadow-xl">
-      <CardHeader className={`${isMobile ? 'p-1 pb-0' : 'pb-0 pt-4'} bg-gradient-to-r from-[#051937] to-[#004d7a]`}>
+      <CardHeader className={`${isMobile ? 'p-1 pb-0' : 'pb-0 pt-4'} bg-[#845ec2]`}>
         <div className="flex items-center justify-center">
           <Trophy className={`mr-1 ${isMobile ? 'h-4 w-4' : 'h-8 w-8'} text-yellow-500`} />
           <CardTitle className={`${isMobile ? 'text-lg' : 'text-3xl'} font-extrabold text-white drop-shadow-md`}>
@@ -65,10 +65,10 @@ const LeaderboardPanel = ({
                     key={index} 
                     className={`flex items-center ${isMobile ? 'p-2' : 'p-3'} rounded-lg ${
                       index === 0 
-                        ? 'bg-gradient-to-r from-yellow-100/90 to-yellow-200/90 border-2 border-yellow-300/80' 
+                        ? 'bg-white/90 border-2 border-yellow-300/80' 
                         : index === 1 
-                          ? 'bg-gradient-to-r from-gray-100/90 to-gray-200/90 border-2 border-gray-300/80'
-                          : 'bg-gradient-to-r from-amber-100/90 to-amber-200/90 border-2 border-amber-300/80'
+                          ? 'bg-white/90 border-2 border-gray-300/80'
+                          : 'bg-white/90 border-2 border-amber-300/80'
                     } shadow-lg animate-fade-in`}
                     style={{ animationDelay: `${index * 0.15}s` }}
                   >
@@ -86,17 +86,17 @@ const LeaderboardPanel = ({
                         <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                         <AvatarFallback className={`${
                           index === 0 
-                            ? 'bg-gradient-to-r from-yellow-400 to-yellow-500' 
+                            ? 'bg-[#845ec2]' 
                             : index === 1 
-                              ? 'bg-gradient-to-r from-gray-400 to-gray-500'
-                              : 'bg-gradient-to-r from-amber-500 to-amber-600'
+                              ? 'bg-[#2c73d2]'
+                              : 'bg-[#0081cf]'
                         } text-white`}>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 truncate">
                         <div className={`${isMobile ? 'text-s' : 'text-xl'} font-extrabold flex items-center`}>
                           {entry.userName}
                           {gameEnded && index === 0 && (
-                            <Badge className={`${isMobile ? 'ml-2 px-3 py-1 ' : 'ml-4 px-6 py-2'} bg-gradient-to-r from-purple-500 to-pink-500 text-white animate-pulse border-none shadow-md`}>
+                            <Badge className={`${isMobile ? 'ml-2 px-3 py-1 ' : 'ml-4 px-6 py-2'} bg-[#845ec2] text-white animate-pulse border-none shadow-md`}>
                               Winner 🏆
                             </Badge>
                           )}
@@ -114,13 +114,13 @@ const LeaderboardPanel = ({
               {isMobile ? (
                 // Mobile view - single column
                 otherPlayers.map((entry, index) => (
-                  <div key={index} className="flex items-center justify-between p-2 bg-gradient-to-r from-white/80 to-white/70 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
+                  <div key={index} className="flex items-center justify-between p-2 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                     <div className="flex items-center">
                       <Avatar className="h-8 w-8 mr-1 avatar-glow">
                         <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
-                        <AvatarFallback className="bg-gradient-to-r from-[#051937] to-[#004d7a] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-[#0089ba] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#004d7a] to-[#008793] flex items-center justify-center mr-1 text-white">
+                      <div className="w-4 h-4 rounded-full bg-[#008e9b] flex items-center justify-center mr-1 text-white">
                         <span className="text-sm font-bold">{index + 4}</span>
                       </div>
                       <span className="font-bold text-sm truncate max-w-[100px]">{entry.userName}</span>
@@ -134,13 +134,13 @@ const LeaderboardPanel = ({
                   {/* Left column */}
                   <div className="space-y-2">
                     {leftColumnPlayers.map((entry, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-white/80 to-white/70 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <div key={index} className="flex items-center justify-between p-3 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                         <div className="flex items-center">
                           <Avatar className="h-10 w-10 mr-2 avatar-glow">
                             <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
-                            <AvatarFallback className="bg-gradient-to-r from-[#051937] to-[#004d7a] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-[#0089ba] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#004d7a] to-[#008793] flex items-center justify-center mr-2 text-white">
+                          <div className="w-6 h-6 rounded-full bg-[#008e9b] flex items-center justify-center mr-2 text-white">
                             <span className="text-sm font-bold">{index + 4}</span>
                           </div>
                           <span className="font-bold text-lg truncate">{entry.userName}</span>
@@ -153,13 +153,13 @@ const LeaderboardPanel = ({
                   {/* Right column */}
                   <div className="space-y-2">
                     {rightColumnPlayers.map((entry, index) => (
-                      <div key={index} className="flex items-center justify-between p-3 bg-gradient-to-r from-white/80 to-white/70 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <div key={index} className="flex items-center justify-between p-3 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                         <div className="flex items-center">
                           <Avatar className="h-10 w-10 mr-2 avatar-glow">
                             <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
-                            <AvatarFallback className="bg-gradient-to-r from-[#051937] to-[#004d7a] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-[#0089ba] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#004d7a] to-[#008793] flex items-center justify-center mr-2 text-white">
+                          <div className="w-6 h-6 rounded-full bg-[#008e9b] flex items-center justify-center mr-2 text-white">
                             <span className="text-sm font-bold">{index + leftColumnPlayers.length + 4}</span>
                           </div>
                           <span className="font-bold text-lg truncate">{entry.userName}</span>

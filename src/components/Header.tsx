@@ -18,10 +18,7 @@ const Header = ({ className }: HeaderProps) => {
         <h1 className="text-xl font-bold">QuizCube</h1>
       </Link>
       <div className="flex items-center w-20 justify-end">
-        <div className="flex items-center gap-1.5 bg-gradient-to-r from-red-600 to-purple-700 px-3 py-1.5 rounded-md shadow-lg relative overflow-hidden">
-          {/* Animated background */}
-          <div className="absolute inset-0 bg-gradient-to-r from-red-600 via-yellow-500 to-red-600 bg-[length:200%_100%] animate-[gradient_2s_ease_infinite]"></div>
-          
+        <div className="flex items-center gap-1.5 bg-[#845ec2] px-3 py-1.5 rounded-md shadow-lg relative overflow-hidden">
           {/* Pulsing dot with improved animation */}
           <span className="relative flex h-3 w-3 z-10">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-white opacity-75"></span>
