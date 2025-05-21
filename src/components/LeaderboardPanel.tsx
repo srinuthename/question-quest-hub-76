@@ -66,7 +66,7 @@ const LeaderboardPanel = ({
           <>
             {/* Top 3 Players with Trophies */}
             {topThree.length > 0 && (
-              <div className={`flex flex-col ${isMobile ? 'gap-1 mb-1' : 'gap-1 mb-3'}`}>
+              <div className={`flex flex-col ${isMobile ? 'gap-1 mb-1' : 'gap-3 mb-6'}`}>
                 {topThree.map((entry, index) => (
                   <div
                     key={index}
@@ -117,7 +117,7 @@ const LeaderboardPanel = ({
             )}
 
             {/* Other players - Desktop gets 2 column layout */}
-            <div className={`${!isMobile ? "grid grid-cols-2 gap-2" : "space-y-1"}`}>
+            <div className={`${!isMobile ? "grid grid-cols-2 gap-4" : "space-y-1"}`}>
               {isMobile ? (
                 // Mobile view - single column
                 otherPlayers.map((entry, index) => (
@@ -139,9 +139,9 @@ const LeaderboardPanel = ({
                 // Desktop view - two columns
                 <>
                   {/* Left column */}
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {leftColumnPlayers.map((entry, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <div key={index} className="flex items-center justify-between p-3 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                         <div className="flex items-center">
                           <Avatar className="h-10 w-10 mr-2 avatar-glow">
                             <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
@@ -158,9 +158,9 @@ const LeaderboardPanel = ({
                   </div>
 
                   {/* Right column */}
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     {rightColumnPlayers.map((entry, index) => (
-                      <div key={index} className="flex items-center justify-between p-2 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
+                      <div key={index} className="flex items-center justify-between p-3 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                         <div className="flex items-center">
                           <Avatar className="h-10 w-10 mr-2 avatar-glow">
                             <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />

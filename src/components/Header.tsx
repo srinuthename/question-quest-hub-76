@@ -17,14 +17,14 @@ const Header = ({ className }: HeaderProps) => {
       <div className={`${isMobile ? 'hidden' : 'flex items-center gap-2'}`}>
         <Link to="/" className="flex items-center gap-2 transition-transform duration-300 hover:scale-105">
           <Boxes className={`h-6 w-6 ${!isMobile ? 'h-12 w-12' : ''}`} />
-          <h1 className={`text-xl font-bold ${!isMobile ? 'text-xl' : ''}`}>QuizCube</h1>
+          <h1 className={`text-xl font-bold ${!isMobile ? 'text-3xl' : ''}`}>QuizCube</h1>
         </Link>
       </div>
 
       {/* Middle section - Scrolling text */}
       <div className="flex-1 mx-4">
         <ScrollingText
-          className={`text-white font-medium ${!isMobile ? 'text-xl' : ''}`}
+          className={`text-white font-medium ${!isMobile ? 'text-5xl' : ''}`}
         />
       </div>
 
