@@ -42,7 +42,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
               return (
                 <div 
                   key={index} 
-                  className={`flex items-center ${isMobile ? 'p-2 mb-1' : 'p-3 mb-2'} rounded-lg bg-white/90 border-2 border-[#845ec2]/30 shadow-md animate-fade-in`}
+                  className={`flex items-center ${isMobile ? 'p-2 mb-1' : 'p-3 mb-1'} rounded-lg bg-white/90 border-2 border-[#845ec2]/30 shadow-md animate-fade-in`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="flex items-center flex-1">
