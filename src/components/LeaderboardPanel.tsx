@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -18,13 +17,13 @@ interface LeaderboardPanelProps {
   gameEnded?: boolean;
 }
 
-const LeaderboardPanel = ({ 
-  leaderboard = [], 
+const LeaderboardPanel = ({
+  leaderboard = [],
   visible = true,
   gameEnded = false
 }: LeaderboardPanelProps) => {
   const isMobile = useIsMobile();
-  
+
   if (!visible) return null;
 
   // Get top 3 players for the podium
@@ -33,13 +32,21 @@ const LeaderboardPanel = ({
   // Get the rest of the players
   const otherPlayers = leaderboard.slice(3);
 
-  // Split other players into two columns for desktop view
-  const leftColumnPlayers = otherPlayers.slice(0, Math.ceil(otherPlayers.length / 2));
-  const rightColumnPlayers = otherPlayers.slice(Math.ceil(otherPlayers.length / 2));
+  // Split other players into left and right columns alternately
+  const leftColumnPlayers = [];
+  const rightColumnPlayers = [];
+
+  otherPlayers.forEach((entry, index) => {
+    if (index % 2 === 0) {
+      leftColumnPlayers.push(entry);
+    } else {
+      rightColumnPlayers.push(entry);
+    }
+  });
 
   // Trophy colors for top 3
   const trophyColors = ["text-yellow-500", "text-gray-400", "text-amber-700"];
-  
+
   return (
     <Card className="w-full h-full overflow-hidden flex flex-col glass-card shadow-xl">
       <CardHeader className={`${isMobile ? 'p-1 pb-0' : 'pb-0 pt-4'} bg-[#845ec2]`}>
@@ -61,12 +68,12 @@ const LeaderboardPanel = ({
             {topThree.length > 0 && (
               <div className={`flex flex-col ${isMobile ? 'gap-1 mb-1' : 'gap-3 mb-6'}`}>
                 {topThree.map((entry, index) => (
-                  <div 
-                    key={index} 
+                  <div
+                    key={index}
                     className={`flex items-center ${isMobile ? 'p-2' : 'p-3'} rounded-lg ${
-                      index === 0 
-                        ? 'bg-white/90 border-2 border-yellow-300/80' 
-                        : index === 1 
+                      index === 0
+                        ? 'bg-white/90 border-2 border-yellow-300/80'
+                        : index === 1
                           ? 'bg-white/90 border-2 border-gray-300/80'
                           : 'bg-white/90 border-2 border-amber-300/80'
                     } shadow-lg animate-fade-in`}
@@ -77,17 +84,17 @@ const LeaderboardPanel = ({
                         <Trophy className={`${isMobile ? 'h-4 w-4' : 'h-8 w-8'} ${trophyColors[index]}`} />
                       </div>
                       <Avatar className={`${isMobile ? 'h-8 w-8 mr-1' : 'h-14 w-14 mr-2'} border-2 avatar-glow ${
-                        index === 0 
-                          ? 'border-yellow-400' 
-                          : index === 1 
+                        index === 0
+                          ? 'border-yellow-400'
+                          : index === 1
                             ? 'border-gray-400'
                             : 'border-amber-500'
                       }`}>
                         <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                         <AvatarFallback className={`${
-                          index === 0 
-                            ? 'bg-[#845ec2]' 
-                            : index === 1 
+                          index === 0
+                            ? 'bg-[#845ec2]'
+                            : index === 1
                               ? 'bg-[#2c73d2]'
                               : 'bg-[#0081cf]'
                         } text-white`}>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
@@ -141,7 +148,7 @@ const LeaderboardPanel = ({
                             <AvatarFallback className="bg-[#0089ba] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="w-6 h-6 rounded-full bg-[#008e9b] flex items-center justify-center mr-2 text-white">
-                            <span className="text-sm font-bold">{index + 4}</span>
+                            <span className="text-sm font-bold">{index * 2 + 4}</span>
                           </div>
                           <span className="font-bold text-lg truncate">{entry.userName}</span>
                         </div>
@@ -160,7 +167,7 @@ const LeaderboardPanel = ({
                             <AvatarFallback className="bg-[#0089ba] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
                           <div className="w-6 h-6 rounded-full bg-[#008e9b] flex items-center justify-center mr-2 text-white">
-                            <span className="text-sm font-bold">{index + leftColumnPlayers.length + 4}</span>
+                            <span className="text-sm font-bold">{index * 2 + 5}</span>
                           </div>
                           <span className="font-bold text-lg truncate">{entry.userName}</span>
                         </div>
