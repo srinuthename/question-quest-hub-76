@@ -6,10 +6,10 @@ interface ScrollingTextProps {
   className?: string;
 }
 
-const ScrollingText = ({ text = "Join the quiz by typing your answer!", className }: ScrollingTextProps) => {
+const ScrollingText = ({ className }: ScrollingTextProps) => {
   const messages = [
-    "Type an option letter to play!",
-    "A, B, C, or D to answer",
+    "Type A, B, C, or D to participate!",
+    "QuizCube Live",
     "Be quick to top the leaderboard!",
     "Answer fast for bonus points!"
   ];
