@@ -61,11 +61,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                     <div className="flex-grow ml-2">
                       <div className={`${isMobile ? 'text-xs' : 'text-base'} font-bold truncate`}>{answer.userName}</div>
                       <div className="flex flex-wrap gap-1 items-center">
-                        {answer.answerIndex !== undefined && (
-                          <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-2 py-0.5'} font-bold bg-[#c34a36] text-white rounded-full shadow-sm`}>
-                            {String.fromCharCode(65 + answer.answerIndex)}
-                          </span>
-                        )}
+
                         <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-gray-600`}>
                           <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-0.5`} />
                           <span>{answer.responseTime}ms</span>
@@ -78,7 +74,6 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                       <Award className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-yellow-500 mr-1`} />
                       <span className={`${isMobile ? 'text-xs' : 'text-base'} font-extrabold`}>{score}</span>
                     </div>
-                    <Check className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-green-500 mt-1`} />
                   </div>
                 </div>
               )
