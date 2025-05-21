@@ -1,3 +1,4 @@
+
 import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
 import { soundService } from "@/services/soundService";
@@ -58,7 +59,7 @@ const PlayPage = () => {
       // Reset state for new question
       setCurrentQuestion(question);
       setCorrectAnswerIndex(null);
-      setAnswers([]); // Clear all previous answers
+      setAnswers([]);
       setFastestAnswers([]);
       setGameState('question');
       setTimerSeconds(QUESTION_TIMER);
@@ -139,6 +140,21 @@ const PlayPage = () => {
       });
     };
 
+    // Add handler for gameStop event
+    const onGameStop = () => {
+      console.log('Game stopped - Reloading client');
+      // Show toast before reloading
+      toast.warning("Game has been stopped by admin. Reloading...", {
+        position: "top-center",
+        duration: 2000,
+      });
+      
+      // Short delay to allow the toast to be seen
+      setTimeout(() => {
+        window.location.reload();
+      }, 2000);
+    };
+
     // Register event listeners
     socket.on('connect', onConnect);
     socket.on('disconnect', onDisconnect);
@@ -148,6 +164,7 @@ const PlayPage = () => {
     socket.on('fastestCorrectAnswers', onFastestAnswers);
     socket.on('leaderboard', onLeaderboard);
     socket.on('gameEnded', onGameEnded);
+    socket.on('gameStop', onGameStop); // Add listener for gameStop event
 
     // Cleanup function
     return () => {
@@ -159,6 +176,7 @@ const PlayPage = () => {
       socket.off('fastestCorrectAnswers', onFastestAnswers);
       socket.off('leaderboard', onLeaderboard);
       socket.off('gameEnded', onGameEnded);
+      socket.off('gameStop', onGameStop); // Remove listener for gameStop event
       
       // Stop all sounds when component unmounts
       soundService.stopAll();

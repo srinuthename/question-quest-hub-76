@@ -218,8 +218,11 @@ const QuestionDisplay = ({
               </div>
             )}
 
-            {/* Options section - takes 2/3 of the width in question state, full column in answer state */}
-            <div className={`${gameState === 'answer' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-2 gap-4'} ${question.questionImageUrl && gameState !== 'answer' ? 'col-span-2' : 'col-span-1'}`}>
+            {/* Options section - modify to take full width and span all columns when no image */}
+            <div className={`${gameState === 'answer' ? 'grid grid-cols-1 gap-4' : 'grid grid-cols-2 gap-4'} 
+                          ${question.questionImageUrl && gameState !== 'answer' 
+                            ? 'col-span-2' 
+                            : (!question.questionImageUrl && gameState !== 'answer' ? 'col-span-3' : 'col-span-1')}`}>
               {question.choices.map((choice) => (
                 <div
                   key={choice.choiceIndex}
@@ -268,4 +271,3 @@ const QuestionDisplay = ({
 };
 
 export default QuestionDisplay;
-
