@@ -1,4 +1,3 @@
-
 import { useState, useEffect } from "react";
 import { socket } from "@/services/socketService";
 import { soundService } from "@/services/soundService";
@@ -8,15 +7,57 @@ import LeaderboardPanel from "@/components/LeaderboardPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
 import CountdownTimer from "@/components/CountdownTimer";
 import ConfettiEffect from "@/components/ConfettiEffect";
+import ScrollingText from "@/components/ScrollingText";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
+import { 
+  Table, 
+  TableBody, 
+  TableCell, 
+  TableHead, 
+  TableHeader, 
+  TableRow 
+} from "@/components/ui/table";
+import { CalendarIcon, Clock3 } from "lucide-react";
 
 // Get the timing values from .env
 const QUESTION_TIMER = parseInt(import.meta.env.VITE_QUESTION_TIMER || '30');
 const REVEAL_ANSWER_TIMER = parseInt(import.meta.env.VITE_REVEAL_ANSWER_TIMER || '10');
 const LEADERBOARD_TIMER = parseInt(import.meta.env.VITE_LEADERBOARD_TIMER || '10');
 const FINAL_STANDINGS_DURATION = parseInt(import.meta.env.VITE_FINAL_STANDINGS_DURATION || '1200');
+
+interface GameInfo {
+  gameTitle: string;
+  totalQuestions: number;
+  estimatedTime: number;
+  estimatedStartTime: string;
+}
+
+interface UpcomingGame {
+  gameTitle: string;
+  totalQuestions: number;
+  estimatedStartTime: string;
+}
+
+// Sample upcoming games data (will be replaced with real data from backend)
+const sampleUpcomingGames: UpcomingGame[] = [
+  {
+    gameTitle: "Music Trivia",
+    totalQuestions: 12,
+    estimatedStartTime: new Date(Date.now() + 60 * 60000).toISOString() // 1 hour from now
+  },
+  {
+    gameTitle: "Movie Quiz",
+    totalQuestions: 10,
+    estimatedStartTime: new Date(Date.now() + 120 * 60000).toISOString() // 2 hours from now
+  },
+  {
+    gameTitle: "Science Facts",
+    totalQuestions: 15,
+    estimatedStartTime: new Date(Date.now() + 180 * 60000).toISOString() // 3 hours from now
+  }
+];
 
 const PlayPage = () => {
   const [gameState, setGameState] = useState<'waiting' | 'question' | 'answer' | 'leaderboard' | 'ended'>('waiting');
@@ -30,6 +71,8 @@ const PlayPage = () => {
   const [isConnected, setIsConnected] = useState<boolean>(false);
   const [timerSeconds, setTimerSeconds] = useState<number>(QUESTION_TIMER);
   const [gameEndTime, setGameEndTime] = useState<number | null>(null);
+  const [gameInfo, setGameInfo] = useState<GameInfo | null>(null);
+  const [upcomingGames, setUpcomingGames] = useState<UpcomingGame[]>(sampleUpcomingGames);
   const isMobile = useIsMobile();
 
   // Connect to socket and listen to events
@@ -154,6 +197,25 @@ const PlayPage = () => {
         window.location.reload();
       }, 2000);
     };
+    
+    // Add handler for gameInfo event
+    const onGameInfo = (info: GameInfo) => {
+      console.log('Game info received:', info);
+      
+      setGameInfo(info);
+      if (info.totalQuestions) {
+        setTotalQuestions(info.totalQuestions);
+      }
+      
+      // Show toast for game info
+      toast.info(`Game info received: ${info.gameTitle}`, {
+        position: "top-center",
+        duration: 3000,
+      });
+      
+      // You could also receive upcoming games info here in a real implementation
+      // For this example, we'll keep using our sample data
+    };
 
     // Register event listeners
     socket.on('connect', onConnect);
@@ -164,7 +226,8 @@ const PlayPage = () => {
     socket.on('fastestCorrectAnswers', onFastestAnswers);
     socket.on('leaderboard', onLeaderboard);
     socket.on('gameEnded', onGameEnded);
-    socket.on('gameStop', onGameStop); // Add listener for gameStop event
+    socket.on('gameStop', onGameStop);
+    socket.on('gameInfo', onGameInfo);
 
     // Cleanup function
     return () => {
@@ -176,7 +239,8 @@ const PlayPage = () => {
       socket.off('fastestCorrectAnswers', onFastestAnswers);
       socket.off('leaderboard', onLeaderboard);
       socket.off('gameEnded', onGameEnded);
-      socket.off('gameStop', onGameStop); // Remove listener for gameStop event
+      socket.off('gameStop', onGameStop);
+      socket.off('gameInfo', onGameInfo);
       
       // Stop all sounds when component unmounts
       soundService.stopAll();
@@ -205,16 +269,80 @@ const PlayPage = () => {
     console.log("Timer completed for state:", gameState);
   };
 
+  // Format date to readable format
+  const formatDateTime = (dateTimeStr: string) => {
+    const date = new Date(dateTimeStr);
+    return date.toLocaleString(undefined, { 
+      month: 'short',
+      day: 'numeric', 
+      hour: '2-digit', 
+      minute: '2-digit' 
+    });
+  };
+
   // Rendering different sections based on game state
   const renderContent = () => {
     switch (gameState) {
       case 'waiting':
         return (
-          <div className="flex items-center justify-center h-full min-h-[80vh]">
-            <div className="text-center glass-card p-8 rounded-xl shadow-2xl">
-              <h2 className="text-4xl font-bold text-white mb-4">Waiting for quiz to start</h2>
-              <p className="text-2xl text-white/90 font-semibold">The quiz host will start the game soon...</p>
+          <div className="flex flex-col items-center justify-center h-full min-h-[60vh]">
+            <div className="w-full max-w-4xl mb-4">
+              <ScrollingText 
+                gameState={gameState}
+                gameTitle={gameInfo?.gameTitle}
+              />
             </div>
+            
+            <div className="text-center glass-card p-8 rounded-xl shadow-2xl mb-8 w-full max-w-4xl">
+              <h2 className="text-4xl font-bold text-white mb-4">Waiting for quiz to start</h2>
+              {gameInfo ? (
+                <div className="space-y-3">
+                  <p className="text-2xl text-white font-semibold">{gameInfo.gameTitle}</p>
+                  <div className="flex flex-wrap justify-center gap-6 text-white">
+                    <div className="flex items-center">
+                      <span className="mr-2 font-bold">Questions:</span> {gameInfo.totalQuestions}
+                    </div>
+                    <div className="flex items-center">
+                      <Clock3 className="mr-1 h-5 w-5" />
+                      <span className="mr-2 font-bold">Est. Duration:</span> {gameInfo.estimatedTime} min
+                    </div>
+                    <div className="flex items-center">
+                      <CalendarIcon className="mr-1 h-5 w-5" />
+                      <span className="mr-2 font-bold">Starting:</span> {formatDateTime(gameInfo.estimatedStartTime)}
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p className="text-2xl text-white font-semibold">The quiz host will start the game soon...</p>
+              )}
+            </div>
+            
+            {/* Upcoming Games Table */}
+            {upcomingGames.length > 0 && (
+              <div className="glass-card p-4 rounded-xl shadow-2xl w-full max-w-4xl">
+                <h3 className="text-2xl font-bold text-white mb-4 text-center">Upcoming Quizzes</h3>
+                <div className="bg-white/20 rounded-lg p-2 backdrop-blur-sm">
+                  <Table>
+                    <TableHeader>
+                      <TableRow>
+                        <TableHead className="text-white">Quiz Title</TableHead>
+                        <TableHead className="text-white text-center">Questions</TableHead>
+                        <TableHead className="text-white text-right">Starting</TableHead>
+                      </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                      {upcomingGames.map((game, index) => (
+                        <TableRow key={index} className={index % 2 === 0 ? 'bg-white/5' : ''}>
+                          <TableCell className="font-medium text-white">{game.gameTitle}</TableCell>
+                          <TableCell className="text-white text-center">{game.totalQuestions}</TableCell>
+                          <TableCell className="text-white text-right">{formatDateTime(game.estimatedStartTime)}</TableCell>
+                        </TableRow>
+                      ))}
+                    </TableBody>
+                  </Table>
+                </div>
+              </div>
+            )}
           </div>
         );
 
@@ -317,7 +445,14 @@ const PlayPage = () => {
 
       case 'ended':
         return (
-          <div className="w-full h-full">
+          <div className="w-full h-full flex flex-col">
+            <div className="mb-4">
+              <ScrollingText 
+                gameState={gameState}
+                gameTitle={gameInfo?.gameTitle}
+                isGameEnded={true}
+              />
+            </div>
             <ConfettiEffect active={true} />
             <LeaderboardPanel
               leaderboard={leaderboard}

@@ -7,7 +7,7 @@ import { socket, emitEvent } from "@/services/socketService";
 import QuestionDisplay from "@/components/QuestionDisplay";
 import AnswersPanel from "@/components/AnswersPanel";
 import GameInfoHeader from "@/components/GameInfoHeader";
-import { Check, Clock, Play, Eye, AlertTriangle, StopCircle } from "lucide-react";
+import { Check, Clock, Play, Eye, AlertTriangle, StopCircle, Info } from "lucide-react";
 import { toast } from "sonner";
 
 // Get API URL from environment variables
@@ -139,6 +139,24 @@ const GamePage = () => {
     });
     setGameActive(false); 
   };
+
+  // New handler for sending game info
+  const handleSendGameInfo = () => {
+    if (!id) return;
+    
+    console.info("Emitting gameInfo event with gameId:", id);
+    emitEvent("gameInfo", { 
+      gameId: id,
+      gameTitle: gameData?.gameTitle || "Quiz Game",
+      totalQuestions: gameData?.questions?.length || 0,
+      estimatedTime: (gameData?.questions?.length || 0) * 2, // Estimate 2 minutes per question
+      estimatedStartTime: new Date(Date.now() + 5 * 60000).toISOString() // Example: start in 5 minutes
+    });
+    
+    toast.success("Game info sent", {
+      description: "Players will now see game information."
+    });
+  };
   
   // Handler for opening player view
   const handleOpenPlayerView = () => {
@@ -237,6 +255,14 @@ const GamePage = () => {
                 >
                   <StopCircle size={18} />
                   {stoppingGame ? "Stopping..." : "Stop Game"}
+                </Button>
+
+                <Button
+                  onClick={handleSendGameInfo}
+                  className="flex items-center gap-2 bg-cyan-600 hover:bg-cyan-700 transition-all shadow-lg text-white"
+                >
+                  <Info size={18} />
+                  Send Game Info
                 </Button>
                 
                 <Button

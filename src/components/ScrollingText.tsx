@@ -6,15 +6,31 @@ import { Star, PartyPopper } from 'lucide-react';
 interface ScrollingTextProps {
   text?: string;
   className?: string;
+  gameTitle?: string;
+  gameState?: string;
+  isGameEnded?: boolean;
 }
 
-const ScrollingText = ({ className }: ScrollingTextProps) => {
-  const messages = [
+const ScrollingText = ({ className, gameTitle, gameState = "waiting", isGameEnded = false }: ScrollingTextProps) => {
+  // Different message sets based on game state
+  const waitingMessages = [
     "Type A, B, C, or D to participate!",
-    "QuizCube Live",
+    gameTitle || "QuizCube Live",
     "Be quick to top the leaderboard!",
-    "Answer fast for bonus points!"
+    "Answer fast for bonus points!",
+    "Stay tuned, the game will start soon!"
   ];
+  
+  const endedMessages = [
+    "Thanks for participating in our quiz!",
+    "Stay tuned for more fun!",
+    "Go to channel home page for more live quizzes!",
+    "Please share your feedback in the comments!",
+    gameTitle ? `Hope you enjoyed ${gameTitle}!` : "Hope you enjoyed the quiz!"
+  ];
+
+  // Select message set based on game state
+  const messages = isGameEnded ? endedMessages : waitingMessages;
   
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
@@ -38,7 +54,7 @@ const ScrollingText = ({ className }: ScrollingTextProps) => {
       <div
         className={`text-center transition-all duration-500 flex items-center justify-center ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-        } ${isMobile ? 'text-sm' : 'text-2xl font-bold'} text-white ${className}`}
+        } ${isMobile ? 'text-sm' : 'text-3xl font-bold'} text-white ${className}`}
       >
         <Star className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'} text-yellow-500 mr-2 animate-pulse`} />
         {messages[currentMessageIndex]}

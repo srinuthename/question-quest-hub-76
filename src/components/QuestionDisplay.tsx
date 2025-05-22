@@ -90,7 +90,7 @@ const QuestionDisplay = ({
   if (!question) {
     return (
       <div className="h-full flex items-center justify-center">
-        <p className="text-3xl font-bold text-white/80">
+        <p className="text-3xl font-bold text-white">
           Waiting for the next question...
         </p>
       </div>
@@ -119,7 +119,7 @@ const QuestionDisplay = ({
     return (
       <div className="h-full rounded-lg shadow-md glass-card">
         <div className="p-4 h-full">
-          <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white drop-shadow-md">
+          <h2 className="text-xl sm:text-2xl font-extrabold mb-4 text-white drop-shadow-md">
             {questionWithNumber}
           </h2>
 
@@ -147,7 +147,7 @@ const QuestionDisplay = ({
   return (
     <div className="h-full rounded-lg shadow-md glass-card">
       <div className="p-4 h-full">
-        <h2 className="text-3xl sm:text-4xl font-extrabold mb-4 text-white drop-shadow-md">
+        <h2 className={`${isMobile ? 'text-lg sm:text-xl' : 'text-3xl sm:text-4xl'} font-extrabold mb-4 text-white drop-shadow-md`}>
           {questionWithNumber}
         </h2>
 

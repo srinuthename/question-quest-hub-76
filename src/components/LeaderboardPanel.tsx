@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Award, Sparkles, PartyPopper, Star, Medal } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -47,7 +48,7 @@ const LeaderboardPanel = ({
   // Trophy colors for top 3
   const trophyColors = ["text-yellow-500", "text-gray-400", "text-amber-700"];
   
-  // Enhanced badge colors and animations for top players
+  // Enhanced badge gradients for top players
   const badgeGradients = [
     "from-yellow-400 to-yellow-600",
     "from-slate-300 to-slate-500",
@@ -136,7 +137,7 @@ const LeaderboardPanel = ({
                         }`}>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 truncate">
-                        <div className={`${isMobile ? 'text-s' : 'text-xl'} font-extrabold flex items-center text-black`}>
+                        <div className={`${isMobile ? 'text-s' : 'text-xl'} font-extrabold flex items-center text-white`}>
                           {entry.userName}
                           {gameEnded && index === 0 && (
                             <Badge className={`${isMobile ? 'ml-2 px-2 py-0.5' : 'ml-4 px-3 py-1'} bg-gradient-to-r from-[#F97316] to-[#D946EF] text-white animate-pulse border-none shadow-md`}>
@@ -146,7 +147,7 @@ const LeaderboardPanel = ({
                         </div>
                       </div>
                     </div>
-                    <div className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-black bg-gradient-to-r ${badgeGradients[index]} bg-clip-text`}>
+                    <div className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white bg-gradient-to-r ${badgeGradients[index]} bg-clip-text`}>
                       <span className="px-3 py-1 bg-white/30 rounded-full shadow-inner">{entry.score}</span>
                     </div>
                   </div>
@@ -172,9 +173,9 @@ const LeaderboardPanel = ({
                       <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#008e9b] to-[#0EA5E9] flex items-center justify-center mr-1 text-white">
                         <span className="text-sm font-bold">{index + 4}</span>
                       </div>
-                      <span className="font-bold text-sm truncate max-w-[100px] text-black">{entry.userName}</span>
+                      <span className="font-bold text-sm truncate max-w-[100px] text-white">{entry.userName}</span>
                     </div>
-                    <span className="font-extrabold text-sm text-black">{entry.score}</span>
+                    <span className="font-extrabold text-sm text-white">{entry.score}</span>
                   </div>
                 ))
               ) : (
@@ -196,9 +197,9 @@ const LeaderboardPanel = ({
                           <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#008e9b] to-[#0EA5E9] flex items-center justify-center mr-2 text-white shadow-md">
                             <span className="text-sm font-bold">{index * 2 + 4}</span>
                           </div>
-                          <span className="font-bold text-lg truncate text-black">{entry.userName}</span>
+                          <span className="font-bold text-lg truncate text-white">{entry.userName}</span>
                         </div>
-                        <span className="font-extrabold text-xl text-black bg-white/70 px-3 py-0.5 rounded-full">{entry.score}</span>
+                        <span className="font-extrabold text-xl text-white bg-white/70 px-3 py-0.5 rounded-full">{entry.score}</span>
                       </div>
                     ))}
                   </div>
@@ -219,9 +220,9 @@ const LeaderboardPanel = ({
                           <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#D946EF] to-[#F97316] flex items-center justify-center mr-2 text-white shadow-md">
                             <span className="text-sm font-bold">{index * 2 + 5}</span>
                           </div>
-                          <span className="font-bold text-lg truncate text-black">{entry.userName}</span>
+                          <span className="font-bold text-lg truncate text-white">{entry.userName}</span>
                         </div>
-                        <span className="font-extrabold text-xl text-black bg-white/70 px-3 py-0.5 rounded-full">{entry.score}</span>
+                        <span className="font-extrabold text-xl text-white bg-white/70 px-3 py-0.5 rounded-full">{entry.score}</span>
                       </div>
                     ))}
                   </div>
