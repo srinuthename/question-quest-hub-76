@@ -49,7 +49,7 @@ const ScrollingText = ({ className, gameTitle, gameState = "waiting", isGameEnde
   }, [messages.length]);
 
   return (
-    <div className="overflow-hidden relative py-1 bg-gradient-to-r from-black/20 to-purple-900/20 rounded-md shadow-inner">
+    <div className="overflow-hidden relative py-1 bg-gradient-to-r from-[#0EA5E9]/20 to-[#8B5CF6]/20 rounded-md shadow-inner">
       <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[slide-in-right_4s_ease-in-out_infinite]"></div>
       <div
         className={`text-center transition-all duration-500 flex items-center justify-center ${

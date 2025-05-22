@@ -317,7 +317,7 @@ const PlayPage = () => {
               )}
             </div>
             
-            {/* Upcoming Games Table */}
+            {/* Upcoming Games Table with enhanced fonts */}
             {upcomingGames.length > 0 && (
               <div className="glass-card p-4 rounded-xl shadow-2xl w-full max-w-4xl">
                 <h3 className="text-2xl font-bold text-white mb-4 text-center">Upcoming Quizzes</h3>
@@ -325,17 +325,17 @@ const PlayPage = () => {
                   <Table>
                     <TableHeader>
                       <TableRow>
-                        <TableHead className="text-white">Quiz Title</TableHead>
-                        <TableHead className="text-white text-center">Questions</TableHead>
-                        <TableHead className="text-white text-right">Starting</TableHead>
+                        <TableHead className={`text-white ${!isMobile ? 'text-xl font-bold' : 'text-base font-bold'}`}>Quiz Title</TableHead>
+                        <TableHead className={`text-white text-center ${!isMobile ? 'text-xl font-bold' : 'text-base font-bold'}`}>Questions</TableHead>
+                        <TableHead className={`text-white text-right ${!isMobile ? 'text-xl font-bold' : 'text-base font-bold'}`}>Starting</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
                       {upcomingGames.map((game, index) => (
                         <TableRow key={index} className={index % 2 === 0 ? 'bg-white/5' : ''}>
-                          <TableCell className="font-medium text-white">{game.gameTitle}</TableCell>
-                          <TableCell className="text-white text-center">{game.totalQuestions}</TableCell>
-                          <TableCell className="text-white text-right">{formatDateTime(game.estimatedStartTime)}</TableCell>
+                          <TableCell className={`font-medium text-white ${!isMobile ? 'text-lg font-bold' : 'text-sm font-bold'}`}>{game.gameTitle}</TableCell>
+                          <TableCell className={`text-white text-center ${!isMobile ? 'text-lg font-bold' : 'text-sm font-bold'}`}>{game.totalQuestions}</TableCell>
+                          <TableCell className={`text-white text-right ${!isMobile ? 'text-lg font-bold' : 'text-sm font-bold'}`}>{formatDateTime(game.estimatedStartTime)}</TableCell>
                         </TableRow>
                       ))}
                     </TableBody>
