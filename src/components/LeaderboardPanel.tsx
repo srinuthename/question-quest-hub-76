@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy, Award, Sparkles, PartyPopper, Star, Medal } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -44,11 +45,14 @@ const LeaderboardPanel = ({
     }
   });
 
-  // Trophy icons for top 3
-  const trophyIcons = [
-    <Trophy key="gold" className="text-yellow-500" />,
-    <Medal key="silver" className="text-slate-400" />,
-    <Medal key="bronze" className="text-amber-700" />
+  // Trophy colors for top 3
+  const trophyColors = ["text-yellow-500", "text-gray-400", "text-amber-700"];
+  
+  // Enhanced badge gradients for top players
+  const badgeGradients = [
+    "from-yellow-400 to-yellow-600",
+    "from-slate-300 to-slate-500",
+    "from-amber-600 to-amber-800"
   ];
 
   return (
@@ -72,7 +76,7 @@ const LeaderboardPanel = ({
         </>
       )}
       
-      <CardHeader className={`${isMobile ? 'p-1 pb-0' : 'pb-0 pt-4'} bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] relative overflow-hidden`}>
+      <CardHeader className={`${isMobile ? 'p-1 pb-0' : 'pb-0 pt-4'} bg-gradient-to-r from-[#D946EF] to-[#8B5CF6] relative overflow-hidden`}>
         <div className="flex items-center justify-center relative z-10">
           <Trophy className={`mr-1 ${isMobile ? 'h-4 w-4' : 'h-8 w-8'} text-yellow-500 animate-pulse`} />
           <CardTitle className={`${isMobile ? 'text-lg' : 'text-3xl'} font-extrabold text-white drop-shadow-md`}>
@@ -100,16 +104,16 @@ const LeaderboardPanel = ({
                     key={index}
                     className={`flex items-center ${isMobile ? 'p-2' : 'p-3'} rounded-lg shadow-lg animate-fade-in bg-gradient-to-r ${
                       index === 0
-                        ? 'from-[#0EA5E9]/30 to-[#8B5CF6]/30 border-l-4 border-yellow-400'
+                        ? 'from-yellow-500/30 to-amber-300/30 border-l-4 border-yellow-400'
                         : index === 1
-                          ? 'from-[#0EA5E9]/20 to-[#8B5CF6]/20 border-l-4 border-slate-400'
-                          : 'from-[#0EA5E9]/20 to-[#8B5CF6]/20 border-l-4 border-amber-600'
-                    } shimmer`}
+                          ? 'from-slate-400/30 to-slate-300/30 border-l-4 border-slate-400'
+                          : 'from-amber-700/30 to-amber-500/30 border-l-4 border-amber-600'
+                    } `}
                     style={{ animationDelay: `${index * 0.15}s` }}
                   >
                     <div className="flex items-center flex-1">
                       <div className={`${isMobile ? 'mr-1' : 'mr-3'} relative`}>
-                        {trophyIcons[index]}
+                        <Trophy className={`${isMobile ? 'h-5 w-5' : 'h-8 w-8'} ${trophyColors[index]} ${index === 0 ? 'animate-pulse' : ''}`} />
                         {index === 0 && (
                           <span className="absolute -top-1 -right-1">
                             <Sparkles className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-yellow-400`} />
@@ -126,24 +130,24 @@ const LeaderboardPanel = ({
                         <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
                         <AvatarFallback className={`text-white ${
                           index === 0
-                            ? 'bg-gradient-to-br from-[#0EA5E9] to-[#8B5CF6]'
+                            ? 'bg-gradient-to-br from-yellow-500 to-amber-600'
                             : index === 1
-                              ? 'bg-gradient-to-br from-[#0EA5E9] to-[#8B5CF6]'
-                              : 'bg-gradient-to-br from-[#0EA5E9] to-[#8B5CF6]'
+                              ? 'bg-gradient-to-br from-slate-400 to-slate-600'
+                              : 'bg-gradient-to-br from-amber-600 to-amber-800'
                         }`}>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 truncate">
                         <div className={`${isMobile ? 'text-s' : 'text-xl'} font-extrabold flex items-center text-white`}>
                           {entry.userName}
                           {gameEnded && index === 0 && (
-                            <Badge className={`${isMobile ? 'ml-2 px-2 py-0.5' : 'ml-4 px-3 py-1'} bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] text-white animate-pulse border-none shadow-md`}>
+                            <Badge className={`${isMobile ? 'ml-2 px-2 py-0.5' : 'ml-4 px-3 py-1'} bg-gradient-to-r from-[#F97316] to-[#D946EF] text-white animate-pulse border-none shadow-md`}>
                               Champion 🏆
                             </Badge>
                           )}
                         </div>
                       </div>
                     </div>
-                    <div className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white`}>
+                    <div className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white bg-gradient-to-r ${badgeGradients[index]} bg-clip-text`}>
                       <span className="px-3 py-1 bg-white/30 rounded-full shadow-inner">{entry.score}</span>
                     </div>
                   </div>
@@ -158,15 +162,15 @@ const LeaderboardPanel = ({
                 otherPlayers.map((entry, index) => (
                   <div 
                     key={index} 
-                    className="flex items-center justify-between p-2 bg-gradient-to-r from-[#0EA5E9]/20 to-[#8B5CF6]/20 rounded-lg animate-fade-in border-l-2 border-[#0EA5E9] shadow-md" 
+                    className="flex items-center justify-between p-2 bg-white/80 rounded-lg animate-fade-in border-l-2 border-[#8B5CF6] shadow-md" 
                     style={{ animationDelay: `${index * 0.1}s` }}
                   >
                     <div className="flex items-center">
                       <Avatar className="h-8 w-8 mr-1 avatar-glow">
                         <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
-                        <AvatarFallback className="bg-gradient-to-br from-[#0EA5E9] to-[#8B5CF6] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                        <AvatarFallback className="bg-[#0089ba] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
-                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] flex items-center justify-center mr-1 text-white">
+                      <div className="w-4 h-4 rounded-full bg-gradient-to-r from-[#008e9b] to-[#0EA5E9] flex items-center justify-center mr-1 text-white">
                         <span className="text-sm font-bold">{index + 4}</span>
                       </div>
                       <span className="font-bold text-sm truncate max-w-[100px] text-white">{entry.userName}</span>
@@ -182,20 +186,20 @@ const LeaderboardPanel = ({
                     {leftColumnPlayers.map((entry, index) => (
                       <div 
                         key={index} 
-                        className="flex items-center justify-between p-2 bg-gradient-to-r from-[#0EA5E9]/20 to-[#8B5CF6]/20 rounded-lg animate-fade-in border-l-2 border-[#0EA5E9] hover:shadow-lg transition-shadow shimmer" 
+                        className="flex items-center justify-between p-2 bg-gradient-to-r from-white/80 to-purple-100/30 rounded-lg animate-fade-in border-l-2 border-[#8B5CF6] hover:shadow-lg transition-shadow" 
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         <div className="flex items-center">
                           <Avatar className="h-10 w-10 mr-2 avatar-glow">
                             <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
-                            <AvatarFallback className="bg-gradient-to-br from-[#0EA5E9] to-[#8B5CF6] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-gradient-to-br from-[#0089ba] to-[#0EA5E9] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#0EA5E9] to-[#8B5CF6] flex items-center justify-center mr-2 text-white shadow-md">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#008e9b] to-[#0EA5E9] flex items-center justify-center mr-2 text-white shadow-md">
                             <span className="text-sm font-bold">{index * 2 + 4}</span>
                           </div>
                           <span className="font-bold text-lg truncate text-white">{entry.userName}</span>
                         </div>
-                        <span className="font-extrabold text-xl text-white bg-white/20 px-3 py-0.5 rounded-full">{entry.score}</span>
+                        <span className="font-extrabold text-xl text-white bg-white/70 px-3 py-0.5 rounded-full">{entry.score}</span>
                       </div>
                     ))}
                   </div>
@@ -205,20 +209,20 @@ const LeaderboardPanel = ({
                     {rightColumnPlayers.map((entry, index) => (
                       <div 
                         key={index} 
-                        className="flex items-center justify-between p-2 bg-gradient-to-r from-[#8B5CF6]/20 to-[#0EA5E9]/20 rounded-lg animate-fade-in border-l-2 border-[#8B5CF6] hover:shadow-lg transition-shadow shimmer" 
+                        className="flex items-center justify-between p-2 bg-gradient-to-r from-white/80 to-blue-100/30 rounded-lg animate-fade-in border-l-2 border-[#0EA5E9] hover:shadow-lg transition-shadow" 
                         style={{ animationDelay: `${index * 0.1}s` }}
                       >
                         <div className="flex items-center">
                           <Avatar className="h-10 w-10 mr-2 avatar-glow">
                             <AvatarImage src={entry.ytProfilePicUrl} alt={entry.userName} />
-                            <AvatarFallback className="bg-gradient-to-br from-[#8B5CF6] to-[#0EA5E9] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
+                            <AvatarFallback className="bg-gradient-to-br from-[#0089ba] to-[#0EA5E9] text-white">{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                           </Avatar>
-                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#8B5CF6] to-[#0EA5E9] flex items-center justify-center mr-2 text-white shadow-md">
+                          <div className="w-6 h-6 rounded-full bg-gradient-to-r from-[#D946EF] to-[#F97316] flex items-center justify-center mr-2 text-white shadow-md">
                             <span className="text-sm font-bold">{index * 2 + 5}</span>
                           </div>
                           <span className="font-bold text-lg truncate text-white">{entry.userName}</span>
                         </div>
-                        <span className="font-extrabold text-xl text-white bg-white/20 px-3 py-0.5 rounded-full">{entry.score}</span>
+                        <span className="font-extrabold text-xl text-white bg-white/70 px-3 py-0.5 rounded-full">{entry.score}</span>
                       </div>
                     ))}
                   </div>
