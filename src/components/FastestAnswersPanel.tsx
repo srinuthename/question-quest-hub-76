@@ -28,7 +28,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
   return (
     <div className="h-full overflow-hidden flex flex-col glass-card shadow-md rounded-lg">
       <div className={`${isMobile ? 'p-1' : 'pb-0 pt-3 px-4'}`}>
-        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#D946EF]`}>Fastest Correct</h3>
+        <h3 className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-white`}>Fastest Correct</h3>
       </div>
       <div className={`flex-grow overflow-y-auto ${isMobile ? 'px-1 pt-1' : 'px-3 pt-2'}`}>
         {fastestAnswers.length === 0 ? (
@@ -59,7 +59,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                       <AvatarFallback className="bg-[#8B5CF6] text-white">{answer.userName.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="flex-grow ml-2">
-                      <div className={`${isMobile ? 'text-xs' : 'text-base'} font-bold truncate`}>{answer.userName}</div>
+                      <div className={`${isMobile ? 'text-xs' : 'text-base'} font-bold truncate text-white`}>{answer.userName}</div>
                       <div className="flex flex-wrap gap-1 items-center">
                         <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-white`}>
                           <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-0.5 text-[#F97316]`} />
@@ -71,7 +71,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                   <div className="flex flex-col items-end">
                     <div className="flex items-center">
                       <Award className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-yellow-500 mr-1`} />
-                      <span className={`${isMobile ? 'text-xs' : 'text-base'} font-extrabold`}>{score}</span>
+                      <span className={`${isMobile ? 'text-xs' : 'text-base'} font-extrabold text-white`}>{score}</span>
                     </div>
                   </div>
                 </div>

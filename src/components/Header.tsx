@@ -18,15 +18,13 @@ const Header = ({ className }: HeaderProps) => {
       <div className={`${isMobile ? 'hidden' : 'flex items-center gap-2'}`}>
         <Link to="/" className="flex items-center gap-2 transition-transform duration-300 hover:scale-105">
           <Boxes className="h-12 w-12 text-[#F97316]" />
-          <h1 className="text-3xl font-bold text-gradient">QuizCube</h1>
+          <h1 className="text-3xl font-bold text-white">QuizCube</h1>
         </Link>
       </div>
 
       {/* Middle section - Scrolling text */}
       <div className="flex-1 mx-4">
-        <ScrollingText
-          className="font-medium text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#D946EF]"
-        />
+        <ScrollingText />
       </div>
 
       {/* Right section - LIVE button (hidden on mobile) */}

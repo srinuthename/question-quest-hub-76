@@ -36,7 +36,7 @@ const ScrollingText = ({ className }: ScrollingTextProps) => {
       <div
         className={`text-center transition-all duration-500 ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-        } ${isMobile ? 'text-sm' : 'text-2xl font-bold'} ${className}`}
+        } ${isMobile ? 'text-sm' : 'text-2xl font-bold'} text-white ${className}`}
       >
         {messages[currentMessageIndex]}
       </div>

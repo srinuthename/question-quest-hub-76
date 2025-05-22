@@ -1,3 +1,4 @@
+
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Trophy } from "lucide-react";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -66,7 +67,7 @@ const LeaderboardPanel = ({
           <>
             {/* Top 3 Players with Trophies */}
             {topThree.length > 0 && (
-              <div className={`flex flex-col ${isMobile ? 'gap-1 mb-1' : 'gap-3 mb-6'}`}>
+              <div className={`flex flex-col ${isMobile ? 'gap-1 mb-1' : 'gap-2 mb-3'}`}>
                 {topThree.map((entry, index) => (
                   <div
                     key={index}
@@ -100,7 +101,7 @@ const LeaderboardPanel = ({
                         } text-white`}>{entry.userName.substring(0, 2).toUpperCase()}</AvatarFallback>
                       </Avatar>
                       <div className="flex-1 truncate">
-                        <div className={`${isMobile ? 'text-s' : 'text-xl'} font-extrabold flex items-center`}>
+                        <div className={`${isMobile ? 'text-s' : 'text-xl'} font-extrabold flex items-center text-black`}>
                           {entry.userName}
                           {gameEnded && index === 0 && (
                             <Badge className={`${isMobile ? 'ml-2 px-3 py-1 ' : 'ml-4 px-6 py-2'} bg-[#845ec2] text-white animate-pulse border-none shadow-md`}>
@@ -110,7 +111,7 @@ const LeaderboardPanel = ({
                         </div>
                       </div>
                     </div>
-                    <div className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold`}>{entry.score}</div>
+                    <div className={`${isMobile ? 'text-sm' : 'text-2xl'} font-extrabold text-black`}>{entry.score}</div>
                   </div>
                 ))}
               </div>
@@ -130,16 +131,16 @@ const LeaderboardPanel = ({
                       <div className="w-4 h-4 rounded-full bg-[#008e9b] flex items-center justify-center mr-1 text-white">
                         <span className="text-sm font-bold">{index + 4}</span>
                       </div>
-                      <span className="font-bold text-sm truncate max-w-[100px]">{entry.userName}</span>
+                      <span className="font-bold text-sm truncate max-w-[100px] text-black">{entry.userName}</span>
                     </div>
-                    <span className="font-extrabold text-sm">{entry.score}</span>
+                    <span className="font-extrabold text-sm text-black">{entry.score}</span>
                   </div>
                 ))
               ) : (
                 // Desktop view - two columns
                 <>
                   {/* Left column */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {leftColumnPlayers.map((entry, index) => (
                       <div key={index} className="flex items-center justify-between p-3 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                         <div className="flex items-center">
@@ -150,15 +151,15 @@ const LeaderboardPanel = ({
                           <div className="w-6 h-6 rounded-full bg-[#008e9b] flex items-center justify-center mr-2 text-white">
                             <span className="text-sm font-bold">{index * 2 + 4}</span>
                           </div>
-                          <span className="font-bold text-lg truncate">{entry.userName}</span>
+                          <span className="font-bold text-lg truncate text-black">{entry.userName}</span>
                         </div>
-                        <span className="font-extrabold text-xl">{entry.score}</span>
+                        <span className="font-extrabold text-xl text-black">{entry.score}</span>
                       </div>
                     ))}
                   </div>
 
                   {/* Right column */}
-                  <div className="space-y-2">
+                  <div className="space-y-1">
                     {rightColumnPlayers.map((entry, index) => (
                       <div key={index} className="flex items-center justify-between p-3 bg-white/80 rounded-lg animate-fade-in border border-white/30 shadow-md" style={{ animationDelay: `${index * 0.1}s` }}>
                         <div className="flex items-center">
@@ -169,9 +170,9 @@ const LeaderboardPanel = ({
                           <div className="w-6 h-6 rounded-full bg-[#008e9b] flex items-center justify-center mr-2 text-white">
                             <span className="text-sm font-bold">{index * 2 + 5}</span>
                           </div>
-                          <span className="font-bold text-lg truncate">{entry.userName}</span>
+                          <span className="font-bold text-lg truncate text-black">{entry.userName}</span>
                         </div>
-                        <span className="font-extrabold text-xl">{entry.score}</span>
+                        <span className="font-extrabold text-xl text-black">{entry.score}</span>
                       </div>
                     ))}
                   </div>

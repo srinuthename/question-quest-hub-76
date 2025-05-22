@@ -216,9 +216,9 @@
   box-shadow: 0 0 10px rgba(217, 70, 239, 0.6);
 }
 
-/* Text gradient */
+/* Text gradient - replacing with solid white */
 .text-gradient {
-  @apply text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#D946EF];
+  @apply text-white font-bold;
 }
 
 /* Custom scrollbar */

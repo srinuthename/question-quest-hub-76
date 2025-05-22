@@ -50,11 +50,11 @@ const GameInfoHeader = ({
   // If we're displaying game info rather than timer
   if (gameTitle || questionIndex !== undefined) {
     return (
-      <Card className={`p-${isMobile ? '2' : '3'} bg-gradient-to-r from-[#845ec2]/10 to-[#b0a8b9]/10 shadow-sm w-full`}>
+      <Card className={`p-${isMobile ? '2' : '3'} bg-white shadow-sm w-full`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-[#845ec2]">{gameTitle || "Game"}</h2>
-            <div className="text-sm text-[#4b4453]">
+            <h2 className="text-lg font-bold text-black">{gameTitle || "Game"}</h2>
+            <div className="text-sm text-black">
               {isGameOpen ? "Active" : "Inactive"} • 
               {questionIndex !== undefined && totalQuestions !== undefined 
                 ? ` Question ${questionIndex} of ${totalQuestions}`
@@ -63,7 +63,7 @@ const GameInfoHeader = ({
           </div>
           <div className="flex items-center">
             <Clock className="h-5 w-5 text-[#c34a36] mr-2" />
-            <span className="text-sm text-[#4b4453]">
+            <span className="text-sm text-black">
               {gameStartedAt 
                 ? `Started: ${new Date(gameStartedAt).toLocaleTimeString()}` 
                 : "Not started yet"}
@@ -76,12 +76,12 @@ const GameInfoHeader = ({
   
   // Default timer display
   return (
-    <Card className={`p-${isMobile ? '1' : '2'} bg-gradient-to-r from-[#845ec2]/10 to-[#b0a8b9]/10 shadow-sm w-full`}>
+    <Card className={`p-${isMobile ? '1' : '2'} bg-white shadow-sm w-full`}>
       <div className="flex items-center gap-2">
-        <Hourglass className={`h-${isMobile ? '4' : '5'} w-${isMobile ? '4' : '5'} text-[#845ec2]`} />
+        <Hourglass className={`h-${isMobile ? '4' : '5'} w-${isMobile ? '4' : '5'} text-black`} />
         <div className="flex-1">
           <div className="flex justify-between items-center text-sm mb-1">
-            <span className="font-medium">{getTimerText()}</span>
+            <span className="font-medium text-black">{getTimerText()}</span>
           </div>
           <Progress 
             value={progressValue} 
