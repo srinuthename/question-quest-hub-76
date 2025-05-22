@@ -108,7 +108,7 @@ const PlayPage = () => {
       setTimerSeconds(QUESTION_TIMER);
 
       // Update question index if available
-      if (question.questionIndex !== undefined) {
+      if (question.questionIndex) {
         setQuestionIndex(question.questionIndex);
       }
 
@@ -294,10 +294,10 @@ const PlayPage = () => {
             </div>
             
             <div className="text-center glass-card p-8 rounded-xl shadow-2xl mb-8 w-full max-w-4xl">
-              <h2 className="text-4xl font-bold text-white mb-4">Waiting for quiz to start</h2>
+              <h2 className="text-4xl font-bold text-white mb-4">Quiz starts soon</h2>
               {gameInfo ? (
                 <div className="space-y-3">
-                  <p className="text-2xl text-white font-semibold">{gameInfo.gameTitle}</p>
+                  <p className="text-2xl text-white font-semibold">Quiz Title: {gameInfo.gameTitle}</p>
                   <div className="flex flex-wrap justify-center gap-6 text-white">
                     <div className="flex items-center">
                       <span className="mr-2 font-bold">Questions:</span> {gameInfo.totalQuestions}
@@ -306,10 +306,7 @@ const PlayPage = () => {
                       <Clock3 className="mr-1 h-5 w-5" />
                       <span className="mr-2 font-bold">Est. Duration:</span> {gameInfo.estimatedTime} min
                     </div>
-                    <div className="flex items-center">
-                      <CalendarIcon className="mr-1 h-5 w-5" />
-                      <span className="mr-2 font-bold">Starting:</span> {formatDateTime(gameInfo.estimatedStartTime)}
-                    </div>
+
                   </div>
                 </div>
               ) : (
