@@ -7,7 +7,7 @@ import LeaderboardPanel from "@/components/LeaderboardPanel";
 import FastestAnswersPanel from "@/components/FastestAnswersPanel";
 import CountdownTimer from "@/components/CountdownTimer";
 import ConfettiEffect from "@/components/ConfettiEffect";
-import ScrollingText from "@/components/ScrollingText";
+import ScrollingText from "@/components/ScrollingTextMini";
 import { motion } from "framer-motion";
 import { useIsMobile } from "@/hooks/use-mobile";
 import { toast } from "sonner";
