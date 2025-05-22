@@ -16,7 +16,7 @@ interface FastestAnswersPanelProps {
 
 const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAnswersPanelProps) => {
   const isMobile = useIsMobile();
-  const QUESTION_TIMER_MS = parseInt(import.meta.env.VITE_QUESTION_TIMER || '30') * 1000;
+  const QUESTION_TIMER_MS = parseInt(import.meta.env.VITE_SERVER_QUESTION_TIMER || '50000') ;
 
   // Calculate score based on response time
   const calculateScore = (responseTime: number) => {
