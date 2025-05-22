@@ -239,3 +239,77 @@
 ::-webkit-scrollbar-thumb:hover {
   background: linear-gradient(to bottom, #D946EF, #F97316);
 }
+
+/* New enhanced animations for leaderboard */
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0);
+  }
+  50% {
+    transform: translateY(-10px);
+  }
+}
+
+@keyframes shine {
+  0% {
+    background-position: 200% center;
+  }
+  100% {
+    background-position: -200% center;
+  }
+}
+
+.animate-float {
+  animation: float 6s ease-in-out infinite;
+}
+
+.animate-shine {
+  background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.4), transparent);
+  background-size: 200% auto;
+  background-clip: text;
+  -webkit-background-clip: text;
+  animation: shine 4s linear infinite;
+}
+
+/* Shimmer effect */
+.shimmer {
+  position: relative;
+  overflow: hidden;
+}
+
+.shimmer::before {
+  content: '';
+  position: absolute;
+  top: 0;
+  left: -100%;
+  width: 50%;
+  height: 100%;
+  background: linear-gradient(to right, transparent 0%, rgba(255, 255, 255, 0.3) 50%, transparent 100%);
+  animation: shimmer 2s infinite;
+  transform: skewX(-20deg);
+}
+
+@keyframes shimmer {
+  0% {
+    left: -100%;
+  }
+  100% {
+    left: 200%;
+  }
+}
+
+/* Card reveal animations */
+.card-reveal {
+  transform: perspective(1000px) rotateY(90deg);
+  transform-origin: left center;
+  animation: card-reveal 0.5s forwards;
+}
+
+@keyframes card-reveal {
+  from {
+    transform: perspective(1000px) rotateY(90deg);
+  }
+  to {
+    transform: perspective(1000px) rotateY(0deg);
+  }
+}
