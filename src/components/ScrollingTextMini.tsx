@@ -21,7 +21,6 @@ const ScrollingText = ({ className, gameTitle, gameState = "waiting", isGameEnde
   
   const endedMessages = [
     "Thanks for participating in our quiz!",
-    "Stay tuned for more fun!",
     "Go to channel home page for more live quizzes!",
     "Please share your feedback in the comments!",
     gameTitle ? `Hope you enjoyed ${gameTitle}!` : "Hope you enjoyed the quiz!"
