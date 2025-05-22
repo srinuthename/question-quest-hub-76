@@ -1,5 +1,6 @@
 
 import { useEffect, useState } from 'react';
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface ScrollingTextProps {
   text?: string;
@@ -16,6 +17,7 @@ const ScrollingText = ({ className }: ScrollingTextProps) => {
   
   const [currentMessageIndex, setCurrentMessageIndex] = useState(0);
   const [isVisible, setIsVisible] = useState(true);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     const interval = setInterval(() => {
@@ -32,9 +34,9 @@ const ScrollingText = ({ className }: ScrollingTextProps) => {
   return (
     <div className="overflow-hidden relative py-1 bg-black/10 rounded-md">
       <div
-        className={`text-center text-sm font-medium transition-all duration-500 ${
+        className={`text-center transition-all duration-500 ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
-        } ${className}`}
+        } ${isMobile ? 'text-sm' : 'text-2xl font-bold'} ${className}`}
       >
         {messages[currentMessageIndex]}
       </div>

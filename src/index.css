@@ -1,3 +1,4 @@
+
 @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800;900&display=swap');
 
 @tailwind base;
@@ -63,45 +64,58 @@
   body {
     @apply bg-background text-foreground;
     background-color: #845ec2;
-    background-image: linear-gradient(to right top, #845ec2, #4b4453, #b0a8b9, #c34a36, #ff8066);
+    background-image: linear-gradient(to right top, #8B5CF6, #4b4453, #D946EF, #F97316, #0EA5E9);
     background-attachment: fixed;
     min-height: 100vh;
   }
 }
 
+/* Play Page Styles - Energetic & Flashy */
 .choice-btn {
-  @apply w-full px-5 py-3 rounded-md mb-2 flex items-center bg-white/90 border-2 border-[#4b4453] shadow-lg hover:bg-white hover:shadow-xl hover:border-[#ff8066] font-bold text-white;
-  transition: all 0.2s ease;
+  @apply w-full px-5 py-3 rounded-md mb-2 flex items-center shadow-lg hover:shadow-xl font-bold text-white;
+  transition: all 0.3s ease;
   backdrop-filter: blur(8px);
-  background-color: rgba(132, 94, 194, 0.8);
+  background: linear-gradient(45deg, #8B5CF6 0%, #D946EF 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  transform-origin: center;
 }
 
 .choice-btn-mobile {
-  @apply w-full px-3 py-1.5 rounded-md mb-1 flex items-center bg-white/90 border border-[#4b4453] shadow-sm hover:bg-white hover:shadow-md hover:border-[#ff8066] font-bold text-white;
-  transition: all 0.2s ease;
+  @apply w-full px-3 py-1.5 rounded-md mb-1 flex items-center shadow-sm hover:shadow-md font-bold text-white;
+  transition: all 0.3s ease;
   backdrop-filter: blur(8px);
-  background-color: rgba(132, 94, 194, 0.8);
+  background: linear-gradient(45deg, #8B5CF6 0%, #D946EF 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.choice-btn:hover, .choice-btn-mobile:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(139, 92, 246, 0.4);
+  border-color: rgba(255, 255, 255, 0.4);
 }
 
 .choice-btn.correct,
 .choice-btn-mobile.correct {
-  @apply bg-green-600 border-green-400 border-2 text-white;
+  background: linear-gradient(45deg, #10B981 0%, #34D399 100%);
+  border: 2px solid rgba(255, 255, 255, 0.4);
   animation: pulse-border 1.5s infinite;
 }
 
 .choice-btn.incorrect,
 .choice-btn-mobile.incorrect {
-  @apply bg-red-600 border-red-400 border-2 text-white opacity-70;
+  background: linear-gradient(45deg, #EF4444 0%, #F87171 100%);
+  border: 2px solid rgba(255, 255, 255, 0.2);
+  opacity: 0.8;
 }
 
 @keyframes pulse-border {
   0%, 100% {
-    border-color: #ffc75f;
-    box-shadow: 0 0 0 0 rgba(255, 199, 95, 0.7);
+    border-color: rgba(255, 255, 255, 0.4);
+    box-shadow: 0 0 0 0 rgba(255, 255, 255, 0.7);
   }
   50% {
-    border-color: #f9f871;
-    box-shadow: 0 0 0 6px rgba(249, 248, 113, 0);
+    border-color: rgba(255, 255, 255, 0.8);
+    box-shadow: 0 0 0 6px rgba(255, 255, 255, 0);
   }
 }
 
@@ -111,6 +125,8 @@
   animation: slide-in-right 0.3s ease-out forwards;
   transform: translateX(100%);
   opacity: 0;
+  background: linear-gradient(45deg, rgba(139, 92, 246, 0.2) 0%, rgba(217, 70, 239, 0.2) 100%);
+  border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 @keyframes slide-in-right {
@@ -149,21 +165,34 @@
   height: 100vh;
 }
 
-/* Card styling enhancements */
+/* Card styling for Play Page - glossy, flashy */
 .glass-card {
   background: rgba(75, 68, 83, 0.15);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.18);
   box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37);
+  transition: all 0.3s ease;
+}
+
+.glass-card:hover {
+  border-color: rgba(255, 255, 255, 0.3);
+  box-shadow: 0 12px 40px 0 rgba(31, 38, 135, 0.45);
 }
 
 .glass-card-dark {
-  background: rgba(255, 128, 102, 0.25);
+  background: linear-gradient(45deg, rgba(139, 92, 246, 0.25) 0%, rgba(217, 70, 239, 0.25) 100%);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.1);
   box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+  transition: all 0.3s ease;
+}
+
+/* Card styling for Admin/Game Page - solid colors */
+.admin-card {
+  @apply bg-white border border-gray-200 shadow-md rounded-lg;
+  transition: all 0.2s ease;
 }
 
 .gradient-border {
@@ -177,14 +206,19 @@
   left: -2px;
   right: -2px;
   bottom: -2px;
-  background: #ff8066;
+  background: linear-gradient(45deg, #F97316, #D946EF);
   z-index: -1;
   border-radius: 0.7rem;
 }
 
 /* Avatar enhancements */
 .avatar-glow {
-  box-shadow: 0 0 10px rgba(255, 128, 102, 0.6);
+  box-shadow: 0 0 10px rgba(217, 70, 239, 0.6);
+}
+
+/* Text gradient */
+.text-gradient {
+  @apply text-transparent bg-clip-text bg-gradient-to-r from-[#F97316] to-[#D946EF];
 }
 
 /* Custom scrollbar */
@@ -198,10 +232,10 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: #4b4453;
+  background: linear-gradient(to bottom, #8B5CF6, #D946EF);
   border-radius: 10px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: #c34a36;
+  background: linear-gradient(to bottom, #D946EF, #F97316);
 }

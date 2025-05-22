@@ -129,7 +129,7 @@ const GamePage = () => {
     setGameActive(true);
   };
 
-    const handleStopGame = () => {
+  const handleStopGame = () => {
     if (!id) return;
     
     console.info("Emitting stopGame event with gameId:", id);
@@ -139,6 +139,7 @@ const GamePage = () => {
     });
     setGameActive(false); 
   };
+  
   // Handler for opening player view
   const handleOpenPlayerView = () => {
     if (!id) return;
@@ -149,16 +150,14 @@ const GamePage = () => {
     toast.success("Player view opened in new window");
   };
   
-
-
   if (loading) {
     return (
       <div className="container mx-auto py-8">
-        <Card className="glass-card border-none shadow-xl">
+        <Card className="admin-card border-none shadow-xl bg-white">
           <CardContent className="flex items-center justify-center p-8">
             <div className="text-center">
-              <Clock className="w-12 h-12 animate-pulse mx-auto mb-4 text-white" />
-              <p className="text-xl text-white">Loading game data...</p>
+              <Clock className="w-12 h-12 animate-pulse mx-auto mb-4 text-[#8B5CF6]" />
+              <p className="text-xl text-gray-800">Loading game data...</p>
             </div>
           </CardContent>
         </Card>
@@ -169,14 +168,14 @@ const GamePage = () => {
   if (error) {
     return (
       <div className="container mx-auto py-8">
-        <Card className="glass-card border-none shadow-xl">
+        <Card className="admin-card border-none shadow-xl bg-white">
           <CardContent className="flex items-center justify-center p-8">
             <div className="text-center">
               <AlertTriangle className="w-12 h-12 mx-auto mb-4 text-red-500" />
-              <p className="text-xl text-white mb-4">{error}</p>
+              <p className="text-xl text-gray-800 mb-4">{error}</p>
               <Button 
                 onClick={() => window.location.reload()} 
-                className="bg-gradient-to-r from-[#008793] to-[#00bf72] hover:opacity-90 transition-all border-none shadow-lg"
+                className="bg-[#8B5CF6] hover:bg-[#7C3AED] text-white transition-all shadow-lg"
               >
                 Try Again
               </Button>
@@ -199,32 +198,32 @@ const GamePage = () => {
       
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 mt-4">
         <div className="lg:col-span-2">
-          <Card className="glass-card border-none shadow-xl mb-6">
-            <CardHeader>
+          <Card className="admin-card border-none shadow-xl bg-white mb-6">
+            <CardHeader className="bg-gray-50 rounded-t-lg border-b">
               <CardTitle className="flex justify-between items-center">
-                <span className="text-white">Game Controls</span>
+                <span className="text-gray-800">Game Controls</span>
                 <div className="flex items-center space-x-2">
-                  <span className="text-sm text-white/70">
+                  <span className="text-sm text-gray-600">
                     Last checked: {new Date(lastStatusCheck).toLocaleTimeString()}
                   </span>
                   {gameActive ? (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#00bf72] to-[#a8eb12] text-white shadow-md">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800 border border-green-200">
                       <Check className="w-3 h-3 mr-1" /> Active
                     </span>
                   ) : (
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gradient-to-r from-[#051937] to-[#004d7a] text-white">
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-gray-100 text-gray-800 border border-gray-200">
                       Inactive
                     </span>
                   )}
                 </div>
               </CardTitle>
             </CardHeader>
-            <CardContent className="space-y-4">
+            <CardContent className="space-y-4 p-6">
               <div className="flex flex-wrap gap-4">
                 <Button 
                   onClick={handleStartGame} 
                   disabled={gameActive}
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#008793] to-[#00bf72] hover:opacity-90 transition-all border-none shadow-lg text-white"
+                  className="flex items-center gap-2 bg-[#8B5CF6] hover:bg-[#7C3AED] transition-all shadow-lg text-white"
                 >
                   <Play size={18} />
                   {gameActive ? "Game Started" : "Start Game"}
@@ -234,15 +233,15 @@ const GamePage = () => {
                   onClick={handleStopGame}
                   disabled={!gameActive || stoppingGame}
                   variant="destructive"
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#990000] to-[#ff4d4d] hover:opacity-90 transition-all border-none shadow-lg text-white"
+                  className="flex items-center gap-2 bg-red-600 hover:bg-red-700 transition-all shadow-lg text-white"
                 >
                   <StopCircle size={18} />
                   {stoppingGame ? "Stopping..." : "Stop Game"}
                 </Button>
                 
-                    <Button
+                <Button
                   onClick={handleOpenPlayerView}
-                  className="flex items-center gap-2 bg-gradient-to-r from-[#051937] to-[#004d7a] hover:opacity-90 transition-all border-none shadow-lg text-white"
+                  className="flex items-center gap-2 bg-gray-800 hover:bg-gray-700 transition-all shadow-lg text-white"
                 >
                   <Eye size={18} />
                   Open Player View                  
@@ -250,8 +249,8 @@ const GamePage = () => {
               </div>
               
               <div className="mt-4">
-                <h3 className="font-medium text-white mb-2">Game Information</h3>
-                <div className="glass-card-dark rounded-md p-4 text-white space-y-2">
+                <h3 className="font-medium text-gray-800 mb-2">Game Information</h3>
+                <div className="bg-gray-50 rounded-md p-4 border border-gray-200 space-y-2">
                   <p><strong>Game Title:</strong> {gameData?.gameTitle}</p>
                   <p><strong>Total Questions:</strong> {gameData?.questions?.length}</p>
                   <p><strong>Current Question:</strong> {gameData?.activeQuestionIndex !== undefined ? gameData.activeQuestionIndex + 1 : "Not started"}</p>
@@ -260,10 +259,7 @@ const GamePage = () => {
               </div>
             </CardContent>
           </Card>
-          
-       </div>
-        
-
+        </div>
       </div>
     </div>
   );
