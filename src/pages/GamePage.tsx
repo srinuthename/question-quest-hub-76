@@ -145,13 +145,7 @@ const GamePage = () => {
     if (!id) return;
     
     console.info("Emitting gameInfo event with gameId:", id);
-    emitEvent("gameInfo", { 
-      gameId: id,
-      gameTitle: gameData?.gameTitle || "Quiz Game",
-      totalQuestions: gameData?.questions?.length || 0,
-      estimatedTime: (gameData?.questions?.length || 0) * 2, // Estimate 2 minutes per question
-      estimatedStartTime: new Date(Date.now() + 5 * 60000).toISOString() // Example: start in 5 minutes
-    });
+    emitEvent("gameInfo", { gameId: id });
     
     toast.success("Game info sent", {
       description: "Players will now see game information."
