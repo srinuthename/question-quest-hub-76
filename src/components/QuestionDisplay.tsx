@@ -98,7 +98,7 @@ const QuestionDisplay = ({
   }
 
   const questionWithNumber = questionIndex && totalQuestions
-    ? `${questionIndex}/${totalQuestions} ${question.questionText}`
+    ? `Q. ${questionIndex}/${totalQuestions}) ${question.questionText}`
     : question.questionText;
 
   // Helper function to determine choice class
