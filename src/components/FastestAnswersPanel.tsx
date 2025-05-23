@@ -42,27 +42,27 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
               return (
                 <div 
                   key={index} 
-                  className={`flex items-center ${isMobile ? 'p-2 mb-1' : 'p-2 mb-1'} rounded-lg bg-gradient-to-r from-[#0EA5E9]/20 to-[#8B5CF6]/20 border-2 border-[#8B5CF6]/30 shadow-md animate-fade-in`}
+                  className={`flex items-center ${isMobile ? 'p-2 mb-1' : 'p-2 mb-1'} rounded-lg bg-slate-800/70 border border-slate-700/50 shadow-md animate-fade-in`}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 >
                   <div className="flex items-center flex-1">
                     <div className={`${isMobile ? 'mr-1' : 'mr-3'}`}>
-                      <div className={`w-${isMobile ? '5' : '6'} h-${isMobile ? '5' : '6'} rounded-full bg-gradient-to-r from-[#F97316] to-[#D946EF] flex items-center justify-center text-white font-bold`}>
+                      <div className={`w-${isMobile ? '5' : '6'} h-${isMobile ? '5' : '6'} rounded-full bg-slate-700 flex items-center justify-center text-white font-bold`}>
                         {index + 1}
                       </div>
                     </div>
-                    <Avatar className={`${isMobile ? 'w-7 h-7' : 'w-12 h-12'} border-2 border-[#0EA5E9] avatar-glow`}>
+                    <Avatar className={`${isMobile ? 'w-7 h-7' : 'w-12 h-12'} border border-slate-600 avatar-glow`}>
                       <AvatarImage 
                         src={answer.ytProfilePicUrl} 
                         alt={answer.userName}
                       />
-                      <AvatarFallback className="bg-[#8B5CF6] text-white">{answer.userName.charAt(0)}</AvatarFallback>
+                      <AvatarFallback className="bg-slate-700 text-white">{answer.userName.charAt(0)}</AvatarFallback>
                     </Avatar>
                     <div className="flex-grow ml-2">
                       <div className={`${isMobile ? 'text-xs' : 'text-base'} font-bold truncate text-white`}>{answer.userName}</div>
                       <div className="flex flex-wrap gap-1 items-center">
                         <div className={`flex items-center ${isMobile ? 'text-xs' : 'text-sm'} text-white`}>
-                          <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-0.5 text-[#F97316]`} />
+                          <Clock className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} mr-0.5 text-slate-400`} />
                           <span>{answer.responseTime}ms</span>
                         </div>
                       </div>
@@ -70,7 +70,7 @@ const FastestAnswersPanel = ({ fastestAnswers = [], visible = true }: FastestAns
                   </div>
                   <div className="flex flex-col items-end">
                     <div className="flex items-center">
-                      <Award className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-yellow-500 mr-1`} />
+                      <Award className={`${isMobile ? 'h-3 w-3' : 'h-4 w-4'} text-slate-300 mr-1`} />
                       <span className={`${isMobile ? 'text-xs' : 'text-base'} font-extrabold text-white`}>{score}</span>
                     </div>
                   </div>

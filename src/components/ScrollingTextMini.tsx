@@ -46,16 +46,16 @@ const ScrollingText = ({ className, gameTitle, gameState = "waiting", isGameEnde
   }, [messages.length]);
 
   return (
-    <div className="overflow-hidden relative py-1 bg-gradient-to-r from-black/20 to-purple-900/20 rounded-md shadow-inner">
-      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-white/5 to-transparent animate-[slide-in-right_4s_ease-in-out_infinite]"></div>
+    <div className="overflow-hidden relative py-1 bg-slate-900/70 rounded-md shadow-inner">
+      <div className="absolute top-0 left-0 w-full h-full bg-gradient-to-r from-transparent via-slate-800/10 to-transparent animate-[slide-in-right_4s_ease-in-out_infinite]"></div>
       <div
         className={`text-center transition-all duration-500 flex items-center justify-center ${
           isVisible ? 'opacity-100 scale-100' : 'opacity-0 scale-95'
         } ${isMobile ? 'text-sm' : 'text-3xl font-bold'} text-white ${className}`}
       >
-        <Star className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'} text-yellow-500 mr-2 animate-pulse`} />
+        <Star className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'} text-slate-200 mr-2 animate-pulse`} />
         {messages[currentMessageIndex]}
-        <PartyPopper className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'} text-yellow-400 ml-2 animate-bounce`} />
+        <PartyPopper className={`${isMobile ? 'h-3 w-3' : 'h-5 w-5'} text-slate-200 ml-2 animate-bounce`} />
       </div>
     </div>
   );

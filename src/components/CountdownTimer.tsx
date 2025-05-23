@@ -49,9 +49,9 @@ const CountdownTimer = ({
 
   // Determine color based on time left (green to orange to red)
   const getColorClass = () => {
-    if (timeLeft > initialSeconds * 0.66) return "bg-green-500";
-    if (timeLeft > initialSeconds * 0.33) return "bg-orange-500";
-    return "bg-red-500";
+    if (timeLeft > initialSeconds * 0.66) return "bg-emerald-500";
+    if (timeLeft > initialSeconds * 0.33) return "bg-amber-500";
+    return "bg-rose-500";
   };
 
   // Determine text based on game state
@@ -71,12 +71,12 @@ const CountdownTimer = ({
       <div className="flex items-center justify-between mb-1">
         <div className="flex items-center gap-2">
           <Clock className="h-6 w-6 text-white" />
-          <Badge variant="outline" className="text-white border-white/40 bg-white/10 font-bold text-base px-3 py-1">
+          <Badge variant="outline" className="text-white border-slate-700 bg-slate-800 font-bold text-base px-3 py-1">
             {getTimerText()}
           </Badge>
         </div>
       </div>
-      <div className="w-full bg-gray-200 rounded-full h-2.5">
+      <div className="w-full bg-slate-700 rounded-full h-2.5">
         <div
           className={`h-2.5 rounded-full transition-all duration-1000 ease-in-out ${getColorClass()}`}
           style={{ width: `${progress}%` }}

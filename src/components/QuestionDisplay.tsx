@@ -119,7 +119,7 @@ const QuestionDisplay = ({
     return (
       <div className="h-full rounded-lg shadow-md glass-card">
         <div className="p-4 h-full">
-          <h2 className="text-xl sm:text-2xl font-extrabold mb-4 text-white drop-shadow-md">
+          <h2 className="text-lg sm:text-xl font-extrabold mb-4 text-white drop-shadow-md">
             {questionWithNumber}
           </h2>
 
@@ -147,7 +147,7 @@ const QuestionDisplay = ({
   return (
     <div className="h-full rounded-lg shadow-md glass-card">
       <div className="p-4 h-full">
-        <h2 className={`${isMobile ? 'text-lg sm:text-xl' : 'text-3xl sm:text-4xl'} font-extrabold mb-4 text-white drop-shadow-md`}>
+        <h2 className={`${isMobile ? 'text-md sm:text-lg' : 'text-3xl sm:text-4xl'} font-extrabold mb-4 text-white drop-shadow-md`}>
           {questionWithNumber}
         </h2>
 
@@ -185,13 +185,13 @@ const QuestionDisplay = ({
                           {answersByChoice[choice.choiceIndex].map((answer, idx) => (
                             <Avatar 
                               key={`${answer.ytChannelId}-${idx}`} 
-                              className="w-6 h-6 border-2 border-white/30"
+                              className="w-6 h-6 border border-slate-600"
                             >
                               <AvatarImage 
                                 src={answer.ytProfilePicUrl} 
                                 alt={answer.userName} 
                               />
-                              <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
+                              <AvatarFallback className="bg-slate-700">{answer.userName.charAt(0)}</AvatarFallback>
                             </Avatar>
                           ))}
                         </div>
@@ -246,13 +246,13 @@ const QuestionDisplay = ({
                         {answersByChoice[choice.choiceIndex].map((answer, idx) => (
                           <Avatar 
                             key={`${answer.ytChannelId}-${idx}`} 
-                            className="w-8 h-8 border-2 border-white/30 avatar-glow"
+                            className="w-8 h-8 border border-slate-600"
                           >
                             <AvatarImage 
                               src={answer.ytProfilePicUrl} 
                               alt={answer.userName} 
                             />
-                            <AvatarFallback>{answer.userName.charAt(0)}</AvatarFallback>
+                            <AvatarFallback className="bg-slate-700">{answer.userName.charAt(0)}</AvatarFallback>
                           </Avatar>
                         ))}
                       </div>

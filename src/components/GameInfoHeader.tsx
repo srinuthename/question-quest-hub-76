@@ -42,19 +42,19 @@ const GameInfoHeader = ({
   
   // Determine color based on time left and game state
   const getTimerColor = () => {
-    if (timeLeft > 15) return "bg-green-500";
-    if (timeLeft > 10) return "bg-orange-500";
-    return "bg-red-500";
+    if (timeLeft > 15) return "bg-emerald-500";
+    if (timeLeft > 10) return "bg-amber-500";
+    return "bg-rose-500";
   };
 
   // If we're displaying game info rather than timer
   if (gameTitle || questionIndex !== undefined) {
     return (
-      <Card className={`p-${isMobile ? '2' : '3'} bg-white shadow-sm w-full`}>
+      <Card className={`p-${isMobile ? '2' : '3'} bg-slate-800 shadow-md w-full border-slate-700`}>
         <div className="flex items-center justify-between">
           <div>
-            <h2 className="text-lg font-bold text-black">{gameTitle || "Game"}</h2>
-            <div className="text-sm text-black">
+            <h2 className="text-lg font-bold text-white">{gameTitle || "Game"}</h2>
+            <div className="text-sm text-slate-200">
               {isGameOpen ? "Active" : "Inactive"} • 
               {questionIndex !== undefined && totalQuestions !== undefined 
                 ? ` Question ${questionIndex} of ${totalQuestions}`
@@ -62,8 +62,8 @@ const GameInfoHeader = ({
             </div>
           </div>
           <div className="flex items-center">
-            <Clock className="h-5 w-5 text-[#c34a36] mr-2" />
-            <span className="text-sm text-black">
+            <Clock className="h-5 w-5 text-slate-300 mr-2" />
+            <span className="text-sm text-slate-200">
               {gameStartedAt 
                 ? `Started: ${new Date(gameStartedAt).toLocaleTimeString()}` 
                 : "Not started yet"}
@@ -76,16 +76,16 @@ const GameInfoHeader = ({
   
   // Default timer display
   return (
-    <Card className={`p-${isMobile ? '1' : '2'} bg-white shadow-sm w-full`}>
+    <Card className={`p-${isMobile ? '1' : '2'} bg-slate-800 shadow-md w-full border-slate-700`}>
       <div className="flex items-center gap-2">
-        <Hourglass className={`h-${isMobile ? '4' : '5'} w-${isMobile ? '4' : '5'} text-black`} />
+        <Hourglass className={`h-${isMobile ? '4' : '5'} w-${isMobile ? '4' : '5'} text-white`} />
         <div className="flex-1">
           <div className="flex justify-between items-center text-sm mb-1">
-            <span className="font-medium text-black">{getTimerText()}</span>
+            <span className="font-medium text-white">{getTimerText()}</span>
           </div>
           <Progress 
             value={progressValue} 
-            className={`h-2 bg-gray-200 ${getTimerColor()}`}
+            className={`h-2 bg-slate-700 ${getTimerColor()}`}
           />
         </div>
       </div>

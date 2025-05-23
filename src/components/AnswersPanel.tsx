@@ -40,25 +40,25 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
             {answers.map((answer, index) => (
               <div
                 key={index}
-                className="answer-card bg-white/90 animate-fade-in"
+                className="answer-card animate-fade-in"
                 style={{ animationDelay: `${index * 0.05}s` }}
               >
-                <Avatar className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} avatar-glow`}>
+                <Avatar className={`${isMobile ? 'w-6 h-6' : 'w-12 h-12'} border border-slate-600`}>
                   <AvatarImage
                     src={answer.ytProfilePicUrl}
                     alt={answer.userName}
                   />
-                  <AvatarFallback className="bg-[#2c73d2] text-white">{answer.userName.charAt(0)}</AvatarFallback>
+                  <AvatarFallback className="bg-slate-700 text-white">{answer.userName.charAt(0)}</AvatarFallback>
                 </Avatar>
                 <div className="flex-grow">
-                  <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate`}>{answer.userName}</div>
+                  <div className={`${isMobile ? 'text-xs' : 'text-xl'} font-bold truncate text-white`}>{answer.userName}</div>
                   <div className="flex gap-1 items-center">
                     {answer.answerIndex !== undefined && (
-                      <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-[#0081cf] text-white rounded-full shadow-sm`}>
+                      <span className={`${isMobile ? 'text-xs px-1 py-0' : 'text-base px-3 py-1'} font-bold bg-slate-700 text-white rounded-full shadow-sm`}>
                         {String.fromCharCode(65 + answer.answerIndex)}
                       </span>
                     )}
-                    <span className={`${isMobile ? 'text-xs' : 'text-base'} font-semibold text-gray-700`}>
+                    <span className={`${isMobile ? 'text-xs' : 'text-base'} font-semibold text-white`}>
                       {answer.responseTime}ms
                     </span>
                   </div>
@@ -68,25 +68,6 @@ const AnswersPanel = ({ answers = [] }: AnswersPanelProps) => {
           </div>
         )}
       </div>
-
-      <style>{`
-        .answer-card {
-          display: flex;
-          align-items: center;
-          padding: ${isMobile ? '0.25rem' : '0.75rem'};
-          border-radius: 0.5rem;
-          gap: ${isMobile ? '0.3rem' : '0.75rem'};
-          margin-bottom: ${isMobile ? '0.15rem' : '0.5rem'};
-          animation: fade-in 0.3s ease-out forwards;
-          border: 1px solid rgba(255, 255, 255, 0.2);
-          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-        }
-
-        @keyframes fade-in {
-          from { opacity: 0; transform: translateY(5px); }
-          to { opacity: 1; transform: translateY(0); }
-        }
-      `}</style>
     </div>
   );
 };
