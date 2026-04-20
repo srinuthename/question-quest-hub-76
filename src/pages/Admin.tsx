@@ -23,7 +23,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { DEFAULT_QUIZ_SETTINGS } from "@/config/quizSettings";
 import { performFullReset, getDefaultTeamConfigs } from "@/config/defaults";
 import { listQuizzes } from "@/lib/quizManagementDB";
-import { loadAdminConfig, saveAdminConfig, type AdminConfig } from "@/services/adminConfigApi";
+import { saveAdminConfig, type AdminConfig } from "@/services/adminConfigApi";
 import { COLOR_THEMES } from "@/config/colorThemes";
 import { useColorTheme } from "@/hooks/useColorTheme";
 import { useBranding } from "@/hooks/useBranding";
@@ -53,7 +53,6 @@ import { fetchHostProfile, fetchHostLoginHistory, type HostProfile, type HostSes
 import { readQuizHostChannel } from "@/lib/quizHostChannel";
 import { getStoredApplicationId } from "@/config/hostProduct";
 import { saveQuizSessionConfigSnapshot } from "@/lib/adminConfigPersistence";
-import { getSharedAuthSession, type SharedAuthSession } from "@/lib/sharedAuth";
 
 interface TeamConfig {
   name: string;
@@ -213,55 +212,25 @@ const Admin = () => {
   const [hostSession, setHostSession] = useState<HostSession | null>(null);
   const [hostLoginHistory, setHostLoginHistory] = useState<LoginAttempt[]>([]);
   const [hostProfileLoading, setHostProfileLoading] = useState(false);
-  const [sharedAuthSession, setSharedAuthSession] = useState<SharedAuthSession | null>(null);
-  const [hostAuthLoading, setHostAuthLoading] = useState(false);
   const [hostActionLoading, setHostActionLoading] = useState<"signout" | null>(null);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const [resetInProgress, setResetInProgress] = useState(false);
-
-  const loadHostAuthStatus = useCallback(async () => {
+  const refreshHostAuthStatus = useCallback(async () => {
     if (getBackendTarget() === "none" || !applicationId) {
       setHostAuthStatus(null);
-      setSharedAuthSession(null);
-      setHostAuthLoading(false);
       return;
     }
-    setHostAuthLoading(true);
     try {
-      const authPayload = await getSharedAuthSession().catch(() => null);
-      setSharedAuthSession(authPayload?.session || null);
       const next = await getYouTubeChatSenderStatus(applicationId);
       setHostAuthStatus(next);
     } catch (error) {
       console.error("[Admin] Failed to load host auth status", error);
-      const authPayload = await getSharedAuthSession().catch(() => null);
-      setSharedAuthSession(authPayload?.session || null);
-    } finally {
-      setHostAuthLoading(false);
     }
   }, [applicationId]);
 
   useEffect(() => {
-    void loadHostAuthStatus();
-  }, [loadHostAuthStatus]);
-
-  useEffect(() => {
-    const handleAuthComplete = (event: MessageEvent) => {
-      if (event.data?.type === "shared-auth-complete") {
-        // Wait for backend to update session - use longer delay to ensure database sync
-        setTimeout(() => {
-          void loadHostAuthStatus();
-        }, 1000);
-        // Also retry after additional time to handle any async delays
-        setTimeout(() => {
-          void loadHostAuthStatus();
-        }, 2500);
-      }
-    };
-
-    window.addEventListener("message", handleAuthComplete);
-    return () => window.removeEventListener("message", handleAuthComplete);
-  }, [loadHostAuthStatus]);
+    void refreshHostAuthStatus();
+  }, [refreshHostAuthStatus]);
 
   const handleHostSignOut = async () => {
     setHostActionLoading("signout");
