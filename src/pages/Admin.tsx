@@ -349,106 +349,10 @@ const Admin = () => {
   }, []);
 
   // Ticker values saved via backend in saveAllSettings
-
-  // ── Load admin config from backend in the background on mount ──
   useEffect(() => {
     setQuestionsPerCategoryReady(true);
     setInitializing(false);
-
-    if (!applicationId) {
-      return;
-    }
-    let active = true;
-    const hostChannel = readQuizHostChannel();
-    const hostChannelId = hostChannel.quizHostChannelId || null;
-    loadAdminConfig(applicationId, hostChannelId).then((savedCfg) => {
-      if (!active) return;
-      if (!savedCfg) return;
-      const cfg: AdminConfig = savedCfg;
-      // Apply saved config to state
-      if (cfg.teamConfigs && Array.isArray(cfg.teamConfigs)) {
-        const parsed = cfg.teamConfigs as TeamConfig[];
-        if (parsed.length > 0) {
-          setTeams(parsed);
-          setTeamCount(parsed.length);
-          setMemberInputs(parsed.map((t) => t.members?.join(', ') ?? ''));
-        }
-      }
-      if (cfg.correctAnswerScore != null) setCorrectAnswerScore(cfg.correctAnswerScore);
-      if (cfg.wrongAnswerPenalty != null) setWrongAnswerPenalty(cfg.wrongAnswerPenalty);
-      if (cfg.lifelinePenalty != null) setLifelinePenalty(cfg.lifelinePenalty);
-      if (cfg.teamLifelines != null) setTeamLifelinesAdmin(cfg.teamLifelines);
-      if (cfg.questionsPerCategory != null) setQuestionsPerCategory(cfg.questionsPerCategory);
-      if (cfg.maxUsedCountThreshold != null) setMaxUsedCountThreshold(cfg.maxUsedCountThreshold);
-      if (cfg.shuffleQuestions != null) setShuffleQuestions(cfg.shuffleQuestions);
-      if (cfg.timerDuration != null) setTimerDuration(cfg.timerDuration);
-      if (cfg.masterTimerDuration != null) setMasterTimerDuration(cfg.masterTimerDuration);
-      if (cfg.passedQuestionTimer != null) setPassedQuestionTimer(cfg.passedQuestionTimer);
-      if (cfg.revealCountdownDuration != null) setRevealCountdownDuration(cfg.revealCountdownDuration);
-      if (cfg.rapidFireDuration != null) setRapidFireDuration(cfg.rapidFireDuration);
-      if (cfg.showActivityFeed != null) setShowActivityFeed(cfg.showActivityFeed);
-      if (cfg.showDifficultyBadge != null) setShowDifficultyBadge(cfg.showDifficultyBadge);
-      if (cfg.showSaveIndicator != null) setShowSaveIndicator(cfg.showSaveIndicator);
-      if (cfg.showToastMessages != null) setShowToastMessages(cfg.showToastMessages);
-      if (cfg.showIntroAnimation != null) setShowIntroAnimation(cfg.showIntroAnimation);
-      if (cfg.maskViewerResponses != null) setMaskViewerResponses(cfg.maskViewerResponses);
-      if (cfg.youtubeIntegrationEnabled != null) setYoutubeIntegrationEnabled(cfg.youtubeIntegrationEnabled);
-      if (cfg.disableLivePanelDuringPowerplay != null) setDisableLivePanelDuringPowerplay(cfg.disableLivePanelDuringPowerplay);
-      if (cfg.showYouTubeAutoPostPanel != null) setShowYouTubeAutoPostPanel(cfg.showYouTubeAutoPostPanel);
-      if (cfg.showEngagementHeatmap != null) setShowEngagementHeatmap(cfg.showEngagementHeatmap);
-      if (cfg.showViewerPredictions != null) setShowViewerPredictions(cfg.showViewerPredictions);
-      if (cfg.powerplayEnabled != null) setPowerplayEnabled(cfg.powerplayEnabled);
-      if (cfg.quizAnalyticsEnabled != null) setQuizAnalyticsEnabledState(cfg.quizAnalyticsEnabled);
-      if (cfg.tickerMessageRegular != null) setTickerMessageRegular(cfg.tickerMessageRegular);
-      if (cfg.tickerMessagePowerplay != null) setTickerMessagePowerplay(cfg.tickerMessagePowerplay);
-      if (cfg.tickerEnabled != null) setTickerEnabled(cfg.tickerEnabled);
-      if (cfg.tvModeEnabled != null) setTvModeEnabled(cfg.tvModeEnabled);
-      if (cfg.fixedLeaderboard != null) setFixedLeaderboard(cfg.fixedLeaderboard);
-      if (cfg.showSequenceNumbers != null) setShowSequenceNumbers(cfg.showSequenceNumbers);
-      if (cfg.minimumCorrectScore != null) setMinimumCorrectScore(cfg.minimumCorrectScore);
-      if (cfg.topicSettings) setTopicSettings(cfg.topicSettings);
-
-      // Mirror loaded config to localStorage so TeamQuiz can read settings at runtime
-      if (cfg.teamConfigs) localStorage.setItem("teamConfigs", JSON.stringify(cfg.teamConfigs));
-      if (cfg.correctAnswerScore != null) localStorage.setItem("correctAnswerScore", cfg.correctAnswerScore.toString());
-      if (cfg.wrongAnswerPenalty != null) localStorage.setItem("wrongAnswerPenalty", cfg.wrongAnswerPenalty.toString());
-      if (cfg.lifelinePenalty != null) localStorage.setItem("lifelinePenalty", cfg.lifelinePenalty.toString());
-      if (cfg.teamLifelines != null) localStorage.setItem("teamLifelines", cfg.teamLifelines.toString());
-      if (cfg.questionsPerCategory != null) localStorage.setItem("questionsPerCategory", cfg.questionsPerCategory.toString());
-      if (cfg.maxUsedCountThreshold != null) localStorage.setItem("maxUsedCountThreshold", cfg.maxUsedCountThreshold.toString());
-      if (cfg.shuffleQuestions != null) localStorage.setItem("shuffleQuestions", cfg.shuffleQuestions.toString());
-      if (cfg.timerDuration != null) localStorage.setItem("timerDuration", cfg.timerDuration.toString());
-      if (cfg.masterTimerDuration != null) localStorage.setItem("masterTimerDuration", cfg.masterTimerDuration.toString());
-      if (cfg.passedQuestionTimer != null) localStorage.setItem("passedQuestionTimer", cfg.passedQuestionTimer.toString());
-      if (cfg.revealCountdownDuration != null) localStorage.setItem("revealCountdownDuration", cfg.revealCountdownDuration.toString());
-      if (cfg.rapidFireDuration != null) localStorage.setItem("rapidFireDuration", cfg.rapidFireDuration.toString());
-      if (cfg.showActivityFeed != null) localStorage.setItem("showActivityFeed", cfg.showActivityFeed.toString());
-      if (cfg.showDifficultyBadge != null) localStorage.setItem("showDifficultyBadge", cfg.showDifficultyBadge.toString());
-      if (cfg.showSaveIndicator != null) localStorage.setItem("showSaveIndicator", cfg.showSaveIndicator.toString());
-      if (cfg.showToastMessages != null) localStorage.setItem("showToastMessages", cfg.showToastMessages.toString());
-      if (cfg.showIntroAnimation != null) localStorage.setItem("showIntroAnimation", cfg.showIntroAnimation.toString());
-      if (cfg.maskViewerResponses != null) localStorage.setItem("maskViewerResponses", cfg.maskViewerResponses.toString());
-      if (cfg.youtubeIntegrationEnabled != null) localStorage.setItem("youtubeIntegrationEnabled", cfg.youtubeIntegrationEnabled.toString());
-      if (cfg.disableLivePanelDuringPowerplay != null) localStorage.setItem("disableLivePanelDuringPowerplay", cfg.disableLivePanelDuringPowerplay.toString());
-      if (cfg.showYouTubeAutoPostPanel != null) localStorage.setItem("showYouTubeAutoPostPanel", cfg.showYouTubeAutoPostPanel.toString());
-      if (cfg.showEngagementHeatmap != null) localStorage.setItem("showEngagementHeatmap", cfg.showEngagementHeatmap.toString());
-      if (cfg.showViewerPredictions != null) localStorage.setItem("showViewerPredictions", cfg.showViewerPredictions.toString());
-      if (cfg.powerplayEnabled != null) localStorage.setItem("powerplayEnabled", cfg.powerplayEnabled.toString());
-      if (cfg.quizAnalyticsEnabled != null) localStorage.setItem("quizAnalyticsEnabled", cfg.quizAnalyticsEnabled.toString());
-      if (cfg.tickerMessageRegular != null) localStorage.setItem("tickerMessageRegular", cfg.tickerMessageRegular);
-      if (cfg.tickerMessagePowerplay != null) localStorage.setItem("tickerMessagePowerplay", cfg.tickerMessagePowerplay);
-      if (cfg.tickerEnabled != null) localStorage.setItem("tickerEnabled", cfg.tickerEnabled.toString());
-      if (cfg.tvModeEnabled != null) localStorage.setItem("tvModeEnabled", cfg.tvModeEnabled.toString());
-      if (cfg.fixedLeaderboard != null) localStorage.setItem("fixedLeaderboard", cfg.fixedLeaderboard.toString());
-      if (cfg.showSequenceNumbers != null) localStorage.setItem("showSequenceNumbers", cfg.showSequenceNumbers.toString());
-      if (cfg.minimumCorrectScore != null) localStorage.setItem("minimumCorrectScore", cfg.minimumCorrectScore.toString());
-    }).catch(() => {
-      // Defaults are already rendered locally; backend hydration is best-effort.
-    });
-    return () => {
-      active = false;
-    };
-  }, [applicationId]);
+  }, []);
 
   const refreshQuestionStats = useCallback(async () => {
     setDbLoading(true);
