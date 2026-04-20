@@ -103,7 +103,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   // Resolve user synchronously from local token first so protected routes
   // never block on async bootstrap after OAuth callback.
   const [user, setUser] = useState<AuthUser | null>(() => readCurrentUser());
-  const [loading, setLoading] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const refreshUser = useCallback(() => {
     setUser(readCurrentUser());
