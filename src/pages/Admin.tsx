@@ -23,7 +23,7 @@ import { ThemeToggle } from "@/components/ThemeToggle";
 import { DEFAULT_QUIZ_SETTINGS } from "@/config/quizSettings";
 import { performFullReset, getDefaultTeamConfigs } from "@/config/defaults";
 import { listQuizzes } from "@/lib/quizManagementDB";
-import { loadAdminConfig, saveAdminConfig, type AdminConfig } from "@/services/adminConfigApi";
+import { saveAdminConfig, type AdminConfig } from "@/services/adminConfigApi";
 import { COLOR_THEMES } from "@/config/colorThemes";
 import { useColorTheme } from "@/hooks/useColorTheme";
 import { useBranding } from "@/hooks/useBranding";
@@ -53,7 +53,6 @@ import { fetchHostProfile, fetchHostLoginHistory, type HostProfile, type HostSes
 import { readQuizHostChannel } from "@/lib/quizHostChannel";
 import { getStoredApplicationId } from "@/config/hostProduct";
 import { saveQuizSessionConfigSnapshot } from "@/lib/adminConfigPersistence";
-import { getSharedAuthSession, type SharedAuthSession } from "@/lib/sharedAuth";
 
 interface TeamConfig {
   name: string;
@@ -213,55 +212,25 @@ const Admin = () => {
   const [hostSession, setHostSession] = useState<HostSession | null>(null);
   const [hostLoginHistory, setHostLoginHistory] = useState<LoginAttempt[]>([]);
   const [hostProfileLoading, setHostProfileLoading] = useState(false);
-  const [sharedAuthSession, setSharedAuthSession] = useState<SharedAuthSession | null>(null);
-  const [hostAuthLoading, setHostAuthLoading] = useState(false);
   const [hostActionLoading, setHostActionLoading] = useState<"signout" | null>(null);
   const [confirmResetOpen, setConfirmResetOpen] = useState(false);
   const [resetInProgress, setResetInProgress] = useState(false);
-
-  const loadHostAuthStatus = useCallback(async () => {
+  const refreshHostAuthStatus = useCallback(async () => {
     if (getBackendTarget() === "none" || !applicationId) {
       setHostAuthStatus(null);
-      setSharedAuthSession(null);
-      setHostAuthLoading(false);
       return;
     }
-    setHostAuthLoading(true);
     try {
-      const authPayload = await getSharedAuthSession().catch(() => null);
-      setSharedAuthSession(authPayload?.session || null);
       const next = await getYouTubeChatSenderStatus(applicationId);
       setHostAuthStatus(next);
     } catch (error) {
       console.error("[Admin] Failed to load host auth status", error);
-      const authPayload = await getSharedAuthSession().catch(() => null);
-      setSharedAuthSession(authPayload?.session || null);
-    } finally {
-      setHostAuthLoading(false);
     }
   }, [applicationId]);
 
   useEffect(() => {
-    void loadHostAuthStatus();
-  }, [loadHostAuthStatus]);
-
-  useEffect(() => {
-    const handleAuthComplete = (event: MessageEvent) => {
-      if (event.data?.type === "shared-auth-complete") {
-        // Wait for backend to update session - use longer delay to ensure database sync
-        setTimeout(() => {
-          void loadHostAuthStatus();
-        }, 1000);
-        // Also retry after additional time to handle any async delays
-        setTimeout(() => {
-          void loadHostAuthStatus();
-        }, 2500);
-      }
-    };
-
-    window.addEventListener("message", handleAuthComplete);
-    return () => window.removeEventListener("message", handleAuthComplete);
-  }, [loadHostAuthStatus]);
+    void refreshHostAuthStatus();
+  }, [refreshHostAuthStatus]);
 
   const handleHostSignOut = async () => {
     setHostActionLoading("signout");
@@ -380,106 +349,10 @@ const Admin = () => {
   }, []);
 
   // Ticker values saved via backend in saveAllSettings
-
-  // ── Load admin config from backend in the background on mount ──
   useEffect(() => {
     setQuestionsPerCategoryReady(true);
     setInitializing(false);
-
-    if (!applicationId) {
-      return;
-    }
-    let active = true;
-    const hostChannel = readQuizHostChannel();
-    const hostChannelId = hostChannel.quizHostChannelId || null;
-    loadAdminConfig(applicationId, hostChannelId).then((savedCfg) => {
-      if (!active) return;
-      if (!savedCfg) return;
-      const cfg: AdminConfig = savedCfg;
-      // Apply saved config to state
-      if (cfg.teamConfigs && Array.isArray(cfg.teamConfigs)) {
-        const parsed = cfg.teamConfigs as TeamConfig[];
-        if (parsed.length > 0) {
-          setTeams(parsed);
-          setTeamCount(parsed.length);
-          setMemberInputs(parsed.map((t) => t.members?.join(', ') ?? ''));
-        }
-      }
-      if (cfg.correctAnswerScore != null) setCorrectAnswerScore(cfg.correctAnswerScore);
-      if (cfg.wrongAnswerPenalty != null) setWrongAnswerPenalty(cfg.wrongAnswerPenalty);
-      if (cfg.lifelinePenalty != null) setLifelinePenalty(cfg.lifelinePenalty);
-      if (cfg.teamLifelines != null) setTeamLifelinesAdmin(cfg.teamLifelines);
-      if (cfg.questionsPerCategory != null) setQuestionsPerCategory(cfg.questionsPerCategory);
-      if (cfg.maxUsedCountThreshold != null) setMaxUsedCountThreshold(cfg.maxUsedCountThreshold);
-      if (cfg.shuffleQuestions != null) setShuffleQuestions(cfg.shuffleQuestions);
-      if (cfg.timerDuration != null) setTimerDuration(cfg.timerDuration);
-      if (cfg.masterTimerDuration != null) setMasterTimerDuration(cfg.masterTimerDuration);
-      if (cfg.passedQuestionTimer != null) setPassedQuestionTimer(cfg.passedQuestionTimer);
-      if (cfg.revealCountdownDuration != null) setRevealCountdownDuration(cfg.revealCountdownDuration);
-      if (cfg.rapidFireDuration != null) setRapidFireDuration(cfg.rapidFireDuration);
-      if (cfg.showActivityFeed != null) setShowActivityFeed(cfg.showActivityFeed);
-      if (cfg.showDifficultyBadge != null) setShowDifficultyBadge(cfg.showDifficultyBadge);
-      if (cfg.showSaveIndicator != null) setShowSaveIndicator(cfg.showSaveIndicator);
-      if (cfg.showToastMessages != null) setShowToastMessages(cfg.showToastMessages);
-      if (cfg.showIntroAnimation != null) setShowIntroAnimation(cfg.showIntroAnimation);
-      if (cfg.maskViewerResponses != null) setMaskViewerResponses(cfg.maskViewerResponses);
-      if (cfg.youtubeIntegrationEnabled != null) setYoutubeIntegrationEnabled(cfg.youtubeIntegrationEnabled);
-      if (cfg.disableLivePanelDuringPowerplay != null) setDisableLivePanelDuringPowerplay(cfg.disableLivePanelDuringPowerplay);
-      if (cfg.showYouTubeAutoPostPanel != null) setShowYouTubeAutoPostPanel(cfg.showYouTubeAutoPostPanel);
-      if (cfg.showEngagementHeatmap != null) setShowEngagementHeatmap(cfg.showEngagementHeatmap);
-      if (cfg.showViewerPredictions != null) setShowViewerPredictions(cfg.showViewerPredictions);
-      if (cfg.powerplayEnabled != null) setPowerplayEnabled(cfg.powerplayEnabled);
-      if (cfg.quizAnalyticsEnabled != null) setQuizAnalyticsEnabledState(cfg.quizAnalyticsEnabled);
-      if (cfg.tickerMessageRegular != null) setTickerMessageRegular(cfg.tickerMessageRegular);
-      if (cfg.tickerMessagePowerplay != null) setTickerMessagePowerplay(cfg.tickerMessagePowerplay);
-      if (cfg.tickerEnabled != null) setTickerEnabled(cfg.tickerEnabled);
-      if (cfg.tvModeEnabled != null) setTvModeEnabled(cfg.tvModeEnabled);
-      if (cfg.fixedLeaderboard != null) setFixedLeaderboard(cfg.fixedLeaderboard);
-      if (cfg.showSequenceNumbers != null) setShowSequenceNumbers(cfg.showSequenceNumbers);
-      if (cfg.minimumCorrectScore != null) setMinimumCorrectScore(cfg.minimumCorrectScore);
-      if (cfg.topicSettings) setTopicSettings(cfg.topicSettings);
-
-      // Mirror loaded config to localStorage so TeamQuiz can read settings at runtime
-      if (cfg.teamConfigs) localStorage.setItem("teamConfigs", JSON.stringify(cfg.teamConfigs));
-      if (cfg.correctAnswerScore != null) localStorage.setItem("correctAnswerScore", cfg.correctAnswerScore.toString());
-      if (cfg.wrongAnswerPenalty != null) localStorage.setItem("wrongAnswerPenalty", cfg.wrongAnswerPenalty.toString());
-      if (cfg.lifelinePenalty != null) localStorage.setItem("lifelinePenalty", cfg.lifelinePenalty.toString());
-      if (cfg.teamLifelines != null) localStorage.setItem("teamLifelines", cfg.teamLifelines.toString());
-      if (cfg.questionsPerCategory != null) localStorage.setItem("questionsPerCategory", cfg.questionsPerCategory.toString());
-      if (cfg.maxUsedCountThreshold != null) localStorage.setItem("maxUsedCountThreshold", cfg.maxUsedCountThreshold.toString());
-      if (cfg.shuffleQuestions != null) localStorage.setItem("shuffleQuestions", cfg.shuffleQuestions.toString());
-      if (cfg.timerDuration != null) localStorage.setItem("timerDuration", cfg.timerDuration.toString());
-      if (cfg.masterTimerDuration != null) localStorage.setItem("masterTimerDuration", cfg.masterTimerDuration.toString());
-      if (cfg.passedQuestionTimer != null) localStorage.setItem("passedQuestionTimer", cfg.passedQuestionTimer.toString());
-      if (cfg.revealCountdownDuration != null) localStorage.setItem("revealCountdownDuration", cfg.revealCountdownDuration.toString());
-      if (cfg.rapidFireDuration != null) localStorage.setItem("rapidFireDuration", cfg.rapidFireDuration.toString());
-      if (cfg.showActivityFeed != null) localStorage.setItem("showActivityFeed", cfg.showActivityFeed.toString());
-      if (cfg.showDifficultyBadge != null) localStorage.setItem("showDifficultyBadge", cfg.showDifficultyBadge.toString());
-      if (cfg.showSaveIndicator != null) localStorage.setItem("showSaveIndicator", cfg.showSaveIndicator.toString());
-      if (cfg.showToastMessages != null) localStorage.setItem("showToastMessages", cfg.showToastMessages.toString());
-      if (cfg.showIntroAnimation != null) localStorage.setItem("showIntroAnimation", cfg.showIntroAnimation.toString());
-      if (cfg.maskViewerResponses != null) localStorage.setItem("maskViewerResponses", cfg.maskViewerResponses.toString());
-      if (cfg.youtubeIntegrationEnabled != null) localStorage.setItem("youtubeIntegrationEnabled", cfg.youtubeIntegrationEnabled.toString());
-      if (cfg.disableLivePanelDuringPowerplay != null) localStorage.setItem("disableLivePanelDuringPowerplay", cfg.disableLivePanelDuringPowerplay.toString());
-      if (cfg.showYouTubeAutoPostPanel != null) localStorage.setItem("showYouTubeAutoPostPanel", cfg.showYouTubeAutoPostPanel.toString());
-      if (cfg.showEngagementHeatmap != null) localStorage.setItem("showEngagementHeatmap", cfg.showEngagementHeatmap.toString());
-      if (cfg.showViewerPredictions != null) localStorage.setItem("showViewerPredictions", cfg.showViewerPredictions.toString());
-      if (cfg.powerplayEnabled != null) localStorage.setItem("powerplayEnabled", cfg.powerplayEnabled.toString());
-      if (cfg.quizAnalyticsEnabled != null) localStorage.setItem("quizAnalyticsEnabled", cfg.quizAnalyticsEnabled.toString());
-      if (cfg.tickerMessageRegular != null) localStorage.setItem("tickerMessageRegular", cfg.tickerMessageRegular);
-      if (cfg.tickerMessagePowerplay != null) localStorage.setItem("tickerMessagePowerplay", cfg.tickerMessagePowerplay);
-      if (cfg.tickerEnabled != null) localStorage.setItem("tickerEnabled", cfg.tickerEnabled.toString());
-      if (cfg.tvModeEnabled != null) localStorage.setItem("tvModeEnabled", cfg.tvModeEnabled.toString());
-      if (cfg.fixedLeaderboard != null) localStorage.setItem("fixedLeaderboard", cfg.fixedLeaderboard.toString());
-      if (cfg.showSequenceNumbers != null) localStorage.setItem("showSequenceNumbers", cfg.showSequenceNumbers.toString());
-      if (cfg.minimumCorrectScore != null) localStorage.setItem("minimumCorrectScore", cfg.minimumCorrectScore.toString());
-    }).catch(() => {
-      // Defaults are already rendered locally; backend hydration is best-effort.
-    });
-    return () => {
-      active = false;
-    };
-  }, [applicationId]);
+  }, []);
 
   const refreshQuestionStats = useCallback(async () => {
     setDbLoading(true);
@@ -653,52 +526,6 @@ const Admin = () => {
     setShuffleQuestions(defaults.shuffleQuestions);
 
     setTeamLifelinesAdmin(defaults.teamLifelines);
-
-    // Persist the reset to the backend so the next page load doesn't restore
-    // the old config from MongoDB.
-    if (appId) {
-      const hostChannel = readQuizHostChannel();
-      const hostChannelId = hostChannel.quizHostChannelId || null;
-      const defaultCfg: AdminConfig = {
-        quizHostChannelId: hostChannelId,
-        quizHostChannelTitle: hostChannel.quizHostChannelTitle || null,
-        quizHostChannelHandle: hostChannel.quizHostChannelHandle || null,
-        teamConfigs: getDefaultTeamConfigs(),
-        correctAnswerScore: defaults.correctAnswerScore,
-        wrongAnswerPenalty: defaults.wrongAnswerPenalty,
-        lifelinePenalty: defaults.lifelinePenalty,
-        teamLifelines: defaults.teamLifelines,
-        questionsPerCategory: defaults.questionsPerCategory,
-        maxUsedCountThreshold: defaults.maxUsedCountThreshold,
-        shuffleQuestions: defaults.shuffleQuestions,
-        timerDuration: defaults.timerDuration,
-        masterTimerDuration: defaults.masterTimerDuration,
-        passedQuestionTimer: defaults.passedQuestionTimer,
-        revealCountdownDuration: defaults.revealCountdownDuration,
-        rapidFireDuration: defaults.rapidFireDuration,
-        showActivityFeed: defaults.showActivityFeed,
-        showDifficultyBadge: defaults.showDifficultyBadge,
-        showSaveIndicator: defaults.showSaveIndicator,
-        showToastMessages: defaults.showToastMessages,
-        showIntroAnimation: defaults.showIntroAnimation,
-        maskViewerResponses: defaults.maskViewerResponses,
-        youtubeIntegrationEnabled: defaults.youtubeIntegrationEnabled,
-        disableLivePanelDuringPowerplay: defaults.disableLivePanelDuringPowerplay,
-        showYouTubeAutoPostPanel: defaults.showYouTubeAutoPostPanel,
-        showEngagementHeatmap: defaults.showEngagementHeatmap,
-        showViewerPredictions: defaults.showViewerPredictions,
-        powerplayEnabled: defaults.powerplayEnabled,
-        quizAnalyticsEnabled: defaults.quizAnalyticsEnabled,
-        tickerEnabled: defaults.tickerEnabled,
-        tickerMessageRegular: defaults.tickerMessageRegular,
-        tickerMessagePowerplay: defaults.tickerMessagePowerplay,
-        tvModeEnabled: defaults.tvModeEnabled,
-        fixedLeaderboard: defaults.fixedLeaderboard,
-        showSequenceNumbers: defaults.showSequenceNumbers,
-        minimumCorrectScore: defaults.minimumCorrectScore,
-      };
-      saveAdminConfig(appId, hostChannelId, defaultCfg).catch(() => {/* non-critical */});
-    }
 
     toast({
       title: t.success,
@@ -1350,30 +1177,30 @@ const Admin = () => {
                 <div className="rounded-xl border border-border/60 bg-background/60 p-3">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Channel</p>
                   <p className="mt-2 font-semibold text-foreground">
-                    {hostAuthStatus?.channelTitle || sharedAuthSession?.youtubeChannelTitle || "Not connected"}
+                    {hostAuthStatus?.channelTitle || "Not connected"}
                   </p>
                   <p className="mt-1 break-all text-xs text-muted-foreground">
-                    {hostAuthStatus?.channelId || sharedAuthSession?.youtubeChannelId || "No shared auth session"}
+                    {hostAuthStatus?.channelId || "No connected channel"}
                   </p>
                 </div>
                 <div className="rounded-xl border border-border/60 bg-background/60 p-3">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Workspace</p>
                   <p className="mt-2 font-mono text-xs text-foreground break-all">
-                    {hostAuthStatus?.resolvedApplicationId || sharedAuthSession?.applicationId || applicationId || "n/a"}
+                    {hostAuthStatus?.resolvedApplicationId || applicationId || "n/a"}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Session: {(Boolean(hostAuthStatus?.sessionAuthenticated) || Boolean(sharedAuthSession?.userId)) ? "Authenticated" : "Not authenticated"}
+                    Session: {hostAuthStatus?.sessionAuthenticated ? "Authenticated" : "Not authenticated"}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Expires: {(hostAuthStatus?.sessionExpiresAt || sharedAuthSession?.tokenExpiresAt)
-                      ? new Date(String(hostAuthStatus?.sessionExpiresAt || sharedAuthSession?.tokenExpiresAt)).toLocaleString()
+                    Expires: {hostAuthStatus?.sessionExpiresAt
+                      ? new Date(String(hostAuthStatus.sessionExpiresAt)).toLocaleString()
                       : "n/a"}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Button variant="outline" className="gap-2" onClick={() => void loadHostAuthStatus()} disabled={hostAuthLoading}>
+                  <Button variant="outline" className="gap-2" onClick={() => void refreshHostAuthStatus()} disabled={hostActionLoading !== null}>
                     <ShieldCheck className="h-4 w-4" />
-                    {hostAuthLoading ? "Refreshing…" : "Refresh Host Status"}
+                    Refresh Host Status
                   </Button>
                   <Button variant="destructive" className="gap-2" onClick={() => void handleHostSignOut()} disabled={hostActionLoading !== null}>
                     <LogOut className="h-4 w-4" />

@@ -7,7 +7,7 @@ import { applyBackendBaseUrl, getApiServerUrl, getAppMode, getBackendTarget, set
 import { setAnalyticsScope } from '@/services/analyticsApi';
 import { QUIZ_HOST_CHANNEL_UPDATED_EVENT, readQuizHostChannel } from '@/lib/quizHostChannel';
 import { ensureRemoteAppAccessSession, HOST_PRODUCT_KEY } from '@/config/hostProduct';
-import { hydrateAdminConfigFromBackend, resetAdminConfigHydrationGate } from '@/lib/adminConfigHydration';
+import { applyAllDefaults } from '@/config/defaults';
 
 // Storage keys
 const FRONTEND_GAME_ID_KEY = 'frontendQuizGameId';
@@ -112,10 +112,19 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
     loadApplicationId();
   }, [loadApplicationId]);
 
+  useEffect(() => {
+    try {
+      const hasLocalDefaults = Boolean(localStorage.getItem('teamConfigs'))
+        && Boolean(localStorage.getItem('correctAnswerScore'))
+        && Boolean(localStorage.getItem('quizBranding'));
+      if (hasLocalDefaults) return;
+    } catch {
+      // Fall through and attempt to seed defaults.
+    }
+    void applyAllDefaults();
+  }, []);
+
   // Analytics scope must be runtime-only: derive from JWT token via readQuizHostChannel.
-  // Also hydrate admin config from backend → localStorage on boot so every page
-  // (TeamQuiz, QuizMirror, YouTubeLivePanel) sees the host's saved settings on a
-  // fresh device without needing to visit Admin first.
   useEffect(() => {
     const syncAnalyticsScope = () => {
       const hostChannel = readQuizHostChannel();
@@ -124,17 +133,10 @@ export const AppProvider: React.FC<AppProviderProps> = ({ children }) => {
         ownerId: '',
         quizHostChannelId: hostChannel.quizHostChannelId || '',
       });
-      if (applicationId && hostChannel.quizHostChannelId) {
-        // Fire-and-forget; idempotent per channel.
-        void hydrateAdminConfigFromBackend(applicationId);
-      }
     };
     syncAnalyticsScope();
-    // Re-sync when the auth token changes (cross-tab or login/refresh)
     const onStorage = (e: StorageEvent) => {
       if (e.key === 'quizUiStateToken' || e.key === 'quizHostChannelId') {
-        // Force a re-hydration when host identity changes
-        resetAdminConfigHydrationGate();
         syncAnalyticsScope();
       }
     };
