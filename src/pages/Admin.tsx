@@ -129,6 +129,7 @@ const Admin = () => {
   const { 
     applicationId, 
     frontendQuizGameId, 
+    setFrontendQuizGameId,
     createNewQuizGame, 
     clearQuizRuntimeContext,
     setApplicationId,
