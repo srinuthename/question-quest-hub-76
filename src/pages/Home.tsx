@@ -91,17 +91,24 @@ const Home = React.forwardRef<HTMLDivElement, Record<string, never>>((_props, re
       if (!cancelled) void preloadAdminRoute();
     };
 
-    if (typeof window === "undefined") return () => { cancelled = true; };
+    if (typeof window === "undefined") {
+      return () => { cancelled = true; };
+    }
 
-    if ("requestIdleCallback" in window) {
-      const idleId = window.requestIdleCallback(() => preload(), { timeout: 2000 });
+    const w = window as Window & {
+      requestIdleCallback?: (cb: () => void, opts?: { timeout?: number }) => number;
+      cancelIdleCallback?: (id: number) => void;
+    };
+
+    if (typeof w.requestIdleCallback === "function") {
+      const idleId = w.requestIdleCallback(() => preload(), { timeout: 2000 });
       return () => {
         cancelled = true;
-        window.cancelIdleCallback?.(idleId);
+        w.cancelIdleCallback?.(idleId);
       };
     }
 
-    const timeoutId = window.setTimeout(preload, 1200);
+    const timeoutId = w.setTimeout(preload, 1200);
     return () => {
       cancelled = true;
       window.clearTimeout(timeoutId);
