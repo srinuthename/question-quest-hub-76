@@ -527,52 +527,6 @@ const Admin = () => {
 
     setTeamLifelinesAdmin(defaults.teamLifelines);
 
-    // Persist the reset to the backend so the next page load doesn't restore
-    // the old config from MongoDB.
-    if (appId) {
-      const hostChannel = readQuizHostChannel();
-      const hostChannelId = hostChannel.quizHostChannelId || null;
-      const defaultCfg: AdminConfig = {
-        quizHostChannelId: hostChannelId,
-        quizHostChannelTitle: hostChannel.quizHostChannelTitle || null,
-        quizHostChannelHandle: hostChannel.quizHostChannelHandle || null,
-        teamConfigs: getDefaultTeamConfigs(),
-        correctAnswerScore: defaults.correctAnswerScore,
-        wrongAnswerPenalty: defaults.wrongAnswerPenalty,
-        lifelinePenalty: defaults.lifelinePenalty,
-        teamLifelines: defaults.teamLifelines,
-        questionsPerCategory: defaults.questionsPerCategory,
-        maxUsedCountThreshold: defaults.maxUsedCountThreshold,
-        shuffleQuestions: defaults.shuffleQuestions,
-        timerDuration: defaults.timerDuration,
-        masterTimerDuration: defaults.masterTimerDuration,
-        passedQuestionTimer: defaults.passedQuestionTimer,
-        revealCountdownDuration: defaults.revealCountdownDuration,
-        rapidFireDuration: defaults.rapidFireDuration,
-        showActivityFeed: defaults.showActivityFeed,
-        showDifficultyBadge: defaults.showDifficultyBadge,
-        showSaveIndicator: defaults.showSaveIndicator,
-        showToastMessages: defaults.showToastMessages,
-        showIntroAnimation: defaults.showIntroAnimation,
-        maskViewerResponses: defaults.maskViewerResponses,
-        youtubeIntegrationEnabled: defaults.youtubeIntegrationEnabled,
-        disableLivePanelDuringPowerplay: defaults.disableLivePanelDuringPowerplay,
-        showYouTubeAutoPostPanel: defaults.showYouTubeAutoPostPanel,
-        showEngagementHeatmap: defaults.showEngagementHeatmap,
-        showViewerPredictions: defaults.showViewerPredictions,
-        powerplayEnabled: defaults.powerplayEnabled,
-        quizAnalyticsEnabled: defaults.quizAnalyticsEnabled,
-        tickerEnabled: defaults.tickerEnabled,
-        tickerMessageRegular: defaults.tickerMessageRegular,
-        tickerMessagePowerplay: defaults.tickerMessagePowerplay,
-        tvModeEnabled: defaults.tvModeEnabled,
-        fixedLeaderboard: defaults.fixedLeaderboard,
-        showSequenceNumbers: defaults.showSequenceNumbers,
-        minimumCorrectScore: defaults.minimumCorrectScore,
-      };
-      saveAdminConfig(appId, hostChannelId, defaultCfg).catch(() => {/* non-critical */});
-    }
-
     toast({
       title: t.success,
       description: "All settings reset to defaults and sessions cleared.",
@@ -1223,30 +1177,30 @@ const Admin = () => {
                 <div className="rounded-xl border border-border/60 bg-background/60 p-3">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Channel</p>
                   <p className="mt-2 font-semibold text-foreground">
-                    {hostAuthStatus?.channelTitle || sharedAuthSession?.youtubeChannelTitle || "Not connected"}
+                    {hostAuthStatus?.channelTitle || "Not connected"}
                   </p>
                   <p className="mt-1 break-all text-xs text-muted-foreground">
-                    {hostAuthStatus?.channelId || sharedAuthSession?.youtubeChannelId || "No shared auth session"}
+                    {hostAuthStatus?.channelId || "No connected channel"}
                   </p>
                 </div>
                 <div className="rounded-xl border border-border/60 bg-background/60 p-3">
                   <p className="text-xs uppercase tracking-[0.18em] text-muted-foreground">Workspace</p>
                   <p className="mt-2 font-mono text-xs text-foreground break-all">
-                    {hostAuthStatus?.resolvedApplicationId || sharedAuthSession?.applicationId || applicationId || "n/a"}
+                    {hostAuthStatus?.resolvedApplicationId || applicationId || "n/a"}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Session: {(Boolean(hostAuthStatus?.sessionAuthenticated) || Boolean(sharedAuthSession?.userId)) ? "Authenticated" : "Not authenticated"}
+                    Session: {hostAuthStatus?.sessionAuthenticated ? "Authenticated" : "Not authenticated"}
                   </p>
                   <p className="mt-1 text-xs text-muted-foreground">
-                    Expires: {(hostAuthStatus?.sessionExpiresAt || sharedAuthSession?.tokenExpiresAt)
-                      ? new Date(String(hostAuthStatus?.sessionExpiresAt || sharedAuthSession?.tokenExpiresAt)).toLocaleString()
+                    Expires: {hostAuthStatus?.sessionExpiresAt
+                      ? new Date(String(hostAuthStatus.sessionExpiresAt)).toLocaleString()
                       : "n/a"}
                   </p>
                 </div>
                 <div className="flex flex-col gap-2">
-                  <Button variant="outline" className="gap-2" onClick={() => void loadHostAuthStatus()} disabled={hostAuthLoading}>
+                  <Button variant="outline" className="gap-2" onClick={() => void refreshHostAuthStatus()} disabled={hostActionLoading !== null}>
                     <ShieldCheck className="h-4 w-4" />
-                    {hostAuthLoading ? "Refreshing…" : "Refresh Host Status"}
+                    Refresh Host Status
                   </Button>
                   <Button variant="destructive" className="gap-2" onClick={() => void handleHostSignOut()} disabled={hostActionLoading !== null}>
                     <LogOut className="h-4 w-4" />
