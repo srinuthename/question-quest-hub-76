@@ -53,9 +53,7 @@ const AnimatedRoutes = () => {
   );
   const appProtectedElement = (node: React.ReactNode) => (
     <RequireAuth>
-      <AppRuntime>
-        <RequireYouTube>{node}</RequireYouTube>
-      </AppRuntime>
+      <AppRuntime>{node}</AppRuntime>
     </RequireAuth>
   );
   const quizProtectedElement = (node: React.ReactNode) => (
